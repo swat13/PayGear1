@@ -1,0 +1,76 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/animationLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#e7e8da"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/topLogo"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:layout_alignParentTop="true"
+        android:background="#b07d79"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/tci_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="10dp"
+            android:text="شماره تلفن"
+            android:textColor="#FFF" />
+
+        <Button
+            android:id="@+id/phone_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/phone_Edittext3"
+        android:layout_width="wrap_content"
+        android:layout_height="?actionBarSize"
+        android:layout_below="@+id/topLogo"
+        android:layout_marginTop="5dp">
+
+        <EditText
+            android:id="@+id/phone_Edittext"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_toRightOf="@+id/pre_text"
+            android:backgroundTint="#b07d79"
+            android:gravity="right|center"
+            android:hint="شماره تلفن خود را وارد کنید!"
+            android:inputType="phone|number"
+            android:maxLength="9"
+            android:padding="5dp"
+            android:textColor="#000"
+            android:textColorHint="#000"
+            android:textDirection="ltr"
+            android:textSize="19dp" />
+
+        <TextView
+            android:id="@+id/pre_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:alpha="0.84"
+            android:gravity="left"
+            android:text="09"
+            android:textColor="#FFFFFF"
+            android:textSize="19dp"
+            android:visibility="invisible" />
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,26 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/animationLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="@dimen/height2"
+        android:layout_height="@dimen/height"
+        android:layout_marginTop="0dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/mainlogo" />
+
+    <TextView
+        android:id="@+id/payfriends_en"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="PayFriendsfff"
+        android:textColor="#335a00" />
+
+
+</LinearLayout>

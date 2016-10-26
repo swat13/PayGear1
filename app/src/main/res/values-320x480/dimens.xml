@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="marginTop">35dp</dimen>
+    <dimen name="width">70dp</dimen>
+    <dimen name="height">70dp</dimen>
+    <dimen name="heightLogo">110dp</dimen>
+    <dimen name="marginTop2">20dp</dimen>
+    <dimen name="height2">50dp</dimen>
+    <dimen name="marginLeft">30dp</dimen>
+    <dimen name="marginRight">30dp</dimen>
+    <dimen name="marginTop3">10dp</dimen>
+    <dimen name="height3">55dp</dimen>
+    <dimen name="splash_ratio">90dp</dimen>
+
+</resources>

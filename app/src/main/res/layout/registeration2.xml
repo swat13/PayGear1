@@ -1,0 +1,140 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/animationLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#e7e8da"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/topLogo"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:layout_alignParentTop="true"
+        android:background="#b07d79"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/tci_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="10dp"
+            android:text="شماره تلفن"
+            android:textColor="#FFF" />
+
+        <Button
+            android:id="@+id/phone_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true" />
+
+    </RelativeLayout>
+
+
+    <TextView
+        android:id="@+id/center_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:alpha="0.78"
+        android:textSize="12dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="15dp"
+        android:gravity="center"
+        android:text=""
+        android:textColor="#FFF"
+        android:layout_alignParentBottom="true"
+        />
+
+
+
+    <RelativeLayout
+        android:id="@+id/edittext_back"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true"
+        android:gravity="center"
+        android:layout_marginRight="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="19dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_below="@+id/topLogo">
+
+        <EditText
+            android:id="@+id/code_Edittext"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:gravity="right|center"
+            android:inputType="phone|number"
+            android:hint="کد فعال سازی را وارد کنید ..."
+            android:maxLength="4"
+            android:padding="15dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#000"
+            android:textDirection="ltr"
+            android:textSize="15dp" />
+
+
+
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/time_label_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="15dp"
+        android:gravity="bottom"
+        android:layout_below="@id/edittext_back"
+        android:layout_above="@+id/center_text">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/time_label"
+            android:text="زمان :"
+            android:textColor="#000"/>
+
+        <TextView
+            android:id="@+id/time_label"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="#000"/>
+
+
+
+    </RelativeLayout>
+
+
+
+
+
+
+
+
+
+    <RelativeLayout
+        android:id="@+id/wait_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:background="@drawable/loading_bg2"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/image_view"
+            android:layout_centerInParent="true"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>
