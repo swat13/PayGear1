@@ -25,62 +25,63 @@ import magia.af.ezpay.R;
 
 public class LoginFragment extends Fragment implements View.OnClickListener {
   private ImageButton btn_done;
+  private String phone;
   private EditText edtInputPhoneNumber;
-  public static LoginFragment getInstance(){
+
+  public static LoginFragment getInstance() {
     return new LoginFragment();
   }
 
   @Nullable
   @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-    View rootView = inflater.inflate(R.layout.fragment_login , container , false);
-    btn_done = (ImageButton)rootView.findViewById(R.id.btn_done);
+    View rootView = inflater.inflate(R.layout.fragment_login, container, false);
+    btn_done = (ImageButton) rootView.findViewById(R.id.btn_done);
     btn_done.setOnClickListener(this);
-    edtInputPhoneNumber = (EditText)rootView.findViewById(R.id.edt_input_phone_number);
+    edtInputPhoneNumber = (EditText) rootView.findViewById(R.id.edt_input_phone_number);
 
-      edtInputPhoneNumber.addTextChangedListener(new TextWatcher() {
-          @Override
-          public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+    edtInputPhoneNumber.addTextChangedListener(new TextWatcher() {
+      @Override
+      public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-          }
+      }
 
-          @Override
-          public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+      @Override
+      public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-              if (edtInputPhoneNumber.getText().length()==11) {
-                  hideKey(edtInputPhoneNumber);
-              }
-
-
+        if (edtInputPhoneNumber.getText().length() == 11) {
+          hideKey(edtInputPhoneNumber);
+        }
 
 
-          }
+      }
 
-          @Override
-          public void afterTextChanged(Editable editable) {
+      @Override
+      public void afterTextChanged(Editable editable) {
 
-          }
-      });
+      }
+    });
 
     return rootView;
   }
 
-    public void hideKey(View view) {
-        if (view != null) {
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
+  public void hideKey(View view) {
+    if (view != null) {
+      InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+      imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
+  }
 
 
-    @Override
+  @Override
   public void onClick(View v) {
     //Handle All View Click Here
-    switch (v.getId()){
+    switch (v.getId()) {
       case R.id.btn_done:
-          new registration().execute(edtInputPhoneNumber.getText().toString());
-          Toast.makeText(getActivity(),edtInputPhoneNumber.getText().toString(),Toast.LENGTH_SHORT).show();
-          break;
+        phone = edtInputPhoneNumber.getText().toString();
+        new registration().execute(edtInputPhoneNumber.getText().toString());
+        Toast.makeText(getActivity(), edtInputPhoneNumber.getText().toString(), Toast.LENGTH_SHORT).show();
+        break;
     }
   }
 
@@ -105,18 +106,19 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 //      getActivity().findViewById(R.id.wait_layout).setVisibility(View.GONE);
       Log.e("^^^^^^^^^", "onPostExecute: " + result);
       if (result) {
-          Toast.makeText(getActivity(), "Test", Toast.LENGTH_SHORT).show();
-          ActivationCodeFragment activationCodeFragment = ActivationCodeFragment.getInstance();
-          Bundle bundle = new Bundle();
-          bundle.putString("number" ,edtInputPhoneNumber.getText().toString());
-          activationCodeFragment.setArguments(bundle);
-          getActivity().getSupportFragmentManager()
-                  .beginTransaction()
-                  .replace(R.id.container , activationCodeFragment)
-                  .commit();
+        Toast.makeText(getActivity(), "Test", Toast.LENGTH_SHORT).show();
+        Bundle bundle = new Bundle();
+        bundle.putString("number", phone);
+        Log.i("Input phone" , phone);
+        ActivationCodeFragment activationCodeFragment = ActivationCodeFragment.getInstance();
+        activationCodeFragment.setArguments(bundle);
+        getActivity().getSupportFragmentManager()
+          .beginTransaction()
+          .replace(R.id.container, activationCodeFragment)
+          .commit();
 
 
-      }else {
+      } else {
         Toast.makeText(getActivity(), "مشکل در برقراری ارتباط!", Toast.LENGTH_SHORT).show();
       }
     }

@@ -427,7 +427,7 @@ public class DOMParser {
             httpConn.setRequestMethod("POST");
             httpConn.setConnectTimeout(10000);
             httpConn.setReadTimeout(10000);
-            httpConn.setRequestProperty("application/json", "text/json");
+            httpConn.setRequestProperty("Content-Type", "application/json");
 
             OutputStream os = httpConn.getOutputStream();
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
