@@ -31,7 +31,7 @@
                     android:background="@android:color/transparent"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_check_black_24dp"
-                    android:id="@+id/btn_done"/>
+                    android:id="@+id/btn_send_activation_code"/>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

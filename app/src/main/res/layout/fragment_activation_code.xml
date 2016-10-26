@@ -24,6 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
+
                 <ImageButton
                     android:padding="5dp"
                     android:layout_gravity="center"
@@ -31,7 +32,7 @@
                     android:background="@android:color/transparent"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_check_black_24dp"
-                    android:id="@+id/btn_done"
+                    android:id="@+id/btn_send_activation_code"
                     android:contentDescription="@string/action_done_button"/>
 
                 <TextView

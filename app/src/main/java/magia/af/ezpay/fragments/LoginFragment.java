@@ -12,15 +12,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import magia.af.ezpay.LoginActivity;
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.R;
-import magia.af.ezpay.Splash;
 
 /**
  * Created by Saeid Yazdany on 10/26/2016.
@@ -37,7 +34,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
   @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
     View rootView = inflater.inflate(R.layout.fragment_login , container , false);
-    btn_done = (ImageButton)rootView.findViewById(R.id.btn_done);
+    btn_done = (ImageButton)rootView.findViewById(R.id.btn_send_activation_code);
     btn_done.setOnClickListener(this);
     edtInputPhoneNumber = (EditText)rootView.findViewById(R.id.edt_input_phone_number);
 
@@ -80,7 +77,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
   public void onClick(View v) {
     //Handle All View Click Here
     switch (v.getId()){
-      case R.id.btn_done:
+      case R.id.btn_send_activation_code:
           new registration().execute(edtInputPhoneNumber.getText().toString());
           Toast.makeText(getActivity(),edtInputPhoneNumber.getText().toString(),Toast.LENGTH_SHORT).show();
           break;
@@ -110,10 +107,15 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
       if (result) {
           Toast.makeText(getActivity(), "Test", Toast.LENGTH_SHORT).show();
           ActivationCodeFragment activationCodeFragment = ActivationCodeFragment.getInstance();
+          Bundle bundle = new Bundle();
+          bundle.putString("number" ,edtInputPhoneNumber.getText()+"" );
+          activationCodeFragment.setArguments(bundle);
           getActivity().getSupportFragmentManager()
                   .beginTransaction()
                   .replace(R.id.container , activationCodeFragment)
                   .commit();
+
+
       }else {
         Toast.makeText(getActivity(), "مشکل در برقراری ارتباط!", Toast.LENGTH_SHORT).show();
       }
