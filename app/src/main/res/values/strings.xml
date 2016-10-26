@@ -13,4 +13,6 @@
     <string name="send_again">ارسال مجدد</string>
     <string name="wrong_number">شماره اشتباه است</string>
     <string name="time_placeholder">--:--</string>
+    <string name="contact_list">لیست مخاطبین</string>
+    <string name="invite_friends">دعوت دوستان</string>
 </resources>

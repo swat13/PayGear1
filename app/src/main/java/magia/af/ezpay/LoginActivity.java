@@ -1,35 +1,44 @@
 package magia.af.ezpay;
 
+import android.content.ContentResolver;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.os.PersistableBundle;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.view.Window;
-import android.view.WindowManager;
+import android.util.Log;
+import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import magia.af.ezpay.fragments.LoginFragment;
+import magia.af.ezpay.helper.GetContact;
 
 /**
- * Created by erfan on 10/25/2016.
+ * Created by Saeid Yazdany on 10/25/2016.
  */
 
 public class LoginActivity extends BaseActivity {
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN , WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        //Load The Login Fragment
-        loadFragment();
-    }
+  private static final String TAG = "TAG";
 
+  @Override
+  protected void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_login);
     //Load The Login Fragment
-    public void loadFragment(){
-        LoginFragment loginFragment = LoginFragment.getInstance();
-        getSupportFragmentManager()
-          .beginTransaction()
-          .add(R.id.container , loginFragment)
-          .commit();
-    }
+    loadFragment();
+//    GetContact getContact = new GetContact();
+//    getContact.getContact(this);
+  }
+
+  //Load The Login Fragment
+  public void loadFragment() {
+    LoginFragment loginFragment = LoginFragment.getInstance();
+    getSupportFragmentManager()
+      .beginTransaction()
+      .add(R.id.container, loginFragment)
+      .commit();
+  }
 }

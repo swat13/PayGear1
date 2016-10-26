@@ -491,11 +491,11 @@ public class DOMParser {
      * @param number
      * @return
      **/
-    public String forgetPass(String number) {
+    public String getContact(String json) {
 
         try {
 
-            URL url = new URL(mainUrl + "accounts/user/password/" + "09" + number + "/");
+            URL url = new URL(mainUrl + "api/Account/CheckContactList");
             Log.e("1111111", "doInBackground: " + url);
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
             httpConn.setDoOutput(true);
@@ -509,11 +509,8 @@ public class DOMParser {
             OutputStream os = httpConn.getOutputStream();
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
 
-            String request = "{\n" +
-                    "\"username\" : \"09" + number + "\"\n" +
-                    "}";
-            Log.e("999999999", "activateSong: " + request);
-            writer.write(request);
+            Log.e("999999999", "activateSong: " + json);
+            writer.write(json);
             writer.flush();
             writer.close();
             os.close();

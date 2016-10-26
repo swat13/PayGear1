@@ -34,7 +34,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
   @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
     View rootView = inflater.inflate(R.layout.fragment_login , container , false);
-    btn_done = (ImageButton)rootView.findViewById(R.id.btn_send_activation_code);
+    btn_done = (ImageButton)rootView.findViewById(R.id.btn_done);
     btn_done.setOnClickListener(this);
     edtInputPhoneNumber = (EditText)rootView.findViewById(R.id.edt_input_phone_number);
 
@@ -77,7 +77,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
   public void onClick(View v) {
     //Handle All View Click Here
     switch (v.getId()){
-      case R.id.btn_send_activation_code:
+      case R.id.btn_done:
           new registration().execute(edtInputPhoneNumber.getText().toString());
           Toast.makeText(getActivity(),edtInputPhoneNumber.getText().toString(),Toast.LENGTH_SHORT).show();
           break;
@@ -108,7 +108,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
           Toast.makeText(getActivity(), "Test", Toast.LENGTH_SHORT).show();
           ActivationCodeFragment activationCodeFragment = ActivationCodeFragment.getInstance();
           Bundle bundle = new Bundle();
-          bundle.putString("number" ,edtInputPhoneNumber.getText()+"" );
+          bundle.putString("number" ,edtInputPhoneNumber.getText().toString());
           activationCodeFragment.setArguments(bundle);
           getActivity().getSupportFragmentManager()
                   .beginTransaction()

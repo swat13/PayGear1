@@ -41,15 +41,17 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
         View rootView = inflater.inflate(R.layout.fragment_activation_code, container, false);
         btn_send_activation_code_again = (Button) rootView.findViewById(R.id.btn_send_activation_code_again);
         btn_send_activation_code = (ImageButton) rootView.findViewById(R.id.btn_send_activation_code);
-        edtInputPhoneNumber = (EditText) rootView.findViewById(R.id.edt_input_phone_number);
+        edtInputPhoneNumber = (EditText) rootView.findViewById(R.id.edt_input_activation_code);
         timerText = (TextView) rootView.findViewById(R.id.timer_text);
-        btn_send_activation_code_again.setOnClickListener(this);
+        btn_send_activation_code.setOnClickListener(this);
         CountdownTimerTextView countdownTimerTextView = new CountdownTimerTextView(timerText, this);
         countdownTimerTextView.setSecond(30);
         countdownTimerTextView.setMinute(2);
         countdownTimerTextView.start();
-        if (getArguments().getString("phone") != null) {
-            phone = getArguments().getString("phone");
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            phone = bundle.getString("phone");
+            Log.i("Phone" , phone);
         }
         return rootView;
     }
