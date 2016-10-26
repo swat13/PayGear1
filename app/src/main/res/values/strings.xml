@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">EZpay</string>
     <string name="aaa">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuqi5itZP46xPVlEWn6ClcXZU9xHGXTbpkOXvwwIndqCgrkPSKi+JJvaLMFWv7MR9IwCO3RuTvHE44cwJD2O/reNYWAzRXywkGjK+ksNv8CCnk2JwkgrZrwhD9w8MWueXmzgolFJQanR79qMNeqeAvP90nVdPsq+t9jRCgQ/qIk0uDYq0ZB7qV7eVIg3a5CBOXUBmD7NvHik+vJXNZ/2dafjf+1v8wuvhOV4ndcKh9C1JSGCbEzbivHZrmx0Qy1GeC7HI6tzXnNaugiVY3E6OKOnsX55eI6aF03g6bEE7uYW/iUt5VTxReeZLgXd/mkYSDN1fMcS/wmDF+Fqj70rAJQIDAQAB</string>
+    <string name="title_activity_example">ExampleActivity</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_scrolling">ScrollingActivity</string>
+    <string name="phone_number">شماره تلفن</string>
+    <string name="your_code">کد شما</string>
+    <string name="enter_your_phone_number">شماره همراه خود را وارد کنید</string>
+    <string name="we_send_activation_code_to_you">ما یک کد فعالسازی به شماره همراه شما پیامک کرده ایم</string>
+    <string name="action_done_button">Action Done Button</string>
+    <string name="secret_active_code_number">****</string>
+    <string name="send_again">ارسال مجدد</string>
+    <string name="wrong_number">شماره اشتباه است</string>
+    <string name="time_placeholder">--:--</string>
 </resources>
