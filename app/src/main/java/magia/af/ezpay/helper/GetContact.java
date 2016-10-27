@@ -45,8 +45,8 @@ public class GetContact {
               ContactsContract.CommonDataKinds.Phone.NUMBER));
             JSONObject jsonObject = new JSONObject();
             try {
-              jsonObject.put("T", name);
-              jsonObject.put("M", phoneNo);
+              jsonObject.put("t", name);
+              jsonObject.put("m", phoneNo);
               jsonArray.put(count, jsonObject);
               Log.e(TAG, "getContact: ^^^^  " + count);
             } catch (JSONException e) {

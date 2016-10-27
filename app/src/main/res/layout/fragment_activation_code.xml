@@ -118,6 +118,7 @@
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_check_black_24dp"
                     android:id="@+id/btn_send_activation_code"
+                    android:visibility="gone"
                     android:contentDescription="@string/action_done_button"/>
 
                 <TextView

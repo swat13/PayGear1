@@ -1,9 +1,12 @@
 package magia.af.ezpay.fragments;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import magia.af.ezpay.FriendListActivity;
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.R;
 import magia.af.ezpay.helper.CountdownTimerTextView;
@@ -38,19 +42,43 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
   @Nullable
   @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-    View rootView = inflater.inflate(R.layout.fragment_activation_code, container, false);
-    btn_send_activation_code_again = (Button) rootView.findViewById(R.id.btn_send_activation_code_again);
-    btn_send_activation_code = (ImageButton) rootView.findViewById(R.id.btn_send_activation_code);
-    edtInputPhoneNumber = (EditText) rootView.findViewById(R.id.edt_input_activation_code);
-    timerText = (TextView) rootView.findViewById(R.id.timer_text);
-    btn_send_activation_code.setOnClickListener(this);
-    CountdownTimerTextView countdownTimerTextView = new CountdownTimerTextView(timerText, this);
-    countdownTimerTextView.setSecond(30);
-    countdownTimerTextView.setMinute(2);
-    countdownTimerTextView.start();
-    phone = getArguments().getString("number");
-    Log.i("Phone", phone + "");
-    return rootView;
+      View rootView = inflater.inflate(R.layout.fragment_activation_code, container, false);
+      btn_send_activation_code_again = (Button) rootView.findViewById(R.id.btn_send_activation_code_again);
+      btn_send_activation_code = (ImageButton) rootView.findViewById(R.id.btn_send_activation_code);
+      edtInputPhoneNumber = (EditText) rootView.findViewById(R.id.edt_input_activation_code);
+      edtInputPhoneNumber.addTextChangedListener(new TextWatcher() {
+          @Override
+          public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+          }
+
+          @Override
+          public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+              if (edtInputPhoneNumber.getText().length()==4)
+              {
+                  btn_send_activation_code.setVisibility(View.VISIBLE);
+
+              }
+              else
+                  btn_send_activation_code.setVisibility(View.GONE);
+
+          }
+
+          @Override
+          public void afterTextChanged(Editable editable) {
+
+          }
+      });
+      timerText = (TextView) rootView.findViewById(R.id.timer_text);
+      btn_send_activation_code.setOnClickListener(this);
+      CountdownTimerTextView countdownTimerTextView = new CountdownTimerTextView(timerText, this);
+      countdownTimerTextView.setSecond(30);
+      countdownTimerTextView.setMinute(2);
+      countdownTimerTextView.start();
+      phone = getArguments().getString("number");
+      Log.i("Phone", phone + "");
+      return rootView;
   }
 
   @Override
@@ -87,14 +115,12 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
 
     @Override
     protected void onPostExecute(String result) {
-//      findViewById(R.id.wait_layout).setVisibility(View.GONE);
+
       Log.e("11111111111111", "onPostExecute: " + result);
       if (result.length() > 10) {
         Log.e("55555555555", "onPostExecute: " + result);
-//        getSharedPreferences("TCT", 0).edit().putString("number", phone_number).commit();
-//        getSharedPreferences("TCT", 0).edit().putString("token", result).commit();
-//        startActivity(new Intent(Splash.this, MainActivity.class));
-//        finish();
+        getActivity().getSharedPreferences("EZpay", 0).edit().putString("token", result).commit();
+        startActivity(new Intent(getActivity(), FriendListActivity.class));
       } else if (result.equals("wrong")) {
         Toast.makeText(getActivity(), "کد فعال سازی صحیح نمی باشد!", Toast.LENGTH_SHORT).show();
       } else {

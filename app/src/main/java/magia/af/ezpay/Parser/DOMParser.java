@@ -34,96 +34,6 @@ public class DOMParser {
     private String mainUrl = "http://new.opaybot.ir/";
     private String token = "";
 
-    /**
-     * @param number
-     * @return
-     */
-    public RSSItem getBillInfo(String number) {
-
-        try {
-
-            URL url = new URL(mainUrl + "utility/single-bill/");
-            Log.e("1111111", "doInBackground: " + url);
-            HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
-            httpConn.setDoOutput(true);
-            httpConn.setDoInput(true);
-            httpConn.setAllowUserInteraction(false);
-            httpConn.setRequestMethod("POST");
-            httpConn.setConnectTimeout(20000);
-            httpConn.setReadTimeout(20000);
-            httpConn.setRequestProperty("Content-Type", "application/json");
-            httpConn.setRequestProperty("Authorization", "JWT " + token);
-
-            OutputStream os = httpConn.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-
-            String request = "{\n" +
-                    "\"tel_no\" : \"21" + number + "\"\n" +
-                    "}";
-            Log.e("999999999", "activateSong: " + request);
-            writer.write(request);
-            writer.flush();
-            writer.close();
-            os.close();
-
-            int resCode = httpConn.getResponseCode();
-            Log.e("0000000", "doInBackground: " + resCode);
-            if (resCode == 400) {
-//                return null;
-            }
-
-            InputStream in = httpConn.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            StringBuilder sb = new StringBuilder();
-
-            String line = null;
-            try {
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            Log.e("@@@@@@", sb.toString());
-            JSONObject jsonObject = new JSONObject(sb.toString());
-            JSONObject jsonObject1 = jsonObject.getJSONObject("bill_info");
-            RSSItem rssItem = new RSSItem();
-            try {
-                rssItem.setAmount(jsonObject1.getLong("amount"));
-                rssItem.setPayDate((long) 1474370347);
-                rssItem.setStatus(jsonObject1.getLong("status"));
-                rssItem.setPayId(jsonObject1.getLong("payId"));
-//                rssItem.set_AdslActive(true);
-//                rssItem.set_StatusBandwidth("20kb/s");
-//                rssItem.set_AdslData("50 GB");
-                rssItem.setBillId(jsonObject1.getLong("billId"));
-                if (!jsonObject1.isNull("message"))
-                    rssItem.setMessage(jsonObject1.getString("message"));
-                rssItem.setTelNo(jsonObject1.getLong("telNo"));
-                return rssItem;
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            return null;
-
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     /**
      * @param phoneNumber
@@ -321,8 +231,7 @@ public class DOMParser {
             Log.e("0000000", "doInBackground: " + resCode);
             if (resCode == 200) {
                 return true;
-            }
-            else
+            } else
                 return false;
 
 
@@ -470,7 +379,7 @@ public class DOMParser {
 
             Log.e("@@@@@@", sb.toString());
             JSONObject jsonObject = new JSONObject(sb.toString());
-            String token = jsonObject.getString("token");
+            String token = jsonObject.getString("access_token");
             return token;
 
         } catch (MalformedURLException e) {
@@ -488,10 +397,9 @@ public class DOMParser {
     }
 
     /**
-     * @param number
      * @return
      **/
-    public String getContact(String json) {
+    public RSSFeed getContact(String json) {
 
         try {
 
@@ -501,10 +409,11 @@ public class DOMParser {
             httpConn.setDoOutput(true);
             httpConn.setDoInput(true);
             httpConn.setAllowUserInteraction(false);
-            httpConn.setRequestMethod("PUT");
+            httpConn.setRequestMethod("POST");
             httpConn.setConnectTimeout(20000);
             httpConn.setReadTimeout(20000);
             httpConn.setRequestProperty("Content-Type", "application/json");
+            httpConn.setRequestProperty("Authorization", "bearer " + token);
 
             OutputStream os = httpConn.getOutputStream();
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
@@ -518,7 +427,7 @@ public class DOMParser {
             int resCode = httpConn.getResponseCode();
             Log.e("0000000", "doInBackground: " + resCode);
             if (resCode == 400) {
-                return "Failed";
+                return null;
             }
 
             InputStream in = httpConn.getInputStream();
@@ -541,7 +450,23 @@ public class DOMParser {
             }
 
             Log.e("@@@@@@", sb.toString());
+            JSONArray jsonArray = new JSONArray(sb.toString());
 
+            RSSFeed rssFeed = new RSSFeed();
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                RSSItem rssItem = new RSSItem();
+                try {
+                    rssItem.setTelNo(jsonArray.getString(i));
+                    rssItem.setContactName(getContactName(jsonArray.getString(i),json));
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                rssFeed.addItem(rssItem);
+            }
+
+            return rssFeed;
 
             /**
              * TODO: check if activated then return the token to Splash class
@@ -553,8 +478,32 @@ public class DOMParser {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-        return "Success";
+        return null;
+
+    }
+
+    public String getContactName(String phoneNumber,String jsons)
+    {
+        try {
+            JSONArray jsonArray=new JSONArray(jsons);
+            for (int i=0;i<jsonArray.length();i++)
+            {
+                JSONObject jsonObject=jsonArray.getJSONObject(i);
+                if (jsonObject.getString("m").equals(phoneNumber))
+                {
+                    return jsonObject.getString("t");
+                }
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+
+
     }
 
 }
