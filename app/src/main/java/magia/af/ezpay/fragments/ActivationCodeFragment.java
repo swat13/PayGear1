@@ -1,10 +1,13 @@
 package magia.af.ezpay.fragments;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import magia.af.ezpay.FriendListActivity;
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.R;
 import magia.af.ezpay.helper.CountdownTimerTextView;
@@ -104,14 +108,12 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
 
     @Override
     protected void onPostExecute(String result) {
-//      findViewById(R.id.wait_layout).setVisibility(View.GONE);
+
       Log.e("11111111111111", "onPostExecute: " + result);
       if (result.length() > 10) {
         Log.e("55555555555", "onPostExecute: " + result);
-//        getSharedPreferences("TCT", 0).edit().putString("number", phone_number).commit();
-//        getSharedPreferences("TCT", 0).edit().putString("token", result).commit();
-//        startActivity(new Intent(Splash.this, MainActivity.class));
-//        finish();
+        getActivity().getSharedPreferences("EZpay", 0).edit().putString("token", result).commit();
+        startActivity(new Intent(getActivity(), FriendListActivity.class));
       } else if (result.equals("wrong")) {
         Toast.makeText(getActivity(), "کد فعال سازی صحیح نمی باشد!", Toast.LENGTH_SHORT).show();
       } else {

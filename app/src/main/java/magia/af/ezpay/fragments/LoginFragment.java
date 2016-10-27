@@ -39,6 +39,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     btn_done = (ImageButton) rootView.findViewById(R.id.btn_done);
     btn_done.setOnClickListener(this);
     edtInputPhoneNumber = (EditText) rootView.findViewById(R.id.edt_input_phone_number);
+    edtInputPhoneNumber = (EditText)rootView.findViewById(R.id.edt_input_phone_number);
 
     edtInputPhoneNumber.addTextChangedListener(new TextWatcher() {
       @Override
@@ -52,7 +53,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         if (edtInputPhoneNumber.getText().length() == 11) {
           hideKey(edtInputPhoneNumber);
         }
-
+              if (edtInputPhoneNumber.getText().length()==11) {
+                  btn_done.setVisibility(View.VISIBLE);
+                  hideKey(edtInputPhoneNumber);
+              }
+              else
+                  btn_done.setVisibility(View.GONE);
 
       }
 
@@ -96,9 +102,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     @Override
     protected void onPreExecute() {
       super.onPreExecute();
-//      getActivity().findViewById(R.id.wait_layout).setVisibility(View.VISIBLE);
-//            GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget((ImageView) findViewById(R.id.image_view));
-//            Glide.with(Splash.this).load(R.drawable.gif_loading).into(imageViewTarget);
     }
 
     @Override
