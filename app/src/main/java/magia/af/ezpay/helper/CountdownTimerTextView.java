@@ -2,6 +2,7 @@ package magia.af.ezpay.helper;
 
 import android.content.Context;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.widget.TextView;
 
 import magia.af.ezpay.interfaces.EventCallbackHandler;
@@ -35,7 +36,7 @@ public class CountdownTimerTextView {
   }
 
   public CountDownTimer start(){
-    return   new CountDownTimer(calculateTime(), 1000) {
+    return new CountDownTimer(calculateTime(), 1000) {
 
       public void onTick(long millisUntilFinished) {
 
@@ -43,6 +44,8 @@ public class CountdownTimerTextView {
       }
 
       public void onFinish() {
+        textView.setText("00:00");
+        Log.i("Finish" , "TEST");
         callbackHandler.callback();
       }
 

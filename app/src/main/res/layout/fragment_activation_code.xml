@@ -71,7 +71,7 @@
                     android:layout_height="match_parent"
                     android:text="@string/time_placeholder"
                     android:gravity="center"
-                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="#ffffff"
                     android:id="@+id/timer_text"/>
             </LinearLayout>

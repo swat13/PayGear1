@@ -2,6 +2,7 @@ package magia.af.ezpay.fragments;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -44,11 +45,27 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
     edtInputPhoneNumber = (EditText) rootView.findViewById(R.id.edt_input_activation_code);
     timerText = (TextView) rootView.findViewById(R.id.timer_text);
     btn_send_activation_code.setOnClickListener(this);
-    CountdownTimerTextView countdownTimerTextView = new CountdownTimerTextView(timerText, this);
-    countdownTimerTextView.setSecond(30);
-    countdownTimerTextView.setMinute(2);
-    countdownTimerTextView.start();
+    new CountDownTimer(10000, 1000) {
+
+      public void onTick(long millisUntilFinished) {
+//                textview.setText((millisUntilFinished / 60000)+":"+(millisUntilFinished % 60000 / 1000));
+
+        timerText.setText(String.format("%02d:%02d", (millisUntilFinished / 60000), (millisUntilFinished % 60000 / 1000)));
+      }
+
+      public void onFinish() {
+        Log.i("Finish" , "TEST");
+//        finish();
+      }
+
+    }.start();
+//    CountdownTimerTextView countdownTimerTextView = new CountdownTimerTextView(timerText, this);
+//    countdownTimerTextView.setSecond(10);
+////    countdownTimerTextView.setMinute(2);
+//    countdownTimerTextView.start();
+
     phone = getArguments().getString("number");
+    Log.i("Finish" , "TEST");
     Log.i("Phone", phone + "");
     return rootView;
   }
