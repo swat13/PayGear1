@@ -48,7 +48,6 @@ public class GetContact {
               jsonObject.put("t", name);
               jsonObject.put("m", phoneNo);
               jsonArray.put(count, jsonObject);
-              Log.e(TAG, "getContact: ^^^^  " + count);
             } catch (JSONException e) {
               e.printStackTrace();
             }

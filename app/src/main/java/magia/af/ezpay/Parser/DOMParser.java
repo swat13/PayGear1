@@ -37,166 +37,6 @@ public class DOMParser {
 
     /**
      * @param phoneNumber
-     * @param number
-     * @param pan
-     * @param pin2
-     * @param key
-     * @return
-     * @throws InvalidKeySpecException The timeout should be more than 30 second
-     **/
-    public JSONObject payBill(String phoneNumber, String number, String pan, String pin2, String key) throws InvalidKeySpecException {
-
-        try {
-
-            String PPP = pan + ":" + pin2;
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("username", "09" + phoneNumber);
-            jsonObject.put("number", number);
-//            jsonObject.put("payload", RSA.encryptWithKey(key, PPP));
-
-            URL url = new URL(mainUrl + "payment/quickpay/");
-            Log.e("1111111", "doInBackground: " + url);
-            HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
-            httpConn.setDoOutput(true);
-            httpConn.setDoInput(true);
-            httpConn.setAllowUserInteraction(false);
-            httpConn.setRequestMethod("POST");
-            httpConn.setConnectTimeout(30000);
-            httpConn.setReadTimeout(30000);
-            httpConn.setRequestProperty("Content-Type", "application/json");
-            httpConn.setRequestProperty("Authorization", "JWT " + token);
-            Log.e("((((((((((", "payBill: " + token);
-
-            OutputStream os = httpConn.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-
-            Log.e("999999999", "activateSong: " + jsonObject.toString());
-            writer.write(jsonObject.toString());
-            writer.flush();
-            writer.close();
-            os.close();
-            Log.e("1111111111", "doInBackground: ******");
-            int resCode = httpConn.getResponseCode();
-            Log.e("0000000", "doInBackground: " + resCode);
-            if (resCode == 400) {
-                return null;
-            }
-
-            InputStream in = httpConn.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            StringBuilder sb = new StringBuilder();
-
-            String line = null;
-            try {
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            Log.e("@@@@@@", sb.toString());
-            JSONObject jsonObject1 = new JSONObject(sb.toString());
-            return jsonObject1;
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-
-    }
-
-    /**
-     * @param username
-     * @param number
-     * @param code
-     * @return
-     **/
-    public String Phone_IVR_Verification(String username, String number, String code) {
-
-        try {
-            URL url = new URL(mainUrl + "accounts/phone/activation/verify/");
-            Log.e("1111111", "doInBackground: " + url);
-            HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
-            httpConn.setDoOutput(true);
-            httpConn.setDoInput(true);
-            httpConn.setAllowUserInteraction(false);
-            httpConn.setRequestMethod("POST");
-            httpConn.setConnectTimeout(10000);
-            httpConn.setReadTimeout(10000);
-            httpConn.setRequestProperty("Content-Type", "application/json");
-            httpConn.setRequestProperty("Authorization", "JWT " + token);
-
-            OutputStream os = httpConn.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-
-            String request = "{\n" +
-                    "\"username\" : \"09" + username + "\",\n" +
-                    "\"number\" : \"" + "09127764165" + "\",\n" +
-                    "\"activation_code\" : \"" + code + "\"\n" +
-                    "}";
-
-            Log.e("999999999", "activateSong: " + request);
-            writer.write(request);
-            writer.flush();
-            writer.close();
-            os.close();
-
-            int resCode = httpConn.getResponseCode();
-            Log.e("0000000", "doInBackground: " + resCode);
-            if (resCode == 400) {
-                return "wrong";
-            }
-
-            InputStream in = httpConn.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            StringBuilder sb = new StringBuilder();
-
-            String line = null;
-            try {
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            Log.e("@@@@@@", sb.toString());
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return "Success";
-
-    }
-
-    /**
-     * @param phoneNumber
      * @return
      **/
     public boolean register(String phoneNumber) {
@@ -456,9 +296,10 @@ public class DOMParser {
 
             for (int i = 0; i < jsonArray.length(); i++) {
                 RSSItem rssItem = new RSSItem();
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
                 try {
-                    rssItem.setTelNo(jsonArray.getString(i));
-                    rssItem.setContactName(getContactName(jsonArray.getString(i),json));
+                    rssItem.setTelNo(jsonObject.getString("mobile"));
+                    rssItem.setContactName(getContactName(jsonObject.getString("mobile"),json));
 
                 } catch (JSONException e) {
                     e.printStackTrace();
