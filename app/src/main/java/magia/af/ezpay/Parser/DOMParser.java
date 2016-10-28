@@ -21,7 +21,12 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import magia.af.ezpay.modules.ContactItem;
 
@@ -382,11 +387,8 @@ public class DOMParser {
 
       Log.e("@@@@@@", sb.toString());
       JSONArray jsonArray = new JSONArray(sb.toString());
-      ArrayList<ContactItem> contactItems = new ArrayList<>();
-      HashSet<ContactItem> hs = new HashSet<>();
-      hs.addAll(contactItems);
-      contactItems.clear();
-      contactItems.addAll(hs);
+//      ArrayList<ContactItem> contactItems = new ArrayList<>();
+      ArrayList<ContactItem> items = new ArrayList<>();
 //      RSSFeed rssFeed = new RSSFeed();
 
       for (int i = 0; i < jsonArray.length(); i++) {
@@ -400,10 +402,21 @@ public class DOMParser {
         } catch (JSONException e) {
           e.printStackTrace();
         }
-        contactItems.add(contactItem);
+        items.add(contactItem);
+        int count = 0;
+
+        for (ContactItem contactName : items) {
+          contactName = contactItem;
+          if (Objects.equals(contactName.getContactName(), items.get(i).getContactName())) {
+            count ++ ;
+          }
+          if (count > 1) {
+            items.remove(contactName);
+          }
+        }
       }
 
-      return contactItems;
+      return items;
 
       /**
        * TODO: check if activated then return the token to Splash class
@@ -428,7 +441,6 @@ public class DOMParser {
       for (int i = 0; i < jsonArray.length(); i++) {
         JSONObject jsonObject = jsonArray.getJSONObject(i);
         if (jsonObject.getString("m").equals(phoneNumber)) {
-          Log.i("C name", jsonObject.getString("t"));
           return jsonObject.getString("t");
         }
       }

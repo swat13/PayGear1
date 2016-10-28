@@ -33,14 +33,6 @@ public class LoginActivity extends BaseActivity {
     setContentView(R.layout.activity_login);
     //Load The Login Fragment
     loadFragment();
-    new GetContact().getContact(this);
-    DOMParser parser = new DOMParser();
-    ArrayList<ContactItem> contactItems = parser.getAllContactInfo(new GetContact().getContact(this));
-    for (int i = 0 ; i< contactItems.size() ; i++) {
-      Log.i("Contact Info", "phone "+i+" :" + contactItems.get(i).getPhoneNumber());
-    }
-//    GetContact getContact = new GetContact();
-//    getContact.getContact(this);
   }
 
   //Load The Login Fragment
