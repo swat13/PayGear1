@@ -16,7 +16,16 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import magia.af.ezpay.Parser.DOMParser;
+import magia.af.ezpay.Parser.JSONParser;
 import magia.af.ezpay.R;
 
 /**
@@ -95,6 +104,16 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     @Override
     protected Boolean doInBackground(String... params) {
+      JSONParser parser = new JSONParser();
+      List<NameValuePair> pairs = new ArrayList<>();
+      pairs.add(new BasicNameValuePair("mobile","09036004960"));
+      JSONObject object = parser.makeHttpRequest("http://new.opaybot.ir/api/Account/RegisterByMobile","POST",pairs);
+      try {
+        JSONObject obj = object.put("mobile","09036004960");
+        Log.i("TEST PARS" , obj.getString("mobile"));
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
       DOMParser domParser = new DOMParser();
       return domParser.register(params[0]);
     }

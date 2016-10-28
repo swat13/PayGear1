@@ -44,6 +44,12 @@ public class GetContact {
             String phoneNo = pCur.getString(pCur.getColumnIndex(
               ContactsContract.CommonDataKinds.Phone.NUMBER));
             JSONObject jsonObject = new JSONObject();
+            if (phoneNo.contains(" ")) {
+              phoneNo = phoneNo.replace(" ", "");
+            }
+            if (phoneNo.contains("+98")) {
+              phoneNo = phoneNo.replace("+98", "0");
+            }
             try {
               jsonObject.put("t", name);
               jsonObject.put("m", phoneNo);
@@ -57,6 +63,7 @@ public class GetContact {
         }
       }
     }
-    return jsonArray+"";
+    Log.i("JSON CONTACT", jsonArray.toString());
+    return jsonArray != null ? jsonArray.toString() : null;
   }
 }

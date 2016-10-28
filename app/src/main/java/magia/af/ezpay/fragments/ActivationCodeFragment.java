@@ -112,7 +112,7 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
       Log.e("11111111111111", "onPostExecute: " + result);
       if (result.length() > 10) {
         Log.e("55555555555", "onPostExecute: " + result);
-        getActivity().getSharedPreferences("EZpay", 0).edit().putString("token", result).commit();
+        getActivity().getSharedPreferences("EZpay", 0).edit().putString("token", result).apply();
         startActivity(new Intent(getActivity(), FriendListActivity.class));
       } else if (result.equals("wrong")) {
         Toast.makeText(getActivity(), "کد فعال سازی صحیح نمی باشد!", Toast.LENGTH_SHORT).show();
