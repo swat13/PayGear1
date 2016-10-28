@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.ContactsContract;
+import android.util.ArrayMap;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -17,6 +18,7 @@ import org.json.JSONObject;
 public class GetContact {
 
   private static final String TAG = "TAG";
+  private ArrayMap<String, Boolean> stringArrayMap = new ArrayMap<>();
 
   public String getContact(Context context) {
     JSONArray jsonArray = null;
@@ -43,7 +45,6 @@ public class GetContact {
           while (pCur.moveToNext()) {
             String phoneNo = pCur.getString(pCur.getColumnIndex(
               ContactsContract.CommonDataKinds.Phone.NUMBER));
-            JSONObject jsonObject = new JSONObject();
             if (phoneNo.contains(" ")) {
               phoneNo = phoneNo.replace(" ", "");
             }
@@ -51,13 +52,20 @@ public class GetContact {
               phoneNo = phoneNo.replace("+98", "0");
             }
             try {
-              jsonObject.put("t", name);
-              jsonObject.put("m", phoneNo);
-              jsonArray.put(count, jsonObject);
+              Log.e("00000000", "getContact: " + phoneNo);
+              if (!stringArrayMap.containsKey(phoneNo)) {
+                JSONObject jsonObject = new JSONObject();
+                Log.e("1111111111", "getContact: " + phoneNo);
+                jsonObject.put("t", name);
+                jsonObject.put("m", phoneNo);
+                jsonArray.put(count, jsonObject);
+                stringArrayMap.put(phoneNo, true);
+                count++;
+              }
             } catch (JSONException e) {
               e.printStackTrace();
             }
-            count++;
+
           }
           pCur.close();
         }

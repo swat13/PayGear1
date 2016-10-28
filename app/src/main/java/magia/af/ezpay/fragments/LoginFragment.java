@@ -26,6 +26,7 @@ import java.util.List;
 
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.JSONParser;
+import magia.af.ezpay.Parser.PullJSON;
 import magia.af.ezpay.R;
 
 /**
@@ -94,7 +95,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     switch (v.getId()) {
       case R.id.btn_done:
         phone = edtInputPhoneNumber.getText().toString();
-        new registration().execute(edtInputPhoneNumber.getText().toString());
+        new registration().execute();
         Toast.makeText(getActivity(), edtInputPhoneNumber.getText().toString(), Toast.LENGTH_SHORT).show();
         break;
     }
@@ -104,17 +105,16 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     @Override
     protected Boolean doInBackground(String... params) {
-      JSONParser parser = new JSONParser();
-      List<NameValuePair> pairs = new ArrayList<>();
-      pairs.add(new BasicNameValuePair("mobile","09036004960"));
-      JSONObject object = parser.makeHttpRequest("http://new.opaybot.ir/api/Account/RegisterByMobile","POST",pairs);
-      try {
-        JSONObject obj = object.put("mobile","09036004960");
-        Log.i("TEST PARS" , obj.getString("mobile"));
-      } catch (JSONException e) {
-        e.printStackTrace();
-      }
       DOMParser domParser = new DOMParser();
+//      JSONObject object = new JSONObject();
+//      try {
+//        object.put("mobile",phone);
+//        PullJSON pullJSON = new PullJSON("http://new.opaybot.ir/api/Account/RegisterByMobile" , object.toString() , "POST",null);
+//        pullJSON.getResponse();
+//        //Log.i("TOKEN", object.toString());
+//      } catch (JSONException e) {
+//        e.printStackTrace();
+//      }
       return domParser.register(params[0]);
     }
 

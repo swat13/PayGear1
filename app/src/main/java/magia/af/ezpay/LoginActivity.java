@@ -1,23 +1,14 @@
 package magia.af.ezpay;
 
-import android.content.ContentResolver;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
-import magia.af.ezpay.Parser.DOMParser;
+import magia.af.ezpay.Parser.PullJSON;
 import magia.af.ezpay.fragments.LoginFragment;
-import magia.af.ezpay.helper.GetContact;
-import magia.af.ezpay.modules.ContactItem;
 
 /**
  * Created by Saeid Yazdany on 10/25/2016.

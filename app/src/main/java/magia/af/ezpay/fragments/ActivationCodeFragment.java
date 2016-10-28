@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.JsonWriter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,8 +19,20 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
+
 import magia.af.ezpay.FriendListActivity;
 import magia.af.ezpay.Parser.DOMParser;
+import magia.af.ezpay.Parser.JSONParser;
+import magia.af.ezpay.Parser.PullJSON;
 import magia.af.ezpay.R;
 import magia.af.ezpay.helper.CountdownTimerTextView;
 import magia.af.ezpay.interfaces.EventCallbackHandler;
@@ -34,6 +47,7 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
   private EditText edtInputPhoneNumber;
   private TextView timerText;
   private String phone;
+  private String activationCode;
 
   public static ActivationCodeFragment getInstance() {
 
@@ -58,7 +72,7 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
       }
 
       public void onFinish() {
-        Log.i("Finish" , "TEST");
+        Log.i("Finish", "TEST");
 //        finish();
       }
 
@@ -69,7 +83,7 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
 //    countdownTimerTextView.start();
 
     phone = getArguments().getString("number");
-    Log.i("Finish" , "TEST");
+    Log.i("Finish", "TEST");
     Log.i("Phone", phone + "");
     return rootView;
   }
@@ -79,6 +93,7 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
     //Handle All View Click Here
     switch (v.getId()) {
       case R.id.btn_send_activation_code:
+        activationCode = edtInputPhoneNumber.getText().toString();
         Log.e("((((((((((", "onClick: 00000");
         new verifyActiveCode().execute(phone, edtInputPhoneNumber.getText().toString());
         break;
@@ -103,6 +118,17 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
     @Override
     protected String doInBackground(String... params) {
       DOMParser domParser = new DOMParser();
+//      JSONObject object = new JSONObject();
+//      PullJSON pullJSON;
+//      try {
+//        object.put("mobile",phone);
+//        object.put("code",activationCode);
+//        pullJSON = new PullJSON("http://new.opaybot.ir/api/Account/VerifySMSCode" , object.toString() , "POST",null);
+//        pullJSON.getResponse();
+//        //Log.i("TOKEN", object.toString());
+//      } catch (JSONException e) {
+//        e.printStackTrace();
+//      }
       return domParser.Verify_Login_Activation_Code(params[0], params[1]);
     }
 

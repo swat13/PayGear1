@@ -28,8 +28,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import magia.af.ezpay.modules.ContactItem;
-
 public class DOMParser {
 
   public DOMParser(String token) {
@@ -335,104 +333,6 @@ public class DOMParser {
 
   }
 
-  public ArrayList<ContactItem> getRegisteredContactFromServer(String json) {
-
-    try {
-
-      URL url = new URL(mainUrl + "api/Account/CheckContactList");
-      Log.e("1111111", "doInBackground: " + url);
-      HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
-      httpConn.setDoOutput(true);
-      httpConn.setDoInput(true);
-      httpConn.setAllowUserInteraction(false);
-      httpConn.setRequestMethod("POST");
-      httpConn.setConnectTimeout(20000);
-      httpConn.setReadTimeout(20000);
-      httpConn.setRequestProperty("Content-Type", "application/json");
-      httpConn.setRequestProperty("Authorization", "bearer " + token);
-
-      OutputStream os = httpConn.getOutputStream();
-      BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-
-      Log.e("999999999", "activateSong: " + json);
-      writer.write(json);
-      writer.flush();
-      writer.close();
-      os.close();
-
-      int resCode = httpConn.getResponseCode();
-      Log.e("0000000", "doInBackground: " + resCode);
-      if (resCode == 400) {
-        return null;
-      }
-
-      InputStream in = httpConn.getInputStream();
-      BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-      StringBuilder sb = new StringBuilder();
-
-      String line = null;
-      try {
-        while ((line = reader.readLine()) != null) {
-          sb.append(line);
-        }
-      } catch (IOException e) {
-        e.printStackTrace();
-      } finally {
-        try {
-          in.close();
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
-
-      Log.e("@@@@@@", sb.toString());
-      JSONArray jsonArray = new JSONArray(sb.toString());
-//      ArrayList<ContactItem> contactItems = new ArrayList<>();
-      ArrayList<ContactItem> items = new ArrayList<>();
-//      RSSFeed rssFeed = new RSSFeed();
-
-      for (int i = 0; i < jsonArray.length(); i++) {
-//        RSSItem rssItem = new RSSItem();
-        ContactItem contactItem = new ContactItem();
-        JSONObject jsonObject = jsonArray.getJSONObject(i);
-        try {
-          contactItem.setPhoneNumber(jsonObject.getString("mobile"));
-          contactItem.setContactName(getContactName(jsonObject.getString("mobile"), json));
-
-        } catch (JSONException e) {
-          e.printStackTrace();
-        }
-        items.add(contactItem);
-      }
-      for(int i=0;i<items.size();i++){
-
-        for(int j=i+1;j<items.size();j++){
-          if(items.get(i).getContactName().equals(items.get(j).getContactName())){
-            items.remove(j);
-            j--;
-          }
-        }
-
-      }
-      return items;
-
-      /**
-       * TODO: check if activated then return the token to Splash class
-       *
-       * */
-
-
-    } catch (ProtocolException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      e.printStackTrace();
-    } catch (JSONException e) {
-      e.printStackTrace();
-    }
-    return null;
-
-  }
-
   public String getContactName(String phoneNumber, String jsons) {
     try {
       JSONArray jsonArray = new JSONArray(jsons);
@@ -468,23 +368,5 @@ public class DOMParser {
     return null;
   }
 
-  public ArrayList<ContactItem> getAllContactInfo(String json) {
-    ArrayList<ContactItem> contactItems = new ArrayList<>();
-    ContactItem contactItem = null;
-    try {
-      JSONArray jsonArray = new JSONArray(json);
-      for (int i = 0; i < jsonArray.length(); i++) {
-        contactItem = new ContactItem();
-        JSONObject jsonObject = jsonArray.getJSONObject(i);
-        contactItem.setContactName(jsonObject.getString("t"));
-        contactItem.setPhoneNumber(jsonObject.getString("m"));
-        contactItems.add(contactItem);
-      }
-
-    } catch (JSONException e) {
-      e.printStackTrace();
-    }
-    return contactItems;
-  }
 
 }

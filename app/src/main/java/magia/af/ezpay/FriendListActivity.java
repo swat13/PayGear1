@@ -12,26 +12,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.RSSFeed;
+import magia.af.ezpay.Parser.RSSItem;
 import magia.af.ezpay.Utilities.LocalPersistence;
 import magia.af.ezpay.helper.GetContact;
-import magia.af.ezpay.modules.ContactItem;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 public class FriendListActivity extends BaseActivity {
 
   RSSFeed _feed;
-  ListAdapter listAdapter;
   RecyclerView recBills;
   ListAdapter adapter;
-  int pos = 0;
 
 
   @Override
@@ -42,7 +33,7 @@ public class FriendListActivity extends BaseActivity {
     StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 
     StrictMode.setThreadPolicy(policy);
-    new fillContact().execute();
+    new fillContact().execute(new GetContact().getContact(FriendListActivity.this));
 
 //        if (_feed != null) {
 //            adapter = new ListAdapter();
@@ -72,25 +63,21 @@ public class FriendListActivity extends BaseActivity {
   }
 
   public class ListAdapter extends RecyclerView.Adapter<FeedViewHolder> {
-    ArrayList<ContactItem> contactItems;
 
-    public ListAdapter(ArrayList<ContactItem> contactItems) {
-      this.contactItems = contactItems;
+    public ListAdapter() {
     }
 
     @Override
     public int getItemCount() {
-      return contactItems.size();
+      return _feed.getItemCount();
     }
 
     @Override
     public void onBindViewHolder(final FeedViewHolder FeedViewHolder, final int position) {
 
-      FeedViewHolder.contactName.setText(contactItems.get(position).getContactName());
+      final RSSItem fe = _feed.getItem(position);
 
-//            final RSSItem fe = _feed.getItem(position);
-
-//            FeedViewHolder.contactName.setText(fe.getContactName());
+      FeedViewHolder.contactName.setText(fe.getContactName());
 //        FeedViewHolder.contactImage.setImageDrawable(fe.getContactImg());
 
             /*if (fe.isContactStatus()) {
@@ -110,7 +97,7 @@ public class FriendListActivity extends BaseActivity {
 
   }
 
-  private class fillContact extends AsyncTask<ArrayList<ContactItem>, Void, ArrayList<ContactItem>> {
+  private class fillContact extends AsyncTask<String, Void, RSSFeed> {
 
     @Override
     protected void onPreExecute() {
@@ -119,36 +106,35 @@ public class FriendListActivity extends BaseActivity {
     }
 
     @Override
-    protected ArrayList<ContactItem> doInBackground(ArrayList<ContactItem>... params) {
+    protected RSSFeed doInBackground(String... params) {
       DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
-      return domParser.getRegisteredContactFromServer(new GetContact().getContact(FriendListActivity.this));
+      return domParser.getContact(params[0]);
     }
 
     @Override
-    protected void onPostExecute(ArrayList<ContactItem> result) {
+    protected void onPostExecute(RSSFeed result) {
       if (result != null) {
-        adapter = new ListAdapter(result);
-        recBills.setAdapter(adapter);
-//                if (_feed == null || _feed.getItemCount() == 0) {
-//                    _feed = result;
-////                    Log.e("000000000", "onPostExecute: " + result.getItem(2).getTelNo());
-//                    adapter = new ListAdapter();
-//                    recBills.setAdapter(adapter);
-        LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        recBills.setNestedScrollingEnabled(true);
-        recBills.setLayoutManager(llm);
-        adapter.notifyDataSetChanged();
-//                } else {
-//                    _feed = result;
-//                    adapter.notifyDataSetChanged();
-//                }
+        if (_feed == null || _feed.getItemCount() == 0) {
+          _feed = result;
+//                    Log.e("000000000", "onPostExecute: " + result.getItem(2).getTelNo());
+          adapter = new ListAdapter();
+          recBills.setAdapter(adapter);
+          LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
+          llm.setOrientation(LinearLayoutManager.VERTICAL);
+          recBills.setNestedScrollingEnabled(true);
+          recBills.setLayoutManager(llm);
+          adapter.notifyDataSetChanged();
+        } else {
+          _feed = result;
+          adapter.notifyDataSetChanged();
+        }
         new LocalPersistence().writeObjectToFile(getApplicationContext(), _feed, "Contact_List");
-      } else {
-        Toast.makeText(getApplicationContext(), "مشکل در برقراری ارتباط!", Toast.LENGTH_SHORT).show();
       }
-    }
-  }
+      else
+        Toast.makeText(FriendListActivity.this, "problem in connection!", Toast.LENGTH_SHORT).show();
 
+    }
+
+  }
 
 }

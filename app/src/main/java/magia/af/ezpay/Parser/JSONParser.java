@@ -9,7 +9,10 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.entity.BasicHttpEntity;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -50,7 +53,7 @@ public class JSONParser {
 				// defaultHttpClient
 				httpClient = new DefaultHttpClient();
 				HttpPost httpPost = new HttpPost(url);
-				httpPost.setEntity(new UrlEncodedFormEntity(params));
+				httpPost.setEntity(new StringEntity(""));
 				httpPost.setHeader("Content-Type" , "application/json");
 				httpPost.setHeader("Authorization","Bearer "+accessToken);
 				HttpResponse httpResponse = httpClient.execute(httpPost);
