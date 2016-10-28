@@ -30,6 +30,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:cardview-v7:24.2.1'
     compile 'com.android.support:recyclerview-v7:24.2.1'
-    compile files('libs/httpclient-4.2.3.jar')
-    compile files('libs/httpcore-4.4.4.jar')
+    compile files('lib/httpclient-4.2.3.jar')
+    compile files('lib/httpcore-4.4.4.jar')
 }
