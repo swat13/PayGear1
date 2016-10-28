@@ -403,19 +403,17 @@ public class DOMParser {
           e.printStackTrace();
         }
         items.add(contactItem);
-        int count = 0;
+      }
+      for(int i=0;i<items.size();i++){
 
-        for (ContactItem contactName : items) {
-          contactName = contactItem;
-          if (Objects.equals(contactName.getContactName(), items.get(i).getContactName())) {
-            count ++ ;
-          }
-          if (count > 1) {
-            items.remove(contactName);
+        for(int j=i+1;j<items.size();j++){
+          if(items.get(i).getContactName().equals(items.get(j).getContactName())){
+            items.remove(j);
+            j--;
           }
         }
-      }
 
+      }
       return items;
 
       /**
