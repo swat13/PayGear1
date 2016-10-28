@@ -99,6 +99,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         Toast.makeText(getActivity(), edtInputPhoneNumber.getText().toString(), Toast.LENGTH_SHORT).show();
         break;
     }
+
   }
 
   private class registration extends AsyncTask<String, Void, Boolean> {
