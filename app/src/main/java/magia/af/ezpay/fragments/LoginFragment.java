@@ -16,17 +16,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import magia.af.ezpay.Parser.DOMParser;
-import magia.af.ezpay.Parser.JSONParser;
-import magia.af.ezpay.Parser.PullJSON;
 import magia.af.ezpay.R;
 
 /**
@@ -95,7 +85,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     switch (v.getId()) {
       case R.id.btn_done:
         phone = edtInputPhoneNumber.getText().toString();
-        new registration().execute();
+        new registration().execute(edtInputPhoneNumber.getText().toString());
         Toast.makeText(getActivity(), edtInputPhoneNumber.getText().toString(), Toast.LENGTH_SHORT).show();
         break;
     }

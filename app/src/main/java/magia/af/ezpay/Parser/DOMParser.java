@@ -307,6 +307,7 @@ public class DOMParser {
         try {
           rssItem.setTelNo(jsonObject.getString("mobile"));
           rssItem.setContactName(getContactName(jsonObject.getString("mobile"), json));
+          rssItem.setContactImg(jsonObject.getString("photo"));
 
         } catch (JSONException e) {
           e.printStackTrace();
@@ -368,5 +369,99 @@ public class DOMParser {
     return null;
   }
 
+  public RSSFeed payLogWithAnother(String phone) {
+
+    try {
+
+      URL url = new URL(mainUrl + "api/Account/PayLogWithAnother");
+      Log.e("1111111", "doInBackground: " + url);
+      HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
+      httpConn.setDoOutput(true);
+      httpConn.setDoInput(true);
+      httpConn.setAllowUserInteraction(false);
+      httpConn.setRequestMethod("POST");
+      httpConn.setConnectTimeout(20000);
+      httpConn.setReadTimeout(20000);
+      httpConn.setRequestProperty("Content-Type", "application/json");
+      httpConn.setRequestProperty("Authorization", "bearer " + token);
+
+      OutputStream os = httpConn.getOutputStream();
+      BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+
+      String request = "{\n" +
+        "\"anotherMobile\" : \"" + phone + "\",\n" +
+        "}";
+
+      Log.e("999999999", "activateSong: " + phone);
+      writer.write(phone);
+      writer.flush();
+      writer.close();
+      os.close();
+
+      int resCode = httpConn.getResponseCode();
+      Log.e("0000000", "doInBackground: " + resCode);
+      if (resCode == 400) {
+        return null;
+      }
+
+      InputStream in = httpConn.getInputStream();
+      BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+      StringBuilder sb = new StringBuilder();
+
+      String line = null;
+      try {
+        while ((line = reader.readLine()) != null) {
+          sb.append(line);
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+      } finally {
+        try {
+          in.close();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+
+      Log.e("@@@@@@", sb.toString());
+      JSONArray jsonArray = new JSONArray(sb.toString());
+
+      RSSFeed rssFeed = new RSSFeed();
+
+      for (int i = 0; i < jsonArray.length(); i++) {
+        RSSItem rssItem = new RSSItem();
+        JSONObject jsonObject = jsonArray.getJSONObject(i);
+        try {
+          rssItem.setId(jsonObject.getInt("id"));
+          rssItem.setF(jsonObject.getString("f"));
+          rssItem.setT(jsonObject.getString("t"));
+          rssItem.setA(jsonObject.getInt("a"));
+          rssItem.setD(jsonObject.getString("d"));
+          rssItem.setO(jsonObject.getBoolean("o"));
+
+        } catch (JSONException e) {
+          e.printStackTrace();
+        }
+        rssFeed.addItem(rssItem);
+      }
+
+      return rssFeed;
+
+      /**
+       * TODO: check if activated then return the token to Splash class
+       *
+       * */
+
+
+    } catch (ProtocolException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
+    return null;
+
+  }
 
 }

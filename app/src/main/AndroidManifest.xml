@@ -36,6 +36,8 @@
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".FriendListActivity">
         </activity>
+        <activity android:name=".ChatPageActivity">
+        </activity>
     </application>
 
 </manifest>

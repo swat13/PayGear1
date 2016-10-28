@@ -6,9 +6,6 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.JsonWriter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,22 +16,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
-
 import magia.af.ezpay.FriendListActivity;
 import magia.af.ezpay.Parser.DOMParser;
-import magia.af.ezpay.Parser.JSONParser;
-import magia.af.ezpay.Parser.PullJSON;
 import magia.af.ezpay.R;
-import magia.af.ezpay.helper.CountdownTimerTextView;
 import magia.af.ezpay.interfaces.EventCallbackHandler;
 
 /**
