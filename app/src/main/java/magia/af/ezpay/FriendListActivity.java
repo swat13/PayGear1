@@ -116,7 +116,7 @@ public class FriendListActivity extends BaseActivity {
         @Override
         protected ArrayList<ContactItem> doInBackground(ArrayList<ContactItem>... params) {
             DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
-            return domParser.getAllContactInfo(new GetContact().getContact(FriendListActivity.this));
+            return domParser.getRegisteredContactFromServer(new GetContact().getContact(FriendListActivity.this));
         }
 
         @Override
