@@ -21,6 +21,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import magia.af.ezpay.modules.ContactItem;
 
@@ -382,6 +383,10 @@ public class DOMParser {
       Log.e("@@@@@@", sb.toString());
       JSONArray jsonArray = new JSONArray(sb.toString());
       ArrayList<ContactItem> contactItems = new ArrayList<>();
+      HashSet<ContactItem> hs = new HashSet<>();
+      hs.addAll(contactItems);
+      contactItems.clear();
+      contactItems.addAll(hs);
 //      RSSFeed rssFeed = new RSSFeed();
 
       for (int i = 0; i < jsonArray.length(); i++) {
