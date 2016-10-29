@@ -8,13 +8,13 @@ public class PayLogFeed implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private int _itemcount = 0;
-	private List<payLogItem> _itemlist;
+	private List<PayLogItem> _itemlist;
 
 	public PayLogFeed() {
-		_itemlist = new Vector<payLogItem>(0);
+		_itemlist = new Vector<PayLogItem>(0);
 	}
 
-	public void addItem(payLogItem item) {
+	public void addItem(PayLogItem item) {
 		_itemlist.add(item);
 		_itemcount++;
 	}
@@ -24,7 +24,7 @@ public class PayLogFeed implements Serializable {
 		_itemcount--;
 	}
 
-	public payLogItem getItem(int location) {
+	public PayLogItem getItem(int location) {
 		return _itemlist.get(location);
 	}
 

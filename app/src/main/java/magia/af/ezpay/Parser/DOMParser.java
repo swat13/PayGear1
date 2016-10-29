@@ -416,7 +416,7 @@ public class DOMParser {
       PayLogFeed payLogFeed = new PayLogFeed();
 
       for (int i = 0; i < jsonArray.length(); i++) {
-        payLogItem payLogItem1 = new payLogItem();
+        PayLogItem payLogItem1 = new PayLogItem();
         JSONObject jsonObject = jsonArray.getJSONObject(i);
           //kk
         try {
@@ -426,6 +426,7 @@ public class DOMParser {
           payLogItem1.setAmount(jsonObject.getInt("a"));
           payLogItem1.setDate(jsonObject.getString("d"));
           payLogItem1.setPaideBool(jsonObject.getBoolean("o"));
+          payLogItem1.setComment(jsonObject.getString("c"));
 
         } catch (JSONException e) {
           e.printStackTrace();

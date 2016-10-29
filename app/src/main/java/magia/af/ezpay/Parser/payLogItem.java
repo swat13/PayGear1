@@ -2,7 +2,7 @@ package magia.af.ezpay.Parser;
 
 import java.io.Serializable;
 
-public class payLogItem implements Serializable {
+public class PayLogItem implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private String _telNo;
@@ -11,7 +11,17 @@ public class payLogItem implements Serializable {
 	private String To;
 	private int Amount;
 	private String Date;
-    private boolean paideBool;
+	private String comment;
+
+  public String getComment() {
+    return comment;
+  }
+
+  public void setComment(String comment) {
+    this.comment = comment;
+  }
+
+  private boolean paideBool;
 
 
     public boolean isPaideBool() {
@@ -69,9 +79,5 @@ public class payLogItem implements Serializable {
 	public String getTelNo() {
 		return _telNo;
 	}
-
-
-
-
 
 }

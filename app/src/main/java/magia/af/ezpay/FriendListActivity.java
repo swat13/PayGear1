@@ -66,7 +66,6 @@ public class FriendListActivity extends BaseActivity implements OnClickHandler{
     ImageView contactImage;
     ImageView contactStat;
     OnClickHandler onClickHandler;
-    RSSFeed rssFeed;
     public FeedViewHolder(View v , OnClickHandler onClickHandler) {
       super(v);
       contactName = (TextView) v.findViewById(R.id.name_text);
