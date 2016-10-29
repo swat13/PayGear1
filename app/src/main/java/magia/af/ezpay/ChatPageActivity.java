@@ -14,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.squareup.picasso.Picasso;
 
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.PayLogFeed;
@@ -37,6 +36,7 @@ public class ChatPageActivity extends BaseActivity {
     Bundle bundle = getIntent().getExtras();
     if (bundle != null) {
       phone = bundle.getString("phone");
+      Log.i("#%^&@%^&@" , phone);
       Log.i("#%^&@%^&@" , phone);
       contactName = bundle.getString("contactName");
       imageUrl = imageUrl + bundle.getString("image");
