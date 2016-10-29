@@ -52,10 +52,8 @@ public class GetContact {
               phoneNo = phoneNo.replace("+98", "0");
             }
             try {
-              Log.e("00000000", "getContact: " + phoneNo);
               if (!stringArrayMap.containsKey(phoneNo)) {
                 JSONObject jsonObject = new JSONObject();
-                Log.e("1111111111", "getContact: " + phoneNo);
                 jsonObject.put("t", name);
                 jsonObject.put("m", phoneNo);
                 jsonArray.put(count, jsonObject);

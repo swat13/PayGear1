@@ -47,8 +47,6 @@ public class FriendListActivity extends BaseActivity implements OnClickHandler{
       }
       new LocalPersistence().writeObjectToFile(FriendListActivity.this, _feed, "Contact_List");
 
-
-
   }
 
   @Override
