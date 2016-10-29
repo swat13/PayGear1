@@ -32,9 +32,9 @@ public class FriendListActivity extends BaseActivity implements OnClickHandler{
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_friend_list);
     recBills = (RecyclerView) findViewById(R.id.contact_recycler);
-    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-
-    StrictMode.setThreadPolicy(policy);
+//    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+//
+//    StrictMode.setThreadPolicy(policy);
     new fillContact().execute(new GetContact().getContact(FriendListActivity.this));
 
 //        if (_feed != null) {
