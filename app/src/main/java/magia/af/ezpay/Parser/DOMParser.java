@@ -305,6 +305,7 @@ public class DOMParser {
         RSSItem rssItem = new RSSItem();
         JSONObject jsonObject = jsonArray.getJSONObject(i);
         try {
+          rssItem.setContactStatus(true);
           rssItem.setTelNo(jsonObject.getString("mobile"));
           rssItem.setContactName(getContactName(jsonObject.getString("mobile"), json));
           rssItem.setContactImg(jsonObject.getString("photo"));
@@ -369,11 +370,11 @@ public class DOMParser {
     return null;
   }
 
-  public RSSFeed payLogWithAnother(String phone) {
+    public PayLogFeed payLogWithAnother(String phone) {
 
     try {
 
-      URL url = new URL(mainUrl + "api/Payment/PayLogWithAnother");
+      URL url = new URL(mainUrl + "api/payment/PayLogWithAnother");
       Log.e("1111111", "doInBackground: " + url);
       HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
       httpConn.setDoOutput(true);
@@ -392,7 +393,7 @@ public class DOMParser {
         "\"anotherMobile\" : \"" + phone + "\"\n" +
         "}";
 
-      Log.e("999999999", "activateSong: " + request);
+      Log.e("999999999", "activateSong: " + phone);
       writer.write(request);
       writer.flush();
       writer.close();
@@ -426,26 +427,27 @@ public class DOMParser {
       Log.e("@@@@@@", sb.toString());
       JSONArray jsonArray = new JSONArray(sb.toString());
 
-      RSSFeed rssFeed = new RSSFeed();
+      PayLogFeed payLogFeed = new PayLogFeed();
 
       for (int i = 0; i < jsonArray.length(); i++) {
-        RSSItem rssItem = new RSSItem();
+        payLogItem payLogItem1 = new payLogItem();
         JSONObject jsonObject = jsonArray.getJSONObject(i);
+          //kk
         try {
-          rssItem.setId(jsonObject.getInt("id"));
-          rssItem.setF(jsonObject.getString("f"));
-          rssItem.setT(jsonObject.getString("t"));
-          rssItem.setA(jsonObject.getInt("a"));
-          rssItem.setD(jsonObject.getString("d"));
-          rssItem.setO(jsonObject.getBoolean("o"));
+          payLogItem1.setId(jsonObject.getInt("id"));
+          payLogItem1.setFrom(jsonObject.getString("f"));
+          payLogItem1.setTo(jsonObject.getString("t"));
+          payLogItem1.setAmount(jsonObject.getInt("a"));
+          payLogItem1.setDate(jsonObject.getString("d"));
+          payLogItem1.setPaideBool(jsonObject.getBoolean("o"));
 
         } catch (JSONException e) {
           e.printStackTrace();
         }
-        rssFeed.addItem(rssItem);
+        payLogFeed.addItem(payLogItem1);
       }
 
-      return rssFeed;
+      return payLogFeed;
 
       /**
        * TODO: check if activated then return the token to Splash class

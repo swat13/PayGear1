@@ -37,15 +37,8 @@ public class FriendListActivity extends BaseActivity implements OnClickHandler{
 //    StrictMode.setThreadPolicy(policy);
     new fillContact().execute(new GetContact().getContact(FriendListActivity.this));
 
-//        if (_feed != null) {
-//            adapter = new ListAdapter();
-//            recBills.setAdapter(adapter);
-//            LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
-//            llm.setOrientation(LinearLayoutManager.VERTICAL);
-//            recBills.setNestedScrollingEnabled(true);
-//            recBills.setLayoutManager(llm);
-//            adapter.notifyDataSetChanged();
-//        }
+
+
 
   }
 

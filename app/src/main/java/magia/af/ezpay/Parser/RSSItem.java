@@ -13,61 +13,16 @@ public class RSSItem implements Serializable {
 	private String contactImg;
 	private String contactName;
 	private int id;
-	private String F;
-	private String T;
-	private int A;
-	private String D;
-	private boolean O;
 
-  public int getId() {
+    public int getId() {
     return id;
   }
 
-  public void setId(int id) {
+    public void setId(int id) {
     this.id = id;
   }
 
-  public String getF() {
-    return F;
-  }
-
-  public void setF(String f) {
-    F = f;
-  }
-
-  public String getT() {
-    return T;
-  }
-
-  public void setT(String t) {
-    T = t;
-  }
-
-  public int getA() {
-    return A;
-  }
-
-  public void setA(int a) {
-    A = a;
-  }
-
-  public String getD() {
-    return D;
-  }
-
-  public void setD(String d) {
-    D = d;
-  }
-
-  public boolean getO() {
-    return O;
-  }
-
-  public void setO(boolean o) {
-    O = o;
-  }
-
-  public boolean isContactStatus() {
+    public boolean isContactStatus() {
         return contactStatus;
     }
 
@@ -98,9 +53,5 @@ public class RSSItem implements Serializable {
 	public String getTelNo() {
 		return _telNo;
 	}
-
-
-
-
 
 }

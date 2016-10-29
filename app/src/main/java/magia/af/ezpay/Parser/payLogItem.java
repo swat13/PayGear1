@@ -5,88 +5,62 @@ import java.io.Serializable;
 public class payLogItem implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private boolean contactStatus =false;
 	private String _telNo;
-	private String contactImg;
-	private String contactName;
 	private int id;
-	private String F;
-	private String T;
-	private int A;
-	private String D;
-	private boolean O;
+	private String From;
+	private String To;
+	private int Amount;
+	private String Date;
+    private boolean paideBool;
 
-  public int getId() {
+
+    public boolean isPaideBool() {
+        return paideBool;
+    }
+
+    public void setPaideBool(boolean paideBool) {
+        this.paideBool = paideBool;
+    }
+
+    public String getDate() {
+        return Date;
+    }
+
+    public void setDate(String date) {
+        Date = date;
+    }
+
+    public int getAmount() {
+        return Amount;
+    }
+
+    public void setAmount(int amount) {
+        Amount = amount;
+    }
+
+    public String getTo() {
+        return To;
+    }
+
+    public void setTo(String to) {
+        To = to;
+    }
+
+    public String getFrom() {
+        return From;
+    }
+
+    public void setFrom(String from) {
+        From = from;
+    }
+
+    public int getId() {
     return id;
   }
 
-  public void setId(int id) {
+    public void setId(int id) {
     this.id = id;
   }
-
-  public String getF() {
-    return F;
-  }
-
-  public void setF(String f) {
-    F = f;
-  }
-
-  public String getT() {
-    return T;
-  }
-
-  public void setT(String t) {
-    T = t;
-  }
-
-  public int getA() {
-    return A;
-  }
-
-  public void setA(int a) {
-    A = a;
-  }
-
-  public String getD() {
-    return D;
-  }
-
-  public void setD(String d) {
-    D = d;
-  }
-
-  public boolean getO() {
-    return O;
-  }
-
-  public void setO(boolean o) {
-    O = o;
-  }
-
-  public boolean isContactStatus() {
-        return contactStatus;
-    }
-
-    public void setContactStatus(boolean contactStatus) {
-        this.contactStatus = contactStatus;
-    }
-
-    public String getContactImg() {
-        return contactImg;
-    }
-
-    public void setContactImg(String contactImg) {
-        this.contactImg = contactImg;
-    }
-
-    public String getContactName() {
-        return contactName;
-    }
-
-    public void setContactName(String contactName) {
-        this.contactName = contactName;
-    }
 
     public void setTelNo(String telNo) {
 		_telNo = telNo;
