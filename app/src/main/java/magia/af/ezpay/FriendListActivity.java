@@ -35,8 +35,17 @@ public class FriendListActivity extends BaseActivity implements OnClickHandler{
 //    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 //
 //    StrictMode.setThreadPolicy(policy);
-    new fillContact().execute(new GetContact().getContact(FriendListActivity.this));
-
+      _feed = (RSSFeed) getIntent().getSerializableExtra("contact");
+      if (_feed != null && _feed.getItemCount() != 0) {
+          adapter = new ListAdapter(FriendListActivity.this);
+          recBills.setAdapter(adapter);
+          LinearLayoutManager llm = new LinearLayoutManager(FriendListActivity.this);
+          llm.setOrientation(LinearLayoutManager.VERTICAL);
+          recBills.setNestedScrollingEnabled(true);
+          recBills.setLayoutManager(llm);
+          adapter.notifyDataSetChanged();
+      }
+      new LocalPersistence().writeObjectToFile(FriendListActivity.this, _feed, "Contact_List");
 
 
 
@@ -111,42 +120,4 @@ public class FriendListActivity extends BaseActivity implements OnClickHandler{
 
   }
 
-  private class fillContact extends AsyncTask<String, Void, RSSFeed> {
-
-    @Override
-    protected void onPreExecute() {
-      super.onPreExecute();
-
-    }
-
-    @Override
-    protected RSSFeed doInBackground(String... params) {
-      DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
-      return domParser.getContact(params[0]);
-    }
-
-    @Override
-    protected void onPostExecute(RSSFeed result) {
-      if (result != null) {
-        if (_feed == null || _feed.getItemCount() == 0) {
-          _feed = result;
-//                    Log.e("000000000", "onPostExecute: " + result.getItem(2).getTelNo());
-          adapter = new ListAdapter(FriendListActivity.this);
-          recBills.setAdapter(adapter);
-          LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
-          llm.setOrientation(LinearLayoutManager.VERTICAL);
-          recBills.setNestedScrollingEnabled(true);
-          recBills.setLayoutManager(llm);
-          adapter.notifyDataSetChanged();
-        } else {
-          _feed = result;
-          adapter.notifyDataSetChanged();
-        }
-        new LocalPersistence().writeObjectToFile(getApplicationContext(), _feed, "Contact_List");
-      } else
-        Toast.makeText(FriendListActivity.this, "problem in connection!", Toast.LENGTH_SHORT).show();
-
-    }
-
-  }
 }

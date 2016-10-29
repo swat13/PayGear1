@@ -110,21 +110,6 @@ public class DOMParser {
       httpConn.setReadTimeout(10000);
       httpConn.setRequestProperty("Content-Type", "application/json");
 
-//            OutputStream os = httpConn.getOutputStream();
-//            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-//
-//            String request = "{" +
-//                    "\"user\":" +
-//                    "{\n" +
-//                    "\"Number\" : \"09" + phoneNumber + "\",\n" +
-//                    "\"password\" : \"" + pass + "\"\n" +
-//                    "}}";
-//
-//            Log.e("999999999", "activateSong: " + request);
-//            writer.write(request);
-//            writer.flush();
-//            writer.close();
-//            os.close();
 
       int resCode = httpConn.getResponseCode();
       Log.e("0000000", "doInBackground: " + resCode);
@@ -298,8 +283,9 @@ public class DOMParser {
 
       Log.e("@@@@@@", sb.toString());
       JSONArray jsonArray = new JSONArray(sb.toString());
+        RSSFeed rssFeed = new RSSFeed();
 
-      RSSFeed rssFeed = new RSSFeed();
+
 
       for (int i = 0; i < jsonArray.length(); i++) {
         RSSItem rssItem = new RSSItem();

@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 
 import magia.af.ezpay.Parser.DOMParser;
+import magia.af.ezpay.Parser.PayLogFeed;
 import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.Utilities.LocalPersistence;
 
@@ -44,7 +45,7 @@ public class ChatPageActivity extends BaseActivity {
     recyclerView.setLayoutManager(manager);
     new fillContact().execute(phone);
   }
-  private class fillContact extends AsyncTask<String, Void, RSSFeed> {
+  private class fillContact extends AsyncTask<String, Void, PayLogFeed> {
 
     @Override
     protected void onPreExecute() {
@@ -53,13 +54,13 @@ public class ChatPageActivity extends BaseActivity {
     }
 
     @Override
-    protected RSSFeed doInBackground(String... params) {
+    protected PayLogFeed doInBackground(String... params) {
       DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
       return domParser.payLogWithAnother(params[0]);
     }
 
     @Override
-    protected void onPostExecute(RSSFeed result) {
+    protected void onPostExecute(PayLogFeed result) {
       if (result != null) {
         Log.i("PAY" , result.toString());
       }
