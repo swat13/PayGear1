@@ -33,6 +33,7 @@ import magia.af.ezpay.R;
 public class LoginFragment extends Fragment implements View.OnClickListener {
     private ImageButton btn_done;
     private String phone;
+
     private EditText edtInputPhoneNumber;
 //تت
 

@@ -1,232 +1,256 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="?actionBarSize">
+        android:layout_height="match_parent">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            android:background="#61a510">
+            android:layout_height="?actionBarSize">
 
-            <LinearLayout
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="right"
-                android:orientation="horizontal">
+                android:layout_height="?actionBarSize"
+                android:background="#61a510">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal">
-
-                    <ImageButton
-                        android:id="@+id/btn_back"
-                        android:layout_width="?actionBarSize"
-                        android:layout_height="?actionBarSize"
-                        android:layout_gravity="left"
-                        android:background="@android:color/transparent"
-                        android:src="@drawable/ic_back_arrow"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="right"
-                    android:layout_weight="1"
                     android:gravity="right"
                     android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginRight="10dp"
-                        android:gravity="right|center"
-                        android:orientation="vertical">
+                        android:orientation="horizontal">
 
-                        <TextView
-                            android:id="@+id/txt_user_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="سعید یزدانی"
-                            android:textColor="#FFFFFF"/>
-
-                        <TextView
-                            android:id="@+id/txt_online_status"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="در حاضر آنلاین می باشد"
-                            android:textColor="#FFFFFF"/>
+                        <ImageButton
+                            android:id="@+id/btn_back"
+                            android:layout_width="?actionBarSize"
+                            android:layout_height="?actionBarSize"
+                            android:layout_gravity="left"
+                            android:background="@android:color/transparent"
+                            android:src="@drawable/ic_back_arrow" />
                     </LinearLayout>
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        xmlns:app="http://schemas.android.com/apk/res-auto"
-                        android:id="@+id/profile_image"
-                        android:layout_width="?actionBarSize"
-                        android:layout_height="?actionBarSize"
-                        android:padding="5dp"
-                        android:src="@drawable/step_one"/>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="right"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:orientation="horizontal">
 
-                    <ImageButton
-                        android:id="@+id/more_menu"
-                        android:layout_width="?actionBarSize"
-                        android:layout_height="?actionBarSize"
-                        android:layout_gravity="right|center"
-                        android:background="@android:color/transparent"
-                        android:src="@drawable/ic_more"/>
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginRight="10dp"
+                            android:gravity="right|center"
+                            android:orientation="vertical">
 
+                            <TextView
+                                android:id="@+id/txt_user_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="سعید یزدانی"
+                                android:textColor="#FFFFFF" />
+
+                            <TextView
+                                android:id="@+id/txt_online_status"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="در حاضر آنلاین می باشد"
+                                android:textColor="#FFFFFF" />
+                        </LinearLayout>
+
+                        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                            android:id="@+id/profile_image"
+                            android:layout_width="?actionBarSize"
+                            android:layout_height="?actionBarSize"
+                            android:padding="5dp"
+                            android:src="@drawable/step_one" />
+
+                        <ImageButton
+                            android:id="@+id/more_menu"
+                            android:layout_width="?actionBarSize"
+                            android:layout_height="?actionBarSize"
+                            android:layout_gravity="right|center"
+                            android:background="@android:color/transparent"
+                            android:src="@drawable/ic_more" />
+
+                    </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
-        </android.support.v7.widget.Toolbar>
-    </android.support.design.widget.AppBarLayout>
+            </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.AppBarLayout>
 
-    <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="65dp"
-        android:layout_marginTop="?android:attr/actionBarSize"
-        app:cardBackgroundColor="#e7e8da"
-        app:cardElevation="3dp">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/pay_list_recycler"
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginBottom="65dp"
+            android:layout_marginTop="?android:attr/actionBarSize"
+            app:cardBackgroundColor="#e7e8da"
+            app:cardElevation="3dp">
 
-        </android.support.v7.widget.RecyclerView>
-    </android.support.v7.widget.CardView>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/pay_list_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center"
-        android:layout_marginBottom="15dp"
-        android:background="@drawable/placeholder_bg"
-        android:gravity="bottom|center"
-        android:paddingLeft="30dp"
-        android:paddingRight="30dp">
+            </android.support.v7.widget.RecyclerView>
+        </android.support.v7.widget.CardView>
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="0.20"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:layout_marginBottom="15dp"
+            android:background="@drawable/placeholder_bg"
+            android:gravity="bottom|center"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp">
 
-            <ImageButton
-                android:id="@+id/btn_notification_sound"
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_notifications_off"/>
+                android:layout_height="match_parent"
+                android:layout_weight="0.20"
+                android:gravity="center"
+                android:orientation="vertical">
 
-            <TextView
+                <ImageButton
+                    android:id="@+id/btn_notification_sound"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/ic_notifications_off" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="بی صدا"
+                    android:textColor="#FFFFFF" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="بی صدا"
-                android:textColor="#FFFFFF"/>
-        </LinearLayout>
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="0.20"
+                android:gravity="center"
+                android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:layout_weight="0.20"
-            android:gravity="center"
-            android:orientation="vertical">
+                <ImageButton
+                    android:id="@+id/btn_reminder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/ic_time" />
 
-            <ImageButton
-                android:id="@+id/btn_reminder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_time"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="یادآوری"
+                    android:textColor="#FFFFFF" />
+            </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="یادآوری"
-                android:textColor="#FFFFFF"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_gravity="center"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_weight="0.40"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageButton
+            <LinearLayout
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:background="@android:color/transparent"/>
-        </LinearLayout>
+                android:layout_gravity="center"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_weight="0.40"
+                android:gravity="center"
+                android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginRight="10dp"
-            android:layout_weight="0.20"
-            android:gravity="center"
-            android:orientation="vertical">
+                <ImageButton
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@android:color/transparent" />
+            </LinearLayout>
 
-            <ImageButton
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:id="@+id/btn_pey"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:background="@android:color/transparent"
-                android:scaleType="fitCenter"
-                android:src="@drawable/payment"/>
+                android:clickable="true"
+                android:layout_marginRight="10dp"
+                android:layout_weight="0.20"
+                android:gravity="center"
+                android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="پرداخت"
-                android:textColor="#FFFFFF"/>
-        </LinearLayout>
+                <ImageButton
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/payment"
+                    android:clickable="false"
+                    />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="0.20"
-            android:gravity="center"
-            android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="پرداخت"
+                    android:textColor="#FFFFFF"
+                    android:clickable="false"
+                    />
+            </LinearLayout>
 
-            <ImageButton
+            <LinearLayout
                 android:id="@+id/btn_receive"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:background="@android:color/transparent"
-                android:scaleType="fitCenter"
-                android:src="@drawable/deposit"/>
-
-            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="دریافت"
-                android:textColor="#FFFFFF"/>
+                android:layout_height="match_parent"
+                android:layout_weight="0.20"
+                android:clickable="true"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageButton
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="@android:color/transparent"
+                    android:clickable="false"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/deposit" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:text="دریافت"
+                    android:textColor="#FFFFFF" />
+            </LinearLayout>
+
         </LinearLayout>
 
-    </LinearLayout>
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_add"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="5dp"
+            android:src="@drawable/ic_add"
+            app:backgroundTint="#61a510"
+            app:elevation="4dp"
+            app:layout_anchorGravity="bottom|center" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_add"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="5dp"
-        android:src="@drawable/ic_add"
-        app:backgroundTint="#61a510"
-        app:elevation="4dp"
-        app:layout_anchorGravity="bottom|center"/>
-</android.support.design.widget.CoordinatorLayout>
+
+    </android.support.design.widget.CoordinatorLayout>
+
+    <RelativeLayout
+        android:id="@+id/dark_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.8"
+        android:background="#99000000"
+        android:clickable="true"
+        android:visibility="gone" />
+
+</RelativeLayout>
