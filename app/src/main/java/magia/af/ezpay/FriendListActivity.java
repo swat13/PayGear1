@@ -1,9 +1,8 @@
 package magia.af.ezpay;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.StrictMode;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,13 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import magia.af.ezpay.Parser.DOMParser;
+import com.bumptech.glide.Glide;
+
 import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.Parser.RSSItem;
 import magia.af.ezpay.Utilities.LocalPersistence;
-import magia.af.ezpay.helper.GetContact;
 import magia.af.ezpay.interfaces.OnClickHandler;
 
 public class FriendListActivity extends BaseActivity implements OnClickHandler{
@@ -98,6 +96,7 @@ public class FriendListActivity extends BaseActivity implements OnClickHandler{
       final RSSItem fe = _feed.getItem(position);
 
       FeedViewHolder.contactName.setText(fe.getContactName());
+      Glide.with(FriendListActivity.this).load("http://new.opaybot.ir"+fe.getContactImg()).into(FeedViewHolder.contactImage);
 //        FeedViewHolder.contactImage.setImageDrawable(fe.getContactImg());
 
             /*if (fe.isContactStatus()) {

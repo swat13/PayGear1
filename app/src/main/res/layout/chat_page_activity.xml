@@ -27,6 +27,7 @@
                     android:orientation="horizontal">
 
                     <ImageButton
+                        android:layout_marginLeft="-15dp"
                         android:id="@+id/btn_back"
                         android:layout_width="?actionBarSize"
                         android:layout_height="?actionBarSize"
@@ -56,13 +57,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="سعید یزدانی"
-                            android:textColor="#FFFFFF"/>
-
-                        <TextView
-                            android:id="@+id/txt_online_status"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="در حاضر آنلاین می باشد"
                             android:textColor="#FFFFFF"/>
                     </LinearLayout>
 

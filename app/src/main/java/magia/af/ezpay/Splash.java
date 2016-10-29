@@ -4,10 +4,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import magia.af.ezpay.Parser.DOMParser;

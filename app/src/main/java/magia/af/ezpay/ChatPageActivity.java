@@ -2,6 +2,7 @@ package magia.af.ezpay;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,9 +17,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 
 import magia.af.ezpay.Parser.DOMParser;
-import magia.af.ezpay.Parser.PayLogFeed;
-import magia.af.ezpay.Parser.RSSFeed;
-import magia.af.ezpay.Utilities.LocalPersistence;
 import magia.af.ezpay.Parser.PayLogFeed;
 
 public class ChatPageActivity extends BaseActivity {
@@ -79,13 +77,14 @@ public class ChatPageActivity extends BaseActivity {
           feed = null;
           adapter.notifyDataSetChanged();
         }
+        recyclerView.smoothScrollToPosition(recyclerView.getAdapter().getItemCount());
       } else
         Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
     }
   }
 
   public class ChatPageAdapter extends RecyclerView.Adapter<ChatPageAdapter.ViewHolder> {
-    public ChatPageAdapter() {
+    ChatPageAdapter() {
 
     }
 
@@ -109,7 +108,7 @@ public class ChatPageActivity extends BaseActivity {
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-      if (holder.getItemViewType() == 0) {
+//      if (holder.getItemViewType() == 0) {
 //        holder.txt_price_from.setText(feed.getItem(position).getAmount());
         holder.txt_status_from.setText(feed.getItem(position).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
         holder.txt_description_from.setText(feed.getItem(position).getComment());
@@ -119,17 +118,18 @@ public class ChatPageActivity extends BaseActivity {
             Toast.makeText(ChatPageActivity.this, ""+holder.getItemViewType(), Toast.LENGTH_SHORT).show();
           }
         });
-      } else {
+//      }
+//    else {
 //        holder.txt_price_from.setText(feed.getItem(position).getAmount());
-        holder.txt_status_from.setText(feed.getItem(position).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
-        holder.txt_description_from.setText(feed.getItem(position).getComment());
-        holder.btn_replay_from.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            Toast.makeText(ChatPageActivity.this, ""+holder.getItemViewType(), Toast.LENGTH_SHORT).show();
-          }
-        });
-      }
+//        holder.txt_status_from.setText(feed.getItem(position).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
+//        holder.txt_description_from.setText(feed.getItem(position).getComment());
+//        holder.btn_replay_from.setOnClickListener(new View.OnClickListener() {
+//          @Override
+//          public void onClick(View v) {
+//            Toast.makeText(ChatPageActivity.this, ""+holder.getItemViewType(), Toast.LENGTH_SHORT).show();
+//          }
+//        });
+//      }
     }
 
     @Override
@@ -138,18 +138,14 @@ public class ChatPageActivity extends BaseActivity {
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-//      TextView txt_price_from;
+      TextView txt_price_from;
       TextView txt_status_from;
       TextView txt_description_from;
       ImageButton btn_replay_from;
-      TextView txt_price_to;
-      TextView txt_status_to;
-      TextView txt_description_to;
-      ImageButton btn_replay_to;
 
       ViewHolder(View itemView) {
         super(itemView);
-//        txt_price_from = (TextView) itemView.findViewById(R.id.txt_price_from);
+        txt_price_from = (TextView) itemView.findViewById(R.id.txt_priceFrom);
         txt_status_from = (TextView) itemView.findViewById(R.id.txt_status_payed_from);
         txt_description_from = (TextView) itemView.findViewById(R.id.txt_description_from);
         btn_replay_from = (ImageButton) itemView.findViewById(R.id.btn_replay_pay_from);
