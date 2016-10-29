@@ -34,7 +34,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private ImageButton btn_done;
     private String phone;
     private EditText edtInputPhoneNumber;
-
+//تت
 
     public static LoginFragment getInstance() {
         return new LoginFragment();
