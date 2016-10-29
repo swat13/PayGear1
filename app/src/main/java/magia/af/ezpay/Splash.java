@@ -25,13 +25,13 @@ public class Splash extends BaseActivity {
             @Override
             public void run() {
 
-//                if (getSharedPreferences("EZpay", 0).getString("token", "").length() > 10) {
-//                    startActivity(new Intent(Splash.this, FriendListActivity.class));
-//                    finish();
-//                }else {
+                if (getSharedPreferences("EZpay", 0).getString("token", "").length() > 10) {
+                    startActivity(new Intent(Splash.this, FriendListActivity.class));
+                    finish();
+                }else {
                 startActivity(new Intent(Splash.this, LoginActivity.class));
                 finish();
-//                }
+                }
             }
         }, 3200);
     }
