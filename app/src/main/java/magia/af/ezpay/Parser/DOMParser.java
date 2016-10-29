@@ -373,7 +373,7 @@ public class DOMParser {
 
     try {
 
-      URL url = new URL(mainUrl + "api/Account/PayLogWithAnother");
+      URL url = new URL(mainUrl + "api/Payment/PayLogWithAnother");
       Log.e("1111111", "doInBackground: " + url);
       HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
       httpConn.setDoOutput(true);
@@ -389,11 +389,11 @@ public class DOMParser {
       BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
 
       String request = "{\n" +
-        "\"anotherMobile\" : \"" + phone + "\",\n" +
+        "\"anotherMobile\" : \"" + phone + "\"\n" +
         "}";
 
-      Log.e("999999999", "activateSong: " + phone);
-      writer.write(phone);
+      Log.e("999999999", "activateSong: " + request);
+      writer.write(request);
       writer.flush();
       writer.close();
       os.close();
