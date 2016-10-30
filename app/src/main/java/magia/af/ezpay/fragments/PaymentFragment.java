@@ -2,6 +2,7 @@ package magia.af.ezpay.fragments;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
@@ -11,8 +12,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import magia.af.ezpay.ChatPageActivity;
+import magia.af.ezpay.Parser.DOMParser;
+import magia.af.ezpay.Parser.PayLogFeed;
+import magia.af.ezpay.Parser.PayLogItem;
 import magia.af.ezpay.R;
 
 /**
@@ -27,6 +32,7 @@ public class PaymentFragment extends Fragment {
     boolean flag = false, commit = false;
     public RelativeLayout waitingDialog;
     public ImageView imageView;
+    public TextView texx;
 
     ChatPageActivity chatPageActivity;
 
@@ -43,8 +49,6 @@ public class PaymentFragment extends Fragment {
         show_dialog_get_phone(v);
         return v;
     }
-
-    TextView texx;
 
     public void show_dialog_get_phone(final View view) {
 

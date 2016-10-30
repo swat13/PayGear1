@@ -19,170 +19,192 @@ import com.bumptech.glide.Glide;
 
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.PayLogFeed;
+import magia.af.ezpay.Parser.PayLogItem;
 import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.Utilities.LocalPersistence;
 import magia.af.ezpay.Parser.PayLogFeed;
 import magia.af.ezpay.fragments.PaymentFragment;
 
 public class ChatPageActivity extends BaseActivity {
-    private String phone;
-    public String contactName;
-    private String imageUrl = "http://new.opaybot.ir";
-    RecyclerView recyclerView;
-    PayLogFeed feed;
-    ChatPageAdapter adapter;
-    static boolean isOpen = false;
-    public RelativeLayout darkDialog;
+  private String phone;
+  public String contactName;
+  private String imageUrl = "http://new.opaybot.ir";
+  RecyclerView recyclerView;
+  PayLogFeed feed;
+  ChatPageAdapter adapter;
+  static boolean isOpen = false;
+  public RelativeLayout darkDialog;
 
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.chat_page_activity);
+    Bundle bundle = getIntent().getExtras();
+    if (bundle != null) {
+      phone = bundle.getString("phone");
+      Log.i("#%^&@%^&@", phone);
+      Log.i("#%^&@%^&@", phone);
+      contactName = bundle.getString("contactName");
+      imageUrl = imageUrl + bundle.getString("image");
+    }
+    ImageView contactImage = (ImageView) findViewById(R.id.profile_image);
+    Glide.with(this).load(imageUrl).into(contactImage);
+    TextView name = (TextView) findViewById(R.id.txt_user_name);
+    name.setText(contactName);
+    recyclerView = (RecyclerView) findViewById(R.id.pay_list_recycler);
+    darkDialog = (RelativeLayout) findViewById(R.id.dark_dialog);
+    LinearLayoutManager manager = new LinearLayoutManager(this);
+    manager.setOrientation(LinearLayoutManager.VERTICAL);
+    recyclerView.setLayoutManager(manager);
+    new fillContact().execute(phone);
+    findViewById(R.id.btn_pey).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        FragmentTransaction ft;
+        darkDialog.setVisibility(View.VISIBLE);
+        PaymentFragment paymentFragment = PaymentFragment.newInstance(false);
+        ft = getFragmentManager().beginTransaction();
+        ft.setCustomAnimations(R.animator.enter_from_right, R.animator.exit_to_right);
+        ft.add(android.R.id.content, paymentFragment).commit();
+        isOpen = false;
+
+      }
+    });
+
+    findViewById(R.id.btn_back).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        onBackPressed();
+      }
+    });
+
+  }
+
+  private class sendPaymentRequest extends AsyncTask<String, Void, PayLogItem> {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.chat_page_activity);
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            phone = bundle.getString("phone");
-            Log.i("#%^&@%^&@", phone);
-            Log.i("#%^&@%^&@", phone);
-            contactName = bundle.getString("contactName");
-            imageUrl = imageUrl + bundle.getString("image");
+    protected void onPreExecute() {
+      super.onPreExecute();
+    }
+
+    @Override
+    protected PayLogItem doInBackground(String... params) {
+      DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
+      return domParser.sendPaymentRequest(params[0], params[0], params[0], params[0]);
+    }
+
+    @Override
+    protected void onPostExecute(PayLogItem result) {
+      if (result != null) {
+
+      } else
+        Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
+    }
+  }
+
+  private class fillContact extends AsyncTask<String, Void, PayLogFeed> {
+
+    @Override
+    protected void onPreExecute() {
+      super.onPreExecute();
+    }
+
+    @Override
+    protected PayLogFeed doInBackground(String... params) {
+      DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
+      return domParser.payLogWithAnother(params[0]);
+    }
+
+    @Override
+    protected void onPostExecute(PayLogFeed result) {
+      if (result != null) {
+        if (feed == null || feed.getItemCount() == 0) {
+          feed = result;
+          Log.i("PAY", result.toString());
+          adapter = new ChatPageAdapter();
+          recyclerView.setAdapter(adapter);
+          adapter.notifyDataSetChanged();
+        } else {
+          feed = null;
+          adapter.notifyDataSetChanged();
         }
-        ImageView contactImage = (ImageView) findViewById(R.id.profile_image);
-        Glide.with(this).load(imageUrl).into(contactImage);
-        TextView name = (TextView) findViewById(R.id.txt_user_name);
-        name.setText(contactName);
-        recyclerView = (RecyclerView) findViewById(R.id.pay_list_recycler);
-        darkDialog = (RelativeLayout) findViewById(R.id.dark_dialog);
-        LinearLayoutManager manager = new LinearLayoutManager(this);
-        manager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(manager);
-        new fillContact().execute(phone);
-        findViewById(R.id.btn_pey).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FragmentTransaction ft;
-                darkDialog.setVisibility(View.VISIBLE);
-                PaymentFragment paymentFragment = PaymentFragment.newInstance(false);
-                ft = getFragmentManager().beginTransaction();
-                ft.setCustomAnimations(R.animator.enter_from_right, R.animator.exit_to_right);
-                ft.add(android.R.id.content, paymentFragment).commit();
-                isOpen = false;
+      } else
+        Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
+    }
+  }
 
-            }
-        });
-        findViewById(R.id.btn_back).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
-
+  public class ChatPageAdapter extends RecyclerView.Adapter<ChatPageAdapter.ViewHolder> {
+    public ChatPageAdapter() {
 
     }
 
-    private class fillContact extends AsyncTask<String, Void, PayLogFeed> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-        }
-
-        @Override
-        protected PayLogFeed doInBackground(String... params) {
-            DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
-            return domParser.payLogWithAnother(params[0]);
-        }
-
-        @Override
-        protected void onPostExecute(PayLogFeed result) {
-            if (result != null) {
-                if (feed == null || feed.getItemCount() == 0) {
-                    feed = result;
-                    Log.i("PAY", result.toString());
-                    adapter = new ChatPageAdapter();
-                    recyclerView.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
-                } else {
-                    feed = null;
-                    adapter.notifyDataSetChanged();
-                }
-            } else
-                Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
-        }
+    @Override
+    public int getItemViewType(int position) {
+      if (feed.getItem(position).getFrom().equals(phone)) {
+        return 0;
+      } else return 1;
     }
 
-    public class ChatPageAdapter extends RecyclerView.Adapter<ChatPageAdapter.ViewHolder> {
-        public ChatPageAdapter() {
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+      View rootView;
+      if (viewType == 0) {
+        rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_from, parent, false);
+      } else {
+        rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_to, parent, false);
+      }
+      return new ViewHolder(rootView);
+    }
 
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            if (feed.getItem(position).getFrom().equals(phone)) {
-                return 0;
-            } else return 1;
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View rootView;
-            if (viewType == 0) {
-                rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_from, parent, false);
-            } else {
-                rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_to, parent, false);
-            }
-            return new ViewHolder(rootView);
-        }
-
-        @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
-            if (holder.getItemViewType() == 0) {
+    @Override
+    public void onBindViewHolder(final ViewHolder holder, int position) {
+      if (holder.getItemViewType() == 0) {
 //        holder.txt_price_from.setText(feed.getItem(position).getAmount());
-                holder.txt_status_from.setText(feed.getItem(position).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
-                holder.txt_description_from.setText(feed.getItem(position).getComment());
-                holder.btn_replay_from.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(ChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            } else {
+        holder.txt_status_from.setText(feed.getItem(position).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
+        holder.txt_description_from.setText(feed.getItem(position).getComment());
+        holder.btn_replay_from.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            Toast.makeText(ChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
+          }
+        });
+      } else {
 //        holder.txt_price_from.setText(feed.getItem(position).getAmount());
-                holder.txt_status_from.setText(feed.getItem(position).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
-                holder.txt_description_from.setText(feed.getItem(position).getComment());
-                holder.btn_replay_from.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(ChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        }
+        holder.txt_status_from.setText(feed.getItem(position).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
+        holder.txt_description_from.setText(feed.getItem(position).getComment());
+        holder.btn_replay_from.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            Toast.makeText(ChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
+          }
+        });
+      }
+    }
 
-        @Override
-        public int getItemCount() {
-            return feed.getItemCount();
-        }
+    @Override
+    public int getItemCount() {
+      return feed.getItemCount();
+    }
 
-        class ViewHolder extends RecyclerView.ViewHolder {
-            //      TextView txt_price_from;
-            TextView txt_status_from;
-            TextView txt_description_from;
-            ImageButton btn_replay_from;
-            TextView txt_price_to;
-            TextView txt_status_to;
-            TextView txt_description_to;
-            ImageButton btn_replay_to;
+    class ViewHolder extends RecyclerView.ViewHolder {
+      //      TextView txt_price_from;
+      TextView txt_status_from;
+      TextView txt_description_from;
+      ImageButton btn_replay_from;
+      TextView txt_price_to;
+      TextView txt_status_to;
+      TextView txt_description_to;
+      ImageButton btn_replay_to;
 
-            ViewHolder(View itemView) {
-                super(itemView);
+      ViewHolder(View itemView) {
+        super(itemView);
 //        txt_price_from = (TextView) itemView.findViewById(R.id.txt_price_from);
-                txt_status_from = (TextView) itemView.findViewById(R.id.txt_status_payed_from);
-                txt_description_from = (TextView) itemView.findViewById(R.id.txt_description_from);
-                btn_replay_from = (ImageButton) itemView.findViewById(R.id.btn_replay_pay_from);
-            }
-        }
-
+        txt_status_from = (TextView) itemView.findViewById(R.id.txt_status_payed_from);
+        txt_description_from = (TextView) itemView.findViewById(R.id.txt_description_from);
+        btn_replay_from = (ImageButton) itemView.findViewById(R.id.btn_replay_pay_from);
+      }
     }
+
+  }
 }
