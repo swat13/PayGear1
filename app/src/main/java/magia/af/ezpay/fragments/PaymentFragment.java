@@ -74,7 +74,6 @@ public class PaymentFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-
             }
         });
     }
