@@ -94,7 +94,6 @@ public class DOMParser {
 
   }
 
-
   public String resendSMS(String phoneNumber) {
 
     try {
@@ -338,23 +337,6 @@ public class DOMParser {
 
   }
 
-  public String getContactPhone(String name, String jsons) {
-    try {
-      JSONArray jsonArray = new JSONArray(jsons);
-      for (int i = 0; i < jsonArray.length(); i++) {
-        JSONObject jsonObject = jsonArray.getJSONObject(i);
-        if (jsonObject.getString("t").equals(name)) {
-          Log.i("C name", jsonObject.getString("m"));
-          return jsonObject.getString("m");
-        }
-      }
-
-    } catch (JSONException e) {
-      e.printStackTrace();
-    }
-    return null;
-  }
-
   public PayLogFeed payLogWithAnother(String phone) {
 
     try {
@@ -452,7 +434,7 @@ public class DOMParser {
 
   }
 
-  public PayLogItem sendPaymentRequest(String phone, String detail, String comment, int amount) {
+  public PayLogItem sendPaymentRequest(String phone, String detail, String comment, String amount) {
 
     try {
 
@@ -474,7 +456,7 @@ public class DOMParser {
       JSONObject jsonObject = new JSONObject();
       jsonObject.put("anotherMobile", phone);
       jsonObject.put("paymentDetails", detail);
-      jsonObject.put("amount", amount);
+      jsonObject.put("amount", Integer.parseInt( amount));
       jsonObject.put("comment", comment);
 
       Log.e("999999999", "activateSong: " + jsonObject);

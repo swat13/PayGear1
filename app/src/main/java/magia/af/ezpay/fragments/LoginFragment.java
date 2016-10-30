@@ -93,7 +93,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 //                ((LoginActivity) getActivity()).darkDialog.setVisibility(View.VISIBLE);
                 phone = edtInputPhoneNumber.getText().toString();
                 new registration().execute(edtInputPhoneNumber.getText().toString());
-                Toast.makeText(getActivity(), edtInputPhoneNumber.getText().toString(), Toast.LENGTH_SHORT).show();
                 break;
         }
 
@@ -120,7 +119,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             ((LoginActivity) getActivity()).waitingDialog.setVisibility(View.GONE);
             Log.e("^^^^^^^^^", "onPostExecute: " + result);
             if (result) {
-                Toast.makeText(getActivity(), "Test", Toast.LENGTH_SHORT).show();
                 Bundle bundle = new Bundle();
                 bundle.putString("number", phone);
                 Log.i("Input phone", phone);

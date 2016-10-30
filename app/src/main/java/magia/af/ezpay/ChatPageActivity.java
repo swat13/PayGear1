@@ -38,7 +38,6 @@ public class ChatPageActivity extends BaseActivity {
     public GetCardFragment getCardFragment;
     public PaymentFragment paymentFragment;
     public int fragment_status = 0;
-    public String amount,comment;
 
 
     @Override
@@ -48,7 +47,6 @@ public class ChatPageActivity extends BaseActivity {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             phone = bundle.getString("phone");
-            Log.i("#%^&@%^&@", phone);
             Log.i("#%^&@%^&@", phone);
             contactName = bundle.getString("contactName");
             imageUrl = imageUrl + bundle.getString("image");
@@ -61,8 +59,11 @@ public class ChatPageActivity extends BaseActivity {
         darkDialog = (RelativeLayout) findViewById(R.id.dark_dialog);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
+        manager.setReverseLayout(true);
+        manager.setStackFromEnd(false);
         recyclerView.setLayoutManager(manager);
         new fillContact().execute(phone);
+
         findViewById(R.id.btn_pey).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -96,7 +97,7 @@ public class ChatPageActivity extends BaseActivity {
         @Override
         protected PayLogItem doInBackground(String... params) {
             DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
-            return domParser.sendPaymentRequest(params[0], params[1], params[2],Integer.parseInt( params[3]));
+            return domParser.sendPaymentRequest(params[0], params[1], params[2], params[3]);
         }
 
         @Override
@@ -214,13 +215,12 @@ public class ChatPageActivity extends BaseActivity {
     }
 
     public void sendPay(String detail, String comment, int amount) {
-        new sendPaymentRequest().execute(phone,detail,comment,String.valueOf(amount ));
-
+        new sendPaymentRequest().execute(phone, detail, comment, String.valueOf(amount));
     }
 
-    public void payBill(int amount,String comment) {
+    public void payBill(int amount, String comment) {
         darkDialog.setVisibility(View.VISIBLE);
-        getCardFragment = GetCardFragment.newInstance(amount,comment);
+        getCardFragment = GetCardFragment.newInstance(amount, comment);
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.setCustomAnimations(R.animator.enter_from_right, R.animator.exit_to_right);
         ft.add(android.R.id.content, getCardFragment).commit();
@@ -231,7 +231,7 @@ public class ChatPageActivity extends BaseActivity {
     public void onBackPressed() {
         if (fragment_status == 1) {
             getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(paymentFragment).commit();
-        } else if(fragment_status == 2){
+        } else if (fragment_status == 2) {
             getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(getCardFragment).commit();
         }
 
