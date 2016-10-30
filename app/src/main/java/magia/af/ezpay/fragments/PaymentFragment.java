@@ -18,7 +18,8 @@ import magia.af.ezpay.R;
 /**
  * Created by erfan on 10/29/2016.
  */
-
+/*ddd
+* */
 public class PaymentFragment extends Fragment {
 
     Typeface typeface;
