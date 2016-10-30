@@ -29,7 +29,6 @@ public class LoginActivity extends BaseActivity {
         waitingDialog = (RelativeLayout) findViewById(R.id.wait_layout);
         imageView = (ImageView) findViewById(R.id.image_view);
 
-
         //Load The Login Fragment
         loadFragment();
     }
