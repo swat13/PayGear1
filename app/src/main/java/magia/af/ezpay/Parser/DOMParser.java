@@ -283,8 +283,7 @@ public class DOMParser {
 
       Log.e("@@@@@@", sb.toString());
       JSONArray jsonArray = new JSONArray(sb.toString());
-        RSSFeed rssFeed = new RSSFeed();
-
+      RSSFeed rssFeed = new RSSFeed();
 
 
       for (int i = 0; i < jsonArray.length(); i++) {
@@ -356,7 +355,7 @@ public class DOMParser {
     return null;
   }
 
-    public PayLogFeed payLogWithAnother(String phone) {
+  public PayLogFeed payLogWithAnother(String phone) {
 
     try {
 
@@ -418,7 +417,7 @@ public class DOMParser {
       for (int i = 0; i < jsonArray.length(); i++) {
         PayLogItem payLogItem1 = new PayLogItem();
         JSONObject jsonObject = jsonArray.getJSONObject(i);
-          //kk
+        //kk
         try {
           payLogItem1.setId(jsonObject.getInt("id"));
           payLogItem1.setFrom(jsonObject.getString("f"));
@@ -441,6 +440,92 @@ public class DOMParser {
        *
        * */
 
+
+    } catch (ProtocolException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
+    return null;
+
+  }
+
+  public PayLogItem sendPaymentRequest(String phone, String detail, String comment, String amount) {
+
+    try {
+
+      URL url = new URL(mainUrl + "api/payment/PayToAnotherWithTF");
+      Log.e("1111111", "doInBackground: " + url);
+      HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
+      httpConn.setDoOutput(true);
+      httpConn.setDoInput(true);
+      httpConn.setAllowUserInteraction(false);
+      httpConn.setRequestMethod("POST");
+      httpConn.setConnectTimeout(20000);
+      httpConn.setReadTimeout(20000);
+      httpConn.setRequestProperty("Content-Type", "application/json");
+      httpConn.setRequestProperty("Authorization", "bearer " + token);
+
+      OutputStream os = httpConn.getOutputStream();
+      BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+
+      JSONObject jsonObject = new JSONObject();
+      jsonObject.put("anotherMobile", phone);
+      jsonObject.put("paymentDetails", detail);
+      jsonObject.put("amount", amount);
+      jsonObject.put("comment", comment);
+
+      Log.e("999999999", "activateSong: " + jsonObject);
+      writer.write(jsonObject.toString());
+      writer.flush();
+      writer.close();
+      os.close();
+
+      int resCode = httpConn.getResponseCode();
+      Log.e("0000000", "doInBackground: " + resCode);
+      if (resCode == 400) {
+        return null;
+      }
+
+      InputStream in = httpConn.getInputStream();
+      BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+      StringBuilder sb = new StringBuilder();
+
+      String line = null;
+      try {
+        while ((line = reader.readLine()) != null) {
+          sb.append(line);
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+      } finally {
+        try {
+          in.close();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+
+      Log.e("@@@@@@", sb.toString());
+
+      PayLogItem payLogItem = new PayLogItem();
+      JSONObject jsonObject1 = new JSONObject(sb.toString());
+      try {
+        payLogItem.setId(jsonObject1.getInt("id"));
+        payLogItem.setFrom(jsonObject1.getString("f"));
+        payLogItem.setTo(jsonObject1.getString("t"));
+        payLogItem.setAmount(jsonObject1.getInt("a"));
+        payLogItem.setDate(jsonObject1.getString("d"));
+        payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
+        payLogItem.setComment(jsonObject1.getString("c"));
+
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      return payLogItem;
 
     } catch (ProtocolException e) {
       e.printStackTrace();
