@@ -452,7 +452,7 @@ public class DOMParser {
 
   }
 
-  public PayLogItem sendPaymentRequest(String phone, String detail, String comment, String amount) {
+  public PayLogItem sendPaymentRequest(String phone, String detail, String comment, int amount) {
 
     try {
 
