@@ -1,73 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:layout_margin="5dp"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingRight="20dp"
-    android:paddingLeft="5dp">
+    android:layout_margin="5dp"
+    android:orientation="horizontal"
+    android:paddingLeft="5dp"
+    android:paddingRight="20dp">
+
     <ImageButton
         android:id="@+id/btn_replay_pay_from"
-        android:layout_gravity="center"
-        android:src="@drawable/ic_reply"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_reply" />
 
     <RelativeLayout
-        android:background="@drawable/chat_to"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@drawable/chat_to">
 
         <LinearLayout
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"
-
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true">
+
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+
             <LinearLayout
-                android:gravity="right"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="right"
                 android:orientation="horizontal">
+
                 <TextView
-                    android:layout_weight="1"
                     android:id="@+id/txt_status_payed_from"
+                    android:layout_width="wrap_content"
+                    android:layout_height="25dp"
+                    android:layout_gravity="right"
+                    android:layout_marginLeft="5dp"
                     android:layout_marginRight="10dp"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/text_background"
+                    android:gravity="center"
                     android:paddingLeft="20dp"
                     android:paddingRight="20dp"
-                    android:background="@drawable/text_background"
                     android:text="پرداخت شد"
-                    android:layout_marginLeft="5dp"
-                    android:gravity="center"
-                    android:layout_gravity="right"
-                    android:textColor="#FFFFFF"
-                    android:layout_width="wrap_content"
-                    android:layout_height="25dp"/>
+                    android:textColor="#FFFFFF" />
+
                 <TextView
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="1"
                     android:id="@+id/txt_priceFrom"
-                    android:text="قیمت"
-                    android:gravity="right|center"
-                    android:layout_gravity="right"
-                    android:textColor="#cb5958"
                     android:layout_width="wrap_content"
-                    android:layout_height="25dp"/>
+                    android:layout_height="25dp"
+                    android:layout_gravity="right"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="0.3"
+                    android:gravity="right|center"
+                    android:text="قیمت"
+                    android:textColor="#cb5958" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="25dp"
+                    android:layout_gravity="right"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="0.1"
+                    android:gravity="right|center"
+                    android:text="قیمت"
+                    android:textColor="#cb5958" />
             </LinearLayout>
+
             <TextView
-                android:layout_marginBottom="10dp"
                 android:id="@+id/txt_description_from"
-                android:text="توضیحات:بابت دنگ مسافرت شمال"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="20dp"
-                android:layout_gravity="right"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:text="توضیحات:بابت دنگ مسافرت شمال" />
         </LinearLayout>
     </RelativeLayout>
 
