@@ -104,6 +104,7 @@ public class ChatPageActivity extends BaseActivity {
         protected void onPostExecute(PayLogItem result) {
             if (result != null) {
                 feed.addItem(result);
+                adapter.notifyDataSetChanged();
             } else
                 Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
         }
@@ -140,14 +141,15 @@ public class ChatPageActivity extends BaseActivity {
         }
     }
 
-    public class ChatPageAdapter extends RecyclerView.Adapter<ChatPageAdapter.ViewHolder> {
-        public ChatPageAdapter() {
+        public class ChatPageAdapter extends RecyclerView.Adapter<ChatPageAdapter.ViewHolder> {
+            public ChatPageAdapter() {
 
-        }
+            }
 
         @Override
         public int getItemViewType(int position) {
-            if (feed.getItem(position).getFrom().equals(phone)) {
+            int pos = feed.getItemCount() - position-1;
+            if (feed.getItem(pos).getFrom().equals(phone)) {
                 return 0;
             } else return 1;
         }
@@ -165,10 +167,11 @@ public class ChatPageActivity extends BaseActivity {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
+            int pos = feed.getItemCount() - position-1;
             if (holder.getItemViewType() == 0) {
 //        holder.txt_price_from.setText(feed.getItem(position).getAmount());
-                holder.txt_status_from.setText(feed.getItem(position).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
-                holder.txt_description_from.setText(feed.getItem(position).getComment());
+                holder.txt_status_from.setText(feed.getItem(pos).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
+                holder.txt_description_from.setText(feed.getItem(pos).getComment());
                 holder.btn_replay_from.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -177,8 +180,8 @@ public class ChatPageActivity extends BaseActivity {
                 });
             } else {
 //        holder.txt_price_from.setText(feed.getItem(position).getAmount());
-                holder.txt_status_from.setText(feed.getItem(position).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
-                holder.txt_description_from.setText(feed.getItem(position).getComment());
+                holder.txt_status_from.setText(feed.getItem(pos).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
+                holder.txt_description_from.setText(feed.getItem(pos).getComment());
                 holder.btn_replay_from.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

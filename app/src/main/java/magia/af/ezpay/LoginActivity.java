@@ -1,7 +1,10 @@
 package magia.af.ezpay;
 
+import android.Manifest;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -31,6 +34,9 @@ public class LoginActivity extends BaseActivity {
 
         //Load The Login Fragment
         loadFragment();
+        if (Build.VERSION.SDK_INT >= 23) {
+            checkPermissions();
+        }
     }
 
     //Load The Login Fragment
@@ -40,5 +46,10 @@ public class LoginActivity extends BaseActivity {
                 .beginTransaction()
                 .add(R.id.container, loginFragment)
                 .commit();
+    }
+
+
+    private void checkPermissions() {
+        ActivityCompat.requestPermissions(LoginActivity.this,new String[]{Manifest.permission.READ_CONTACTS}, 0);
     }
 }
