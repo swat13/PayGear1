@@ -18,19 +18,18 @@ public class Splash extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
 
-        if (getSharedPreferences("EZpay", 0).getString("token", "").length() > 10) {
-            new fillContact().execute();
-        }else {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (getSharedPreferences("EZpay", 0).getString("token", "").length() > 10) {
+                    new fillContact().execute();
+                } else {
                     startActivity(new Intent(Splash.this, LoginActivity.class));
                     finish();
                 }
-            }, 3200);
-        }
+            }
+        }, 3200);
     }
-
 
     private class fillContact extends AsyncTask<Void, Void, RSSFeed> {
 

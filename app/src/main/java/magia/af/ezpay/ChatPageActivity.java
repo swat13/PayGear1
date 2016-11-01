@@ -20,9 +20,6 @@ import com.bumptech.glide.Glide;
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.PayLogFeed;
 import magia.af.ezpay.Parser.PayLogItem;
-import magia.af.ezpay.Parser.RSSFeed;
-import magia.af.ezpay.Utilities.LocalPersistence;
-import magia.af.ezpay.Parser.PayLogFeed;
 import magia.af.ezpay.fragments.GetCardFragment;
 import magia.af.ezpay.fragments.PaymentFragment;
 
@@ -141,14 +138,14 @@ public class ChatPageActivity extends BaseActivity {
         }
     }
 
-        public class ChatPageAdapter extends RecyclerView.Adapter<ChatPageAdapter.ViewHolder> {
-            public ChatPageAdapter() {
+    public class ChatPageAdapter extends RecyclerView.Adapter<ChatPageAdapter.ViewHolder> {
+        public ChatPageAdapter() {
 
-            }
+        }
 
         @Override
         public int getItemViewType(int position) {
-            int pos = feed.getItemCount() - position-1;
+            int pos = feed.getItemCount() - position - 1;
             if (feed.getItem(pos).getFrom().equals(phone)) {
                 return 0;
             } else return 1;
@@ -167,22 +164,22 @@ public class ChatPageActivity extends BaseActivity {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
-            int pos = feed.getItemCount() - position-1;
+            int pos = feed.getItemCount() - position - 1;
             if (holder.getItemViewType() == 0) {
-//        holder.txt_price_from.setText(feed.getItem(position).getAmount());
-                holder.txt_status_from.setText(feed.getItem(pos).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
-                holder.txt_description_from.setText(feed.getItem(pos).getComment());
-                holder.btn_replay_from.setOnClickListener(new View.OnClickListener() {
+                holder.txt_price.setText(feed.getItem(pos).getAmount()+"");
+                holder.txt_status.setText(feed.getItem(pos).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
+                holder.txt_description.setText(feed.getItem(pos).getComment());
+                holder.btn_replay.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Toast.makeText(ChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
                     }
                 });
             } else {
-//        holder.txt_price_from.setText(feed.getItem(position).getAmount());
-                holder.txt_status_from.setText(feed.getItem(pos).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
-                holder.txt_description_from.setText(feed.getItem(pos).getComment());
-                holder.btn_replay_from.setOnClickListener(new View.OnClickListener() {
+                holder.txt_price.setText(feed.getItem(pos).getAmount()+"");
+                holder.txt_status.setText(feed.getItem(pos).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
+                holder.txt_description.setText(feed.getItem(pos).getComment());
+                holder.btn_replay.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Toast.makeText(ChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
@@ -197,21 +194,17 @@ public class ChatPageActivity extends BaseActivity {
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
-            //      TextView txt_price_from;
-            TextView txt_status_from;
-            TextView txt_description_from;
-            ImageButton btn_replay_from;
-            TextView txt_price_to;
-            TextView txt_status_to;
-            TextView txt_description_to;
-            ImageButton btn_replay_to;
+            TextView txt_status;
+            TextView txt_description;
+            ImageButton btn_replay;
+            TextView txt_price;
 
             ViewHolder(View itemView) {
                 super(itemView);
-//        txt_price_from = (TextView) itemView.findViewById(R.id.txt_price_from);
-                txt_status_from = (TextView) itemView.findViewById(R.id.txt_status_payed_from);
-                txt_description_from = (TextView) itemView.findViewById(R.id.txt_description_from);
-                btn_replay_from = (ImageButton) itemView.findViewById(R.id.btn_replay_pay_from);
+                txt_price = (TextView) itemView.findViewById(R.id.txt_priceFrom);
+                txt_status = (TextView) itemView.findViewById(R.id.txt_status_payed_from);
+                txt_description = (TextView) itemView.findViewById(R.id.txt_description_from);
+                btn_replay = (ImageButton) itemView.findViewById(R.id.btn_replay_pay_from);
             }
         }
 
@@ -229,7 +222,6 @@ public class ChatPageActivity extends BaseActivity {
         ft.add(android.R.id.content, getCardFragment).commit();
     }
 
-
     @Override
     public void onBackPressed() {
         if (fragment_status == 1) {
@@ -237,6 +229,8 @@ public class ChatPageActivity extends BaseActivity {
         } else if (fragment_status == 2) {
             getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(getCardFragment).commit();
         }
+        else
+            finish();
 
     }
 }
