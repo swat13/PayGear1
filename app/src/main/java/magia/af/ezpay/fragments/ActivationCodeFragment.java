@@ -1,5 +1,6 @@
 package magia.af.ezpay.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,10 +10,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -27,6 +32,7 @@ import magia.af.ezpay.LoginActivity;
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.R;
+import magia.af.ezpay.Splash;
 import magia.af.ezpay.Utilities.LocalPersistence;
 import magia.af.ezpay.helper.GetContact;
 import magia.af.ezpay.interfaces.EventCallbackHandler;
@@ -51,10 +57,32 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_activation_code, null);
+        final View rootView = inflater.inflate(R.layout.fragment_activation_code, null);
         btn_send_activation_code_again = (Button) rootView.findViewById(R.id.btn_send_activation_code_again);
         btn_send_activation_code = (ImageButton) rootView.findViewById(R.id.btn_send_activation_code);
         edtInputPhoneNumber = (EditText) rootView.findViewById(R.id.edt_input_activation_code);
+        edtInputPhoneNumber.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                if (s.length() == 4) {
+                    btn_send_activation_code.setVisibility(View.VISIBLE);
+                    hideKey(rootView);
+                } else {
+                    btn_send_activation_code.setVisibility(View.GONE);
+
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
         timerText = (TextView) rootView.findViewById(R.id.timer_text);
         btn_send_activation_code.setOnClickListener(this);
         new CountDownTimer(10000, 1000) {
@@ -98,6 +126,14 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
     public void callback() {
         //Handle Callback here
     }
+
+    public void hideKey(View view) {
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
 
     private class verifyActiveCode extends AsyncTask<String, Void, String> {
 
@@ -151,7 +187,7 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
         @Override
         protected RSSFeed doInBackground(Void... params) {
             DOMParser domParser = new DOMParser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
-            return domParser.getContact(new GetContact().getContact(getActivity()));
+            return domParser.getContact(new GetContact().getContact(getActivity(),(RSSFeed) new LocalPersistence().readObjectFromFile(getActivity(), "Contact_List")));
         }
 
         @Override

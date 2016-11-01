@@ -503,6 +503,8 @@ public class DOMParser {
         payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
         payLogItem.setComment(jsonObject1.getString("c"));
 
+
+
       } catch (JSONException e) {
         e.printStackTrace();
       }

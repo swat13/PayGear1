@@ -8,9 +8,11 @@ import android.widget.Toast;
 
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.RSSFeed;
+import magia.af.ezpay.Utilities.LocalPersistence;
 import magia.af.ezpay.helper.GetContact;
 
 public class Splash extends BaseActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +30,7 @@ public class Splash extends BaseActivity {
                     finish();
                 }
             }
-        }, 3200);
+        }, 1500);
     }
 
     private class fillContact extends AsyncTask<Void, Void, RSSFeed> {
@@ -41,12 +43,13 @@ public class Splash extends BaseActivity {
         @Override
         protected RSSFeed doInBackground(Void... params) {
             DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
-            return domParser.getContact(new GetContact().getContact(Splash.this));
+            return domParser.getContact(new GetContact().getContact(Splash.this, (RSSFeed) new LocalPersistence().readObjectFromFile(Splash.this, "Contact_List")));
         }
 
         @Override
         protected void onPostExecute(RSSFeed result) {
             if (result != null) {
+
                 startActivity(new Intent(Splash.this, FriendListActivity.class).putExtra("contact", result));
                 finish();
             } else

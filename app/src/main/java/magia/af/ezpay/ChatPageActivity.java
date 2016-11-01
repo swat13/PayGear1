@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.PayLogFeed;
 import magia.af.ezpay.Parser.PayLogItem;
+import magia.af.ezpay.Utilities.LocalPersistence;
 import magia.af.ezpay.fragments.GetCardFragment;
 import magia.af.ezpay.fragments.PaymentFragment;
 
@@ -47,6 +48,10 @@ public class ChatPageActivity extends BaseActivity {
             Log.i("#%^&@%^&@", phone);
             contactName = bundle.getString("contactName");
             imageUrl = imageUrl + bundle.getString("image");
+        }
+
+        if (new LocalPersistence().readObjectFromFile(ChatPageActivity.this, "Payment_Chat_List") != null) {
+            feed = (PayLogFeed) new LocalPersistence().readObjectFromFile(ChatPageActivity.this, "Payment_Chat_List");
         }
         ImageView contactImage = (ImageView) findViewById(R.id.profile_image);
         Glide.with(this).load(imageUrl).into(contactImage);
@@ -101,6 +106,7 @@ public class ChatPageActivity extends BaseActivity {
         protected void onPostExecute(PayLogItem result) {
             if (result != null) {
                 feed.addItem(result);
+                new LocalPersistence().writeObjectToFile(ChatPageActivity.this, feed, "Payment_Chat_List");
                 adapter.notifyDataSetChanged();
             } else
                 Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
@@ -166,7 +172,7 @@ public class ChatPageActivity extends BaseActivity {
         public void onBindViewHolder(final ViewHolder holder, int position) {
             int pos = feed.getItemCount() - position - 1;
             if (holder.getItemViewType() == 0) {
-                holder.txt_price.setText(feed.getItem(pos).getAmount()+"");
+                holder.txt_price.setText(feed.getItem(pos).getAmount() + "");
                 holder.txt_status.setText(feed.getItem(pos).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
                 holder.txt_description.setText(feed.getItem(pos).getComment());
                 holder.btn_replay.setOnClickListener(new View.OnClickListener() {
@@ -176,7 +182,7 @@ public class ChatPageActivity extends BaseActivity {
                     }
                 });
             } else {
-                holder.txt_price.setText(feed.getItem(pos).getAmount()+"");
+                holder.txt_price.setText(feed.getItem(pos).getAmount() + "");
                 holder.txt_status.setText(feed.getItem(pos).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
                 holder.txt_description.setText(feed.getItem(pos).getComment());
                 holder.btn_replay.setOnClickListener(new View.OnClickListener() {
@@ -228,8 +234,7 @@ public class ChatPageActivity extends BaseActivity {
             getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(paymentFragment).commit();
         } else if (fragment_status == 2) {
             getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(getCardFragment).commit();
-        }
-        else
+        } else
             finish();
 
     }

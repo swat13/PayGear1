@@ -21,6 +21,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 import magia.af.ezpay.ChatPageActivity;
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.PayLogFeed;
@@ -74,7 +77,6 @@ public class PaymentFragment extends Fragment {
 
         texx.setText(new StringBuilder("پرداخت وجه به" + " " + ((ChatPageActivity) getActivity()).contactName));
 
-
         PayAmount.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -126,24 +128,29 @@ public class PaymentFragment extends Fragment {
                     PayAmount.setHint("مبلغ پرداختی");
 
 
+
                 } else {
                     PayAmount.setGravity(Gravity.LEFT);
-                    if (s.length() > 0 && (s.length() % 4) == 0) {
-                        final char c = s.charAt(s.length() - 1);
-                        if (space == c) {
-                            s.delete(s.length() - 1, s.length());
-                        }
-                    }
-//                    && TextUtils.split(s.toString(), String.valueOf(space)).length <= 5
+//                    if (s.length() > 0 && (s.length() % 4) == 0) {
+//                        final char c = s.charAt(s.length() - 1);
+//                        if (space == c) {
+//                            s.delete(s.length() - 1, s.length());
+//                        }
+//                    }
+////                    && TextUtils.split(s.toString(), String.valueOf(space)).length <= 5
+//
+//                    if (s.length() > 0 && (s.length() % 4) == 0) {
+//                        char c = s.charAt(s.length() - 1);
+//                        // Only if its a digit where there should be a space we insert a space
+//                        Log.e("iffffffffff", "afterTextChanged: ");
+//                        if (Character.isDigit(c)) {
+//                            s.insert(s.length() - 1, String.valueOf(space));
+//                        }
+//                    }
+                    PayAmount.setText(NumberFormat.getNumberInstance(Locale.US).format(Double.parseDouble(PayAmount.getText().toString())));
 
-                    if (s.length() > 0 && (s.length() % 4) == 0) {
-                        char c = s.charAt(s.length() - 1);
-                        // Only if its a digit where there should be a space we insert a space
-                        Log.e("iffffffffff", "afterTextChanged: ");
-                        if (Character.isDigit(c)) {
-                            s.insert(s.length() - 1, String.valueOf(space));
-                        }
-                    }
+
+
                 }
             }
         });
