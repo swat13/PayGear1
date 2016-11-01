@@ -148,17 +148,6 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
         @Override
         protected String doInBackground(String... params) {
             DOMParser domParser = new DOMParser();
-//      JSONObject object = new JSONObject();
-//      PullJSON pullJSON;
-//      try {
-//        object.put("mobile",phone);
-//        object.put("code",activationCode);
-//        pullJSON = new PullJSON("http://new.opaybot.ir/api/Account/VerifySMSCode" , object.toString() , "POST",null);
-//        pullJSON.getResponse();
-//        //Log.i("TOKEN", object.toString());
-//      } catch (JSONException e) {
-//        e.printStackTrace();
-//      }
             return domParser.Verify_Login_Activation_Code(params[0], params[1]);
         }
 
@@ -187,7 +176,7 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
         @Override
         protected RSSFeed doInBackground(Void... params) {
             DOMParser domParser = new DOMParser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
-            return domParser.getContact(new GetContact().getContact(getActivity(),(RSSFeed) new LocalPersistence().readObjectFromFile(getActivity(), "Contact_List")));
+            return domParser.getContact(new GetContact().getContact(getActivity(), (RSSFeed) new LocalPersistence().readObjectFromFile(getContext(), "All_Contact_List")));
         }
 
         @Override

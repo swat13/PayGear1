@@ -12,6 +12,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import magia.af.ezpay.Parser.RSSFeed;
+import magia.af.ezpay.Parser.RSSItem;
+import magia.af.ezpay.Splash;
+import magia.af.ezpay.Utilities.LocalPersistence;
 
 /**
  * Created by pc on 10/26/2016.
@@ -21,8 +24,11 @@ public class GetContact {
 
     private static final String TAG = "TAG";
     private ArrayMap<String, Boolean> stringArrayMap = new ArrayMap<>();
+    Context cx;
+
 
     public String getContact(Context context, RSSFeed rssFeed) {
+        cx = context;
         JSONArray jsonArray = null;
         ContentResolver cr = context.getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
@@ -78,6 +84,7 @@ public class GetContact {
             }
         }
         Log.i("JSON CONTACT", jsonArray.toString());
+        writeToFile(jsonArray);
         return jsonArray != null ? jsonArray.toString() : null;
     }
 
@@ -87,7 +94,7 @@ public class GetContact {
             return true;
         }
         for (int i = 0; i < rssFeed.getItemCount(); i++) {
-            if (rssFeed.getItem(i).equals(phoneNumber)) {
+            if (rssFeed.getItem(i).getTelNo().equals(phoneNumber)) {
                 return false;
             }
 
@@ -96,5 +103,20 @@ public class GetContact {
 
     }
 
+    public void writeToFile(JSONArray json) {
+        RSSFeed rssFeed = new RSSFeed();
+        for (int i = 0; i < json.length(); i++) {
+            try {
+                JSONObject jsonObject = json.getJSONObject(i);
+                RSSItem rssItem = new RSSItem();
+                rssItem.setTelNo(jsonObject.getString("m"));
+                rssFeed.addItem(rssItem);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+        new LocalPersistence().writeObjectToFile(cx, rssFeed, "All_Contact_List");
+    }
 
 }

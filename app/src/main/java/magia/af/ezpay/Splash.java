@@ -43,13 +43,13 @@ public class Splash extends BaseActivity {
         @Override
         protected RSSFeed doInBackground(Void... params) {
             DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
-            return domParser.getContact(new GetContact().getContact(Splash.this, (RSSFeed) new LocalPersistence().readObjectFromFile(Splash.this, "Contact_List")));
+            return domParser.getContact(new GetContact().getContact(Splash.this, (RSSFeed) new LocalPersistence().readObjectFromFile(Splash.this, "All_Contact_List")));
         }
 
         @Override
         protected void onPostExecute(RSSFeed result) {
             if (result != null) {
-
+                new LocalPersistence().writeObjectToFile(Splash.this, result, "Contact_List");
                 startActivity(new Intent(Splash.this, FriendListActivity.class).putExtra("contact", result));
                 finish();
             } else

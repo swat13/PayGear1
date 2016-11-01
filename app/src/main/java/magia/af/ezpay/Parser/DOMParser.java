@@ -456,7 +456,7 @@ public class DOMParser {
       JSONObject jsonObject = new JSONObject();
       jsonObject.put("anotherMobile", phone);
       jsonObject.put("paymentDetails", detail);
-      jsonObject.put("amount", Integer.parseInt( amount));
+      jsonObject.put("amount", Integer.parseInt(amount));
       jsonObject.put("comment", comment);
 
       Log.e("999999999", "activateSong: " + jsonObject);
@@ -502,7 +502,6 @@ public class DOMParser {
         payLogItem.setDate(jsonObject1.getString("d"));
         payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
         payLogItem.setComment(jsonObject1.getString("c"));
-
 
 
       } catch (JSONException e) {
