@@ -11,6 +11,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import magia.af.ezpay.ChatPageActivity;
+import magia.af.ezpay.Parser.PayLogFeed;
 import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.Parser.RSSItem;
 import magia.af.ezpay.Splash;
@@ -83,8 +85,9 @@ public class GetContact {
                 }
             }
         }
-        Log.i("JSON CONTACT", jsonArray.toString());
-        writeToFile(jsonArray);
+        Log.e("JSON CONTACT", jsonArray.toString());
+        if (jsonArray.length()>5)
+            writeToFile(jsonArray);
         return jsonArray != null ? jsonArray.toString() : null;
     }
 
@@ -104,7 +107,12 @@ public class GetContact {
     }
 
     public void writeToFile(JSONArray json) {
-        RSSFeed rssFeed = new RSSFeed();
+        RSSFeed rssFeed;
+        if (new LocalPersistence().readObjectFromFile(cx, "All_Contact_List") != null) {
+            rssFeed = (RSSFeed) new LocalPersistence().readObjectFromFile(cx, "All_Contact_List");
+        } else {
+            rssFeed = new RSSFeed();
+        }
         for (int i = 0; i < json.length(); i++) {
             try {
                 JSONObject jsonObject = json.getJSONObject(i);

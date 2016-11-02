@@ -29,6 +29,7 @@ import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.PayLogFeed;
 import magia.af.ezpay.Parser.PayLogItem;
 import magia.af.ezpay.R;
+import magia.af.ezpay.helper.NumberTextWatcher;
 
 /**
  * Created by erfan on 10/29/2016.
@@ -109,52 +110,50 @@ public class PaymentFragment extends Fragment {
         });
 
 
-        PayAmount.addTextChangedListener(new TextWatcher() {
-            private static final char space = ',';
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.length() == 0) {
-
-                    PayAmount.setGravity(Gravity.CENTER);
-                    PayAmount.setHint("مبلغ پرداختی");
-
-
-
-                } else {
-                    PayAmount.setGravity(Gravity.LEFT);
+//        PayAmount.addTextChangedListener(new TextWatcher() {
+//            private static final char space = ',';
+//
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//                if (s.length() == 0) {
+//
+//                    PayAmount.setGravity(Gravity.CENTER);
+//                    PayAmount.setHint("مبلغ پرداختی");
+//
+//
+//
+//                } else {
+//                    PayAmount.setGravity(Gravity.LEFT);
 //                    if (s.length() > 0 && (s.length() % 4) == 0) {
-//                        final char c = s.charAt(s.length() - 1);
+//                        final char c = s.charAt(s.length() - 3);
 //                        if (space == c) {
-//                            s.delete(s.length() - 1, s.length());
+//                            s.delete(s.length() -3, s.length()-2);
 //                        }
 //                    }
 ////                    && TextUtils.split(s.toString(), String.valueOf(space)).length <= 5
 //
 //                    if (s.length() > 0 && (s.length() % 4) == 0) {
-//                        char c = s.charAt(s.length() - 1);
+//                        char c = s.charAt(s.length() - 3);
 //                        // Only if its a digit where there should be a space we insert a space
 //                        Log.e("iffffffffff", "afterTextChanged: ");
 //                        if (Character.isDigit(c)) {
-//                            s.insert(s.length() - 1, String.valueOf(space));
+//                            s.insert(s.length() - 3, String.valueOf(space));
 //                        }
 //                    }
-                    PayAmount.setText(NumberFormat.getNumberInstance(Locale.US).format(Double.parseDouble(PayAmount.getText().toString())));
-
-
-
-                }
-            }
-        });
-
+//
+//
+//                }
+//            }
+//        });
+        PayAmount.addTextChangedListener(new NumberTextWatcher(PayAmount));
 
         view.findViewById(R.id.edge).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -216,10 +215,10 @@ public class PaymentFragment extends Fragment {
     }
 
     private int correctNum(String number) {
-        String result=number;
+        String result = number;
         for (int i = 0; i < number.length(); i++) {
-            if ( number.charAt(i) == ',') {
-                result = number.substring(0, i) + number.substring(i+1);
+            if (number.charAt(i) == ',') {
+                result = number.substring(0, i) + number.substring(i + 1);
             }
         }
         return Integer.valueOf(result);
@@ -241,7 +240,6 @@ public class PaymentFragment extends Fragment {
 
         ((ChatPageActivity) getActivity()).fragment_status = 0;
         ((ChatPageActivity) getActivity()).darkDialog.setVisibility(View.GONE);
-
 
 
     }
