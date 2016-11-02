@@ -11,9 +11,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.Parser.RSSItem;
-import magia.af.ezpay.Splash;
 import magia.af.ezpay.Utilities.LocalPersistence;
 
 /**
@@ -119,4 +120,41 @@ public class GetContact {
         new LocalPersistence().writeObjectToFile(cx, rssFeed, "All_Contact_List");
     }
 
+    public ArrayList<String> allContacts(Context context){
+        cx = context;
+        ContentResolver cr = context.getContentResolver();
+        ArrayList<String> phones = new ArrayList<>();
+        Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
+          null, null, null, null);
+
+        if (cur.getCount() > 0) {
+            while (cur.moveToNext()) {
+                String id = cur.getString(
+                  cur.getColumnIndex(ContactsContract.Contacts._ID));
+                String name = cur.getString(cur.getColumnIndex(
+                  ContactsContract.Contacts.DISPLAY_NAME));
+
+                if (cur.getInt(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)) > 0) {
+                    Cursor pCur = cr.query(
+                      ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                      null,
+                      ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                      new String[]{id}, null);
+                    while (pCur.moveToNext()) {
+                        String phoneNo = pCur.getString(pCur.getColumnIndex(
+                          ContactsContract.CommonDataKinds.Phone.NUMBER));
+                        if (phoneNo.contains(" ")) {
+                            phoneNo = phoneNo.replace(" ", "");
+                        }
+                        if (phoneNo.contains("+989")) {
+                            phoneNo = phoneNo.replace("+98", "0");
+                        }
+                        phones.add(phoneNo);
+                    }
+                    pCur.close();
+                }
+            }
+        }
+        return phones;
+    }
 }

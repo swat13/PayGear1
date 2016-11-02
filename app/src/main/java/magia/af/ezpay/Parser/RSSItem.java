@@ -13,8 +13,71 @@ public class RSSItem implements Serializable {
 	private String contactImg;
 	private String contactName;
 	private int id;
+  private int lastChatId;
+  private String lastChatFrom;
+  private String lastChatTo;
+  private int lastChatAmount;
+  private String lastChatDate;
+  private boolean lastChatOrderByFromOrTo;
+  private String comment;
 
-    public int getId() {
+  public int getLastChatId() {
+    return lastChatId;
+  }
+
+  public void setLastChatId(int lastChatId) {
+    this.lastChatId = lastChatId;
+  }
+
+  public String getLastChatFrom() {
+    return lastChatFrom;
+  }
+
+  public void setLastChatFrom(String lastChatFrom) {
+    this.lastChatFrom = lastChatFrom;
+  }
+
+  public String getLastChatTo() {
+    return lastChatTo;
+  }
+
+  public void setLastChatTo(String lastChatTo) {
+    this.lastChatTo = lastChatTo;
+  }
+
+  public int getLastChatAmount() {
+    return lastChatAmount;
+  }
+
+  public void setLastChatAmount(int lastChatAmount) {
+    this.lastChatAmount = lastChatAmount;
+  }
+
+  public String getLastChatDate() {
+    return lastChatDate;
+  }
+
+  public void setLastChatDate(String lastChatDate) {
+    this.lastChatDate = lastChatDate;
+  }
+
+  public boolean isLastChatOrderByFromOrTo() {
+    return lastChatOrderByFromOrTo;
+  }
+
+  public void setLastChatOrderByFromOrTo(boolean lastChatOrderByFromOrTo) {
+    this.lastChatOrderByFromOrTo = lastChatOrderByFromOrTo;
+  }
+
+  public String getComment() {
+    return comment;
+  }
+
+  public void setComment(String comment) {
+    this.comment = comment;
+  }
+
+  public int getId() {
     return id;
   }
 

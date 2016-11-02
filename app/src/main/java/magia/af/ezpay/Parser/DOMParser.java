@@ -2,7 +2,6 @@ package magia.af.ezpay.Parser;
 
 import android.util.Log;
 
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,19 +13,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.security.spec.InvalidKeySpecException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 
 public class DOMParser {
 
@@ -293,6 +283,19 @@ public class DOMParser {
           rssItem.setTelNo(jsonObject.getString("mobile"));
           rssItem.setContactName(getContactName(jsonObject.getString("mobile"), json));
           rssItem.setContactImg(jsonObject.getString("photo"));
+          JSONObject object = jsonObject.getJSONObject("lastchat");
+          if (object != null) {
+            rssItem.setLastChatId(object.getInt("id"));
+            rssItem.setLastChatFrom(object.getString("f"));
+            rssItem.setLastChatTo(object.getString("t"));
+            rssItem.setLastChatAmount(object.getInt("a"));
+            rssItem.setLastChatDate(object.getString("d"));
+            rssItem.setLastChatOrderByFromOrTo(object.getBoolean("o"));
+            rssItem.setComment(object.getString("c"));
+          }
+          else {
+            break;
+          }
 
         } catch (JSONException e) {
           e.printStackTrace();

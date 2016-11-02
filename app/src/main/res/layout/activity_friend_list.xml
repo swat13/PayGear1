@@ -79,6 +79,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:foreground="?selectableItemBackground"
+            android:clickable="true"
             app:cardBackgroundColor="#edede1"
             app:cardElevation="2dp">
 

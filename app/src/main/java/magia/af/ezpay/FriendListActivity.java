@@ -58,12 +58,16 @@ public class FriendListActivity extends BaseActivity implements OnClickHandler{
   public class FeedViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     TextView contactName;
+    TextView description;
+    TextView pay;
     ImageView contactImage;
     ImageView contactStat;
     OnClickHandler onClickHandler;
     public FeedViewHolder(View v , OnClickHandler onClickHandler) {
       super(v);
-      contactName = (TextView) v.findViewById(R.id.name_text);
+      contactName = (TextView) v.findViewById(R.id.txt_contact_item_name);
+      description = (TextView) v.findViewById(R.id.txt_contact_item_description);
+      pay = (TextView) v.findViewById(R.id.txt_contact_item_pay);
       contactImage = (ImageView) v.findViewById(R.id.contact_img);
       contactStat = (ImageView) v.findViewById(R.id.status_circle);
       v.setOnClickListener(this);
@@ -96,6 +100,8 @@ public class FriendListActivity extends BaseActivity implements OnClickHandler{
 
       FeedViewHolder.contactName.setText(fe.getContactName());
       Glide.with(FriendListActivity.this).load("http://new.opaybot.ir"+fe.getContactImg()).into(FeedViewHolder.contactImage);
+      FeedViewHolder.description.setText(fe.getComment());
+      FeedViewHolder.pay.setText(fe.getLastChatAmount()+"");
 //        FeedViewHolder.contactImage.setImageDrawable(fe.getContactImg());
 
             /*if (fe.isContactStatus()) {
