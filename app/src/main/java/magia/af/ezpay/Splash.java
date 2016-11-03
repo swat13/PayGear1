@@ -19,6 +19,8 @@ import magia.af.ezpay.helper.GetContact;
 
 public class Splash extends BaseActivity {
 
+  /*ddfdf*/
+
   ContactDatabase database;
 
   @Override
