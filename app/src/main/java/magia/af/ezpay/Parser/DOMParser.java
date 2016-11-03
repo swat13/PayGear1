@@ -220,7 +220,7 @@ public class DOMParser {
   /**
    * @return
    **/
-  public RSSFeed getContact(String json) {
+  public RSSFeed sendContact(String json) {
 
     try {
 

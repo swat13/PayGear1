@@ -1,25 +1,13 @@
 package magia.af.ezpay.helper;
 
-import android.content.ContentProvider;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.provider.ContactsContract;
-import android.support.v4.util.ArrayMap;
-import android.util.Log;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-
-import magia.af.ezpay.Parser.ContactModule;
+import magia.af.ezpay.Parser.RSSFeed;
+import magia.af.ezpay.Parser.RSSItem;
 
 /**
  * Created by Saeid Yazdany on 11/2/2016.
@@ -51,29 +39,31 @@ public class ContactDatabase extends SQLiteOpenHelper {
     db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
   }
 
-  public void createData(String phone) {
-
-    Log.e("phone:", phone + "" );
+  public void createData(String phone , String name) {
 
     SQLiteDatabase database = this.getWritableDatabase();
     ContentValues values = new ContentValues();
     values.put(CONTACT_NUMBER , phone);
+    values.put(CONTACT_NAME , name);
     database.insert(TABLE_NAME , null , values);
     database.close();
   }
 
-  public ArrayList<String> getAllData() {
+  public RSSFeed getAllData() {
 
-    ArrayList<String> array_list = new ArrayList<>();
+    RSSFeed rssFeed = new RSSFeed();
 
     //hp = new HashMap();
     SQLiteDatabase db = this.getReadableDatabase();
     Cursor res = db.rawQuery("select * from " + TABLE_NAME, null);
 //    res.moveToFirst();
     while (res.moveToNext()) {
-      array_list.add(res.getString(res.getColumnIndex(CONTACT_NUMBER)));
+      RSSItem rssItem = new RSSItem();
+      rssItem.setTelNo(res.getString(res.getColumnIndex(CONTACT_NUMBER)));
+      rssItem.setContactName(res.getString(res.getColumnIndex(CONTACT_NAME)));
+      rssFeed.addItem(rssItem);
     }
     res.close();
-    return array_list;
+    return rssFeed;
   }
 }

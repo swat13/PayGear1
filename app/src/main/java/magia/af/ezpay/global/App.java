@@ -28,7 +28,7 @@ public class App extends Application {
   }
 
   public static int getVersion(){
-    return preferences.getInt("version",1);
+    return preferences.getInt("version",0);
   }
 
   public static void setVersion(int version){

@@ -176,7 +176,7 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
         @Override
         protected RSSFeed doInBackground(Void... params) {
             DOMParser domParser = new DOMParser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
-            return domParser.getContact(new GetContact().getContact(getActivity(), (RSSFeed) new LocalPersistence().readObjectFromFile(getContext(), "All_Contact_List")));
+            return domParser.sendContact(new GetContact().getContact(getActivity()));
         }
 
         @Override

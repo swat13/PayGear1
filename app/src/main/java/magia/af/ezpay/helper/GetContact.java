@@ -26,11 +26,12 @@ public class GetContact {
     private static final String TAG = "TAG";
     private ArrayMap<String, Boolean> stringArrayMap = new ArrayMap<>();
     Context cx;
+    RSSItem rssItem;
 
-
-    public String getContact(Context context, RSSFeed rssFeed) {
+    public String getContact(Context context) {
         cx = context;
         JSONArray jsonArray = null;
+        RSSFeed feed = new RSSFeed();
         ContentResolver cr = context.getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
                 null, null, null, null);
@@ -59,8 +60,10 @@ public class GetContact {
                         if (phoneNo.contains("+989")) {
                             phoneNo = phoneNo.replace("+98", "0");
                         }
-
-                        if (phoneNo.startsWith("09") && isNewContact(rssFeed, phoneNo)) {
+                        rssItem = new RSSItem();
+                        rssItem.setTelNo(phoneNo);
+                        rssItem.setContactName(name);
+                        if (phoneNo.startsWith("09")) {
 
                             try {
                                 if (!stringArrayMap.containsKey(phoneNo)) {
@@ -81,9 +84,14 @@ public class GetContact {
 
                     }
                     pCur.close();
+                    feed.addItem(rssItem);
                 }
             }
         }
+          ContactDatabase database = new ContactDatabase(context);
+          for (int i = 0; i < feed.getItemCount(); i++) {
+            database.createData(feed.getItem(i).getTelNo(), feed.getItem(i).getContactName());
+          }
         Log.i("JSON CONTACT", jsonArray.toString());
         writeToFile(jsonArray);
         return jsonArray != null ? jsonArray.toString() : null;
@@ -156,5 +164,47 @@ public class GetContact {
             }
         }
         return phones;
+    }
+
+    public RSSFeed getNewContact(Context context) {
+        cx = context;
+        RSSFeed rssFeed = new RSSFeed();
+        ContentResolver cr = context.getContentResolver();
+        Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
+          null, null, null, null);
+
+        if (cur.getCount() > 0) {
+            int count = 0;
+            while (cur.moveToNext()) {
+                String id = cur.getString(
+                  cur.getColumnIndex(ContactsContract.Contacts._ID));
+                String name = cur.getString(cur.getColumnIndex(
+                  ContactsContract.Contacts.DISPLAY_NAME));
+
+                if (cur.getInt(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)) > 0) {
+                    Cursor pCur = cr.query(
+                      ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                      null,
+                      ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                      new String[]{id}, null);
+                    while (pCur.moveToNext()) {
+                        String phoneNo = pCur.getString(pCur.getColumnIndex(
+                          ContactsContract.CommonDataKinds.Phone.NUMBER));
+                        if (phoneNo.contains(" ")) {
+                            phoneNo = phoneNo.replace(" ", "");
+                        }
+                        if (phoneNo.contains("+989")) {
+                            phoneNo = phoneNo.replace("+98", "0");
+                        }
+                        RSSItem rssItem = new RSSItem();
+                        rssItem.setTelNo(phoneNo);
+                        rssItem.setContactName(name);
+                        rssFeed.addItem(rssItem);
+                    }
+                    pCur.close();
+                }
+            }
+        }
+        return rssFeed;
     }
 }
