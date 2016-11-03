@@ -11,10 +11,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
 import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.Parser.RSSItem;
+import magia.af.ezpay.Splash;
 import magia.af.ezpay.Utilities.LocalPersistence;
 
 /**

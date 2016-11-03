@@ -109,6 +109,187 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/invite_friends"/>
+
+
+        <LinearLayout
+            android:id="@+id/btm_menu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:background="@drawable/shadow_bottom_menu"/>
+
+
+            <LinearLayout
+                android:id="@+id/bottom_action_layout"
+                android:layout_width="match_parent"
+                android:layout_height="?actionBarSize"
+                android:background="#eceff1"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/profile_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.2"
+                    android:padding="5dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:onClick="onClick">
+
+                    <Button
+                        android:id="@+id/report_list5"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:clickable="false"
+                        android:background="@drawable/radar"
+                        android:layout_marginBottom="2dp"
+                        />
+
+                    <TextView
+                        android:id="@+id/accounting_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:textSize="10dp"
+                        android:textStyle="bold"
+                        android:text="پروفایل"
+                        android:textColor="#a0817f"
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/friends_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.2"
+                    android:padding="5dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:onClick="onClick">
+
+                    <Button
+                        android:id="@+id/report_list4"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:clickable="false"
+                        android:background="@drawable/group"
+                        android:layout_marginBottom="2dp"
+
+                        />
+
+                    <TextView
+                        android:id="@+id/adsl_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:textSize="10dp"
+                        android:textStyle="bold"
+                        android:text="دوستان"
+                        android:textColor="#a0817f" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/barcode_reader"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.2"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:orientation="vertical"
+                    android:clickable="true">
+
+                    <Button
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:clickable="false"
+                        android:background="@drawable/barcode"
+                        android:layout_marginBottom="2dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="بارکدخوان"
+                        android:textStyle="bold"
+                        android:textSize="10dp"
+                        android:clickable="false"
+                        android:textColor="#a0817f" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/barcode_reader2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.2"
+                    android:padding="5dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:onClick="onClick">
+
+                    <Button
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:clickable="false"
+                        android:background="@drawable/radar"
+                        android:layout_marginBottom="2dp"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="بارکدخوان"
+                        android:textSize="10dp"
+                        android:textStyle="bold"
+                        android:clickable="false"
+                        android:textColor="#a0817f" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/rss_feed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.2"
+                    android:padding="5dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:onClick="onClick">
+
+                    <Button
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:clickable="false"
+                        android:background="@drawable/feed"
+                        android:layout_marginBottom="2dp"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="خوراک"
+                        android:textSize="10dp"
+                        android:clickable="false"
+                        android:textStyle="bold"
+                        android:textColor="#a0817f" />
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+        </LinearLayout>
     </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>

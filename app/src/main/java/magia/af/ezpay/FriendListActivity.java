@@ -102,6 +102,7 @@ public class FriendListActivity extends BaseActivity implements OnClickHandler{
       Glide.with(FriendListActivity.this).load("http://new.opaybot.ir"+fe.getContactImg()).into(FeedViewHolder.contactImage);
       FeedViewHolder.description.setText(fe.getComment());
       FeedViewHolder.pay.setText(fe.getLastChatAmount()+"");
+
 //        FeedViewHolder.contactImage.setImageDrawable(fe.getContactImg());
 
             /*if (fe.isContactStatus()) {
@@ -111,13 +112,13 @@ public class FriendListActivity extends BaseActivity implements OnClickHandler{
                 FeedViewHolder.contactStat.setImageResource(R.drawable.circle_bg_offline_stat);*/
 
 
-    }
+        }
 
-    @Override
-    public FeedViewHolder onCreateViewHolder(final ViewGroup viewGroup, final int position) {
-      View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.contact_item, viewGroup, false);
-      return new FeedViewHolder(itemView , onClickHandler);
-    }
+        @Override
+        public FeedViewHolder onCreateViewHolder(final ViewGroup viewGroup, final int position) {
+            View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.contact_item, viewGroup, false);
+            return new FeedViewHolder(itemView, onClickHandler);
+        }
 
   }
 
