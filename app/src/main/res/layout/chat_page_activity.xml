@@ -81,6 +81,7 @@
 
                     </LinearLayout>
                 </LinearLayout>
+                
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.AppBarLayout>
 
@@ -170,12 +171,12 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/btn_pey"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:id="@+id/btn_pey"
-                android:clickable="true"
                 android:layout_marginRight="10dp"
                 android:layout_weight="0.20"
+                android:clickable="true"
                 android:gravity="center"
                 android:orientation="vertical">
 
@@ -183,18 +184,16 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:background="@android:color/transparent"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/payment"
                     android:clickable="false"
-                    />
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/payment" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="پرداخت"
-                    android:textColor="#FFFFFF"
                     android:clickable="false"
-                    />
+                    android:text="پرداخت"
+                    android:textColor="#FFFFFF" />
             </LinearLayout>
 
             <LinearLayout
