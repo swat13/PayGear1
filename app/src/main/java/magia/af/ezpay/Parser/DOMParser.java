@@ -47,8 +47,8 @@ public class DOMParser {
       httpConn.setDoInput(true);
       httpConn.setAllowUserInteraction(false);
       httpConn.setRequestMethod("POST");
-      httpConn.setConnectTimeout(10000);
-      httpConn.setReadTimeout(10000);
+      httpConn.setConnectTimeout(30000);
+      httpConn.setReadTimeout(30000);
       httpConn.setRequestProperty("Content-Type", "application/json");
 
       OutputStream os = httpConn.getOutputStream();

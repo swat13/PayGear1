@@ -13,7 +13,6 @@ import org.json.JSONObject;
 
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.RSSFeed;
-import magia.af.ezpay.global.App;
 import magia.af.ezpay.helper.ContactDatabase;
 import magia.af.ezpay.helper.GetContact;
 
@@ -31,7 +30,7 @@ public class Splash extends BaseActivity {
     new Handler().postDelayed(new Runnable() {
       @Override
       public void run() {
-        if (getSharedPreferences("EZpay", 0).getString("token", "").length() > 10) {
+        if (!getSharedPreferences("EZpay", 0).getString("token", "").isEmpty()) {
 
           database = new ContactDatabase(Splash.this);
           GetContact getContact = new GetContact();
@@ -42,10 +41,10 @@ public class Splash extends BaseActivity {
           Log.e("1111111", "run: "+phoneContact.getItemCount() );
           for (int i = 0; i < phoneContact.getItemCount(); i++) {
             for (int j = 0; j < databaseContact.getItemCount(); j++) {
-              if (phoneContact.getItem(i).getTelNo().equals(databaseContact.getItem(j).getTelNo())) {
+              if (phoneContact.getItem(i).getTelNo().equals(databaseContact.getItem(j).getTelNo())
+                &&phoneContact.getItem(i).getContactName().equals(databaseContact.getItem(j).getContactName()) ) {
                 Log.e("))))))))))", "run: $$$$$ "+i );
                 phoneContact.removeItem(i);
-                break;
               }
             }
           }
@@ -71,10 +70,6 @@ public class Splash extends BaseActivity {
         }
       }
     }, 1500);
-
-  }
-
-  public void compareContact(ContactDatabase database){
 
   }
 
