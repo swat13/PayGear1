@@ -1,12 +1,10 @@
 package magia.af.ezpay.global;
 
 import android.app.Application;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import magia.af.ezpay.R;
-import magia.af.ezpay.Utilities.FontsOverride;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 /**

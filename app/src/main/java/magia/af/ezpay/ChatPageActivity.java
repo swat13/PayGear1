@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -200,6 +201,8 @@ public class ChatPageActivity extends BaseActivity {
     @Override
     protected void onPreExecute() {
       super.onPreExecute();
+
+
     }
 
     @Override
@@ -239,17 +242,34 @@ public class ChatPageActivity extends BaseActivity {
     public int getItemViewType(int position) {
       int pos = feed.getItemCount() - position - 1;
       if (feed.getItem(pos).getFrom().equals(phone)) {
-        return 0;
-      } else return 1;
+        if (feed.getItem(pos).isPaideBool()) {
+          return 0;
+        }
+        else
+          return 2;
+
+      } else {
+        if (feed.getItem(pos).isPaideBool()) {
+          return 1;
+        }
+        else
+          return 3;
+      }
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
       View rootView;
       if (viewType == 0) {
-        rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_from, parent, false);
-      } else {
         rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_to, parent, false);
+      } else if (viewType == 1){
+        rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_from, parent, false);
+      }
+      else if (viewType == 2){
+        rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_pay_from, parent, false);
+      }
+      else {
+        rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_pay_to, parent, false);
       }
       return new ViewHolder(rootView);
     }
@@ -277,7 +297,54 @@ public class ChatPageActivity extends BaseActivity {
             Toast.makeText(ChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
           }
         });
-      } else {
+      }
+      else if (holder.getItemViewType() == 2){
+        year = Integer.parseInt(feed.getItem(pos).getDate().substring(0, 4));
+        month = Integer.parseInt(feed.getItem(pos).getDate().substring(5, 7));
+        day = Integer.parseInt(feed.getItem(pos).getDate().substring(8, 10));
+        conversion = new CalendarConversion(year, month, day);
+        holder.txt_price.setText(feed.getItem(pos).getAmount() + "");
+        holder.txt_status.setText(feed.getItem(pos).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
+        holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
+        holder.txt_date.setText(conversion.getIranianDate() + "");
+        holder.txt_description.setText(feed.getItem(pos).getComment());
+        holder.btn_cancel.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            Toast.makeText(ChatPageActivity.this, "آیا برای انصراف مطمئن هستید؟", Toast.LENGTH_SHORT).show();
+          }
+        });
+        holder.btn_replay.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            Toast.makeText(ChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
+          }
+        });
+      }
+      else if (holder.getItemViewType() == 3){
+        year = Integer.parseInt(feed.getItem(pos).getDate().substring(0, 4));
+        month = Integer.parseInt(feed.getItem(pos).getDate().substring(5, 7));
+        day = Integer.parseInt(feed.getItem(pos).getDate().substring(8, 10));
+        conversion = new CalendarConversion(year, month, day);
+        holder.txt_price.setText(feed.getItem(pos).getAmount() + "");
+        holder.txt_status.setText(feed.getItem(pos).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
+        holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
+        holder.txt_date.setText(conversion.getIranianDate() + "");
+        holder.txt_description.setText(feed.getItem(pos).getComment());
+        holder.btn_cancel.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            Toast.makeText(ChatPageActivity.this, "آیا برای انصراف مطمئن هستید؟", Toast.LENGTH_SHORT).show();
+          }
+        });
+        holder.btn_replay.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            Toast.makeText(ChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
+          }
+        });
+      }
+      else {
         year = Integer.parseInt(feed.getItem(pos).getDate().substring(0, 4));
         month = Integer.parseInt(feed.getItem(pos).getDate().substring(5, 7));
         day = Integer.parseInt(feed.getItem(pos).getDate().substring(8, 10));
@@ -301,14 +368,14 @@ public class ChatPageActivity extends BaseActivity {
       return feed.getItemCount();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
       TextView txt_status;
       TextView txt_description;
       ImageButton btn_replay;
       TextView txt_price;
       TextView txt_clock;
       TextView txt_date;
-
+      Button btn_cancel;
       ViewHolder(View itemView) {
         super(itemView);
         txt_price = (TextView) itemView.findViewById(R.id.txt_priceFrom);
@@ -317,6 +384,13 @@ public class ChatPageActivity extends BaseActivity {
         txt_status = (TextView) itemView.findViewById(R.id.txt_status_payed_from);
         txt_description = (TextView) itemView.findViewById(R.id.txt_description_from);
         btn_replay = (ImageButton) itemView.findViewById(R.id.btn_replay_pay_from);
+        btn_cancel = (Button)itemView.findViewById(R.id.btn_cancel_pay);
+//        btn_cancel.setOnClickListener(this);
+      }
+
+      @Override
+      public void onClick(View v) {
+
       }
     }
 

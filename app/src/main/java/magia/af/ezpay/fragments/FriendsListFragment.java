@@ -3,24 +3,25 @@ package magia.af.ezpay.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
 import magia.af.ezpay.ChatPageActivity;
-import magia.af.ezpay.FriendListActivity;
 import magia.af.ezpay.MainActivity;
 import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.Parser.RSSItem;
 import magia.af.ezpay.R;
-import magia.af.ezpay.SimpleScannerActivity;
+import magia.af.ezpay.helper.ContactDatabase;
 import magia.af.ezpay.interfaces.OnClickHandler;
 
 /**
@@ -94,27 +95,29 @@ public class FriendsListFragment extends android.app.Fragment implements OnClick
     }
 
 
-
-
     @Override
     public void onClick(RSSItem rssFeed) {
         Intent goToChatPageActivity = new Intent(getActivity(), ChatPageActivity.class);
         goToChatPageActivity.putExtra("phone", rssFeed.getTelNo());
         goToChatPageActivity.putExtra("contactName", rssFeed.getContactName());
         goToChatPageActivity.putExtra("image", rssFeed.getContactImg());
-        startActivity(goToChatPageActivity);
+        goToChatPageActivity.putExtra("pos", rssFeed.getPosition());
+        startActivityForResult(goToChatPageActivity, 10);
     }
 
     public class FeedViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView contactName;
+        TextView description;
+        TextView pay;
         ImageView contactImage;
         ImageView contactStat;
         OnClickHandler onClickHandler;
-
         public FeedViewHolder(View v, OnClickHandler onClickHandler) {
             super(v);
             contactName = (TextView) v.findViewById(R.id.txt_contact_item_name);
+            description = (TextView) v.findViewById(R.id.txt_contact_item_description);
+            pay = (TextView) v.findViewById(R.id.txt_contact_item_pay);
             contactImage = (ImageView) v.findViewById(R.id.contact_img);
             contactStat = (ImageView) v.findViewById(R.id.status_circle);
             v.setOnClickListener(this);
@@ -128,7 +131,7 @@ public class FriendsListFragment extends android.app.Fragment implements OnClick
         }
     }
 
-    public class ListAdapter extends RecyclerView.Adapter<FeedViewHolder> {
+    public class ListAdapter extends RecyclerView.Adapter<FriendsListFragment.FeedViewHolder> {
         OnClickHandler onClickHandler;
 
         public ListAdapter(OnClickHandler onClickHandler) {
@@ -141,12 +144,19 @@ public class FriendsListFragment extends android.app.Fragment implements OnClick
         }
 
         @Override
-        public void onBindViewHolder(final FeedViewHolder FeedViewHolder, final int position) {
+        public void onBindViewHolder(final FriendsListFragment.FeedViewHolder FeedViewHolder, final int position) {
 
-            final RSSItem fe = _feed.getItem(position);
-
+            RSSItem fe = _feed.getItem(position);
+            ContactDatabase database = new ContactDatabase(getActivity());
+            fe.setContactName(database.getNameFromNumber(fe.getTelNo()));
+            Log.e("sssssssss", "onBindViewHolder: " + fe.getTelNo());
+            Log.e("(((((((((((", "onBindViewHolder: " + fe.getTelNo());
             FeedViewHolder.contactName.setText(fe.getContactName());
             Glide.with(getActivity()).load("http://new.opaybot.ir" + fe.getContactImg()).into(FeedViewHolder.contactImage);
+            FeedViewHolder.description.setText(fe.getComment());
+            FeedViewHolder.pay.setText(fe.getLastChatAmount() + "");
+            fe.setPosition(position);
+
 //        FeedViewHolder.contactImage.setImageDrawable(fe.getContactImg());
 
             /*if (fe.isContactStatus()) {
@@ -159,7 +169,7 @@ public class FriendsListFragment extends android.app.Fragment implements OnClick
         }
 
         @Override
-        public FeedViewHolder onCreateViewHolder(final ViewGroup viewGroup, final int position) {
+        public FriendsListFragment.FeedViewHolder onCreateViewHolder(final ViewGroup viewGroup, final int position) {
             View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.contact_item, viewGroup, false);
             return new FeedViewHolder(itemView, onClickHandler);
         }

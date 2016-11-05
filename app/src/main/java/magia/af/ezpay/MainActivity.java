@@ -19,7 +19,7 @@ import magia.af.ezpay.fragments.FriendsListFragment;
  * Created by erfan on 11/3/2016.
  */
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends BaseActivity implements View.OnClickListener {
 
 
 
