@@ -11,5 +11,7 @@
     <dimen name="marginTop3">10dp</dimen>
     <dimen name="height3">55dp</dimen>
     <dimen name="splash_ratio">90dp</dimen>
+    <dimen name="btm_padding">3dp</dimen>
+
 
 </resources>

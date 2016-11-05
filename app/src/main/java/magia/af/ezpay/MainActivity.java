@@ -72,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.barcode_reader:
 
+
+                Log.e("clicked", "onClick: " );
                 startActivity(new Intent(MainActivity.this,SimpleScannerActivity.class));
 
                 break;
@@ -80,7 +82,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 barCodeGet = new BarCodeGet().getInstance();
                 getFragmentManager().beginTransaction().replace(R.id.detail_fragment, barCodeGet).addToBackStack(null).commit();
-
 
                 friendsLayout.setAlpha((float) 0.45);
                 barcodeReader.setAlpha((float) 0.45);
@@ -93,6 +94,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+            finish();
+
     }
 
 }

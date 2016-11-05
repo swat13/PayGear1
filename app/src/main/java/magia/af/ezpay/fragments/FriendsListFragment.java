@@ -114,7 +114,7 @@ public class FriendsListFragment extends android.app.Fragment implements OnClick
 
         public FeedViewHolder(View v, OnClickHandler onClickHandler) {
             super(v);
-            contactName = (TextView) v.findViewById(R.id.name_text);
+            contactName = (TextView) v.findViewById(R.id.txt_contact_item_name);
             contactImage = (ImageView) v.findViewById(R.id.contact_img);
             contactStat = (ImageView) v.findViewById(R.id.status_circle);
             v.setOnClickListener(this);

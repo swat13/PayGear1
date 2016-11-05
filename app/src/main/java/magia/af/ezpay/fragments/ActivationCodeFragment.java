@@ -136,7 +136,7 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
     }
 
 
-    private class verifyActiveCode extends AsyncTask<String, Void, String> {
+    private class verifyActiveCode extends AsyncTask<String, Void, String[]> {
 
         @Override
         protected void onPreExecute() {
@@ -147,17 +147,20 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
         }
 
         @Override
-        protected String doInBackground(String... params) {
+        protected String[] doInBackground(String... params) {
             DOMParser domParser = new DOMParser();
             return domParser.Verify_Login_Activation_Code(params[0], params[1]);
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(String[] result) {
             Log.e("11111111111111", "onPostExecute: " + result);
-            if (result.length() > 10) {
-                Log.e("55555555555", "onPostExecute: " + result);
-                getActivity().getSharedPreferences("EZpay", 0).edit().putString("token", result).apply();
+            String tok=result[0];
+            String id=result[1];
+            if (tok.length() > 10) {
+                Log.e("55555555555", "onPostExecute: " + tok);
+                getActivity().getSharedPreferences("EZpay", 0).edit().putString("token", tok).apply();
+                getActivity().getSharedPreferences("EZpay", 0).edit().putString("id", id).apply();
                 new fillContact().execute();
             } else if (result.equals("wrong")) {
                 Toast.makeText(getActivity(), "کد فعال سازی صحیح نمی باشد!", Toast.LENGTH_SHORT).show();
@@ -177,7 +180,7 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
         @Override
         protected RSSFeed doInBackground(Void... params) {
             DOMParser domParser = new DOMParser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
-            return domParser.sendContact(new GetContact().getContact(getActivity()));
+            return domParser.getContact(new GetContact().getContact(getActivity()));
         }
 
         @Override

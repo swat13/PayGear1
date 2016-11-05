@@ -8,19 +8,13 @@ import com.google.zxing.Result;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
-/**
- * Created by erfan on 11/2/2016.
- */
-
-
-
-
 public class SimpleScannerActivity extends Activity implements ZXingScannerView.ResultHandler {
     private ZXingScannerView mScannerView;
 
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
+        Log.e("Created", "baaaar " );
         mScannerView = new ZXingScannerView(this);   // Programmatically initialize the scanner view
         setContentView(mScannerView);                // Set the scanner view as the content view
     }
@@ -32,6 +26,8 @@ public class SimpleScannerActivity extends Activity implements ZXingScannerView.
         mScannerView.startCamera();          // Start camera on resume
     }
 
+
+
     @Override
     public void onPause() {
         super.onPause();
@@ -41,12 +37,16 @@ public class SimpleScannerActivity extends Activity implements ZXingScannerView.
     @Override
     public void handleResult(Result rawResult) {
         // Do something with the result here
-        Log.e("ssssssss", rawResult.getText()); // Prints scan results
-        Log.e("pppppppp", rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
+        Log.v("dddd", rawResult.getText()); // Prints scan results
+        Log.v("eeeeeeeee", rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
 
-
-//        finish();
         // If you would like to resume scanning, call this method below:
 //        mScannerView.resumeCameraPreview(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
     }
 }

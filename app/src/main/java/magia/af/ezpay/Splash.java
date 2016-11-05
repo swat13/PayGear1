@@ -83,13 +83,14 @@ public class Splash extends BaseActivity {
     @Override
     protected RSSFeed doInBackground(String... params) {
       DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
-      return domParser.sendContact(params[0]);
+      return domParser.getContact(params[0]);
     }
 
     @Override
     protected void onPostExecute(RSSFeed result) {
       if (result != null) {
-        startActivity(new Intent(Splash.this, FriendListActivity.class).putExtra("contact", result));
+        startActivity(new Intent(Splash.this, MainActivity.class).putExtra("contact", result));
+        finish();
       } else
         Toast.makeText(Splash.this, "problem in connection!", Toast.LENGTH_SHORT).show();
 

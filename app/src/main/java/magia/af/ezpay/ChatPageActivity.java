@@ -24,20 +24,22 @@ import magia.af.ezpay.Parser.PayLogItem;
 import magia.af.ezpay.Utilities.LocalPersistence;
 import magia.af.ezpay.fragments.GetCardFragment;
 import magia.af.ezpay.fragments.PaymentFragment;
+import magia.af.ezpay.fragments.RequestPaymentFragment;
 import magia.af.ezpay.helper.CalendarConversion;
 
 public class ChatPageActivity extends BaseActivity {
-  private String phone;
-  public String contactName;
-  private String imageUrl = "http://new.opaybot.ir";
-  RecyclerView recyclerView;
-  PayLogFeed feed;
-  ChatPageAdapter adapter;
-  static boolean isOpen = false;
-  public RelativeLayout darkDialog;
-  public GetCardFragment getCardFragment;
-  public PaymentFragment paymentFragment;
-  public int fragment_status = 0;
+    private String phone;
+    public String contactName;
+    private String imageUrl = "http://new.opaybot.ir";
+    RecyclerView recyclerView;
+    PayLogFeed feed;
+    ChatPageAdapter adapter;
+    static boolean isOpen = false;
+    public RelativeLayout darkDialog;
+    public GetCardFragment getCardFragment;
+    public PaymentFragment paymentFragment;
+    public RequestPaymentFragment requestPaymentFragment;
+    public int fragment_status = 0;
 
   public String description;
   public int amount;
@@ -92,12 +94,28 @@ public class ChatPageActivity extends BaseActivity {
       }
     });
 
-    findViewById(R.id.btn_back).setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        onBackPressed();
-      }
-    });
+        findViewById(R.id.btn_receive).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Log.e("Receive", "onClick: " );
+                FragmentTransaction ft;
+                darkDialog.setVisibility(View.VISIBLE);
+                requestPaymentFragment = RequestPaymentFragment.newInstance();
+                ft = getFragmentManager().beginTransaction();
+                ft.setCustomAnimations(R.animator.enter_from_right, R.animator.exit_to_right);
+                ft.add(android.R.id.content, requestPaymentFragment).commit();
+                isOpen = false;
+
+            }
+        });
+
+        findViewById(R.id.btn_back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
   }
 
@@ -124,6 +142,58 @@ public class ChatPageActivity extends BaseActivity {
         Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
     }
   }
+
+
+    private class requestFromAnother extends AsyncTask<String, Void, PayLogItem> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected PayLogItem doInBackground(String... params) {
+            DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
+            return domParser.RequestFromAnother(params[0], params[1], params[2]);
+        }
+
+        @Override
+        protected void onPostExecute(PayLogItem result) {
+            if (result != null) {
+                feed.addItem(result);
+                new LocalPersistence().writeObjectToFile(ChatPageActivity.this, feed, "Payment_Chat_List");
+                adapter.notifyDataSetChanged();
+            } else
+                Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    private class accPaymentRequest extends AsyncTask<String, Void, PayLogItem> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected PayLogItem doInBackground(String... params) {
+            DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
+            return domParser.accPaymentRequest(getSharedPreferences("EZpay", 0).getString("id", ""), params[1]);
+
+        }
+
+        @Override
+        protected void onPostExecute(PayLogItem result) {
+            if (result != null) {
+                feed.addItem(result);
+                new LocalPersistence().writeObjectToFile(ChatPageActivity.this, feed, "Payment_Chat_List");
+                adapter.notifyDataSetChanged();
+            } else
+                Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
   private class getChatLog extends AsyncTask<String, Void, PayLogFeed> {
 
@@ -252,6 +322,11 @@ public class ChatPageActivity extends BaseActivity {
 
   }
 
+
+
+    public void sendReqPay(int amount,String comment) {
+        new requestFromAnother().execute(phone,  amount+"", comment);
+    }
   public void sendPay(String detail, String comment, int amount) {
     description = comment;
     this.amount = amount;
@@ -266,12 +341,15 @@ public class ChatPageActivity extends BaseActivity {
     ft.add(android.R.id.content, getCardFragment).commit();
   }
 
+
   @Override
   public void onBackPressed() {
     if (fragment_status == 1) {
       getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(paymentFragment).commit();
     } else if (fragment_status == 2) {
       getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(getCardFragment).commit();
+    }else if (fragment_status == 3) {
+        getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(requestPaymentFragment).commit();
     } else if (description != null) {
       Intent intent = new Intent(this, FriendListActivity.class);
       intent.putExtra("description", description);

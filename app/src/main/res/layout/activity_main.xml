@@ -32,7 +32,9 @@
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"
             android:background="#eceff1"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="@dimen/btm_padding"
+            >
 
             <LinearLayout
                 android:id="@+id/profile_layout"
