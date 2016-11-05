@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.Parser.RSSItem;
@@ -39,13 +40,13 @@ public class ContactDatabase extends SQLiteOpenHelper {
     db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
   }
 
-  public void createData(String phone , String name) {
+  public void createData(String phone, String name) {
 
     SQLiteDatabase database = this.getWritableDatabase();
     ContentValues values = new ContentValues();
-    values.put(CONTACT_NUMBER , phone);
-    values.put(CONTACT_NAME , name);
-    database.insert(TABLE_NAME , null , values);
+    values.put(CONTACT_NUMBER, phone);
+    values.put(CONTACT_NAME, name);
+    database.insert(TABLE_NAME, null, values);
     database.close();
   }
 
@@ -65,5 +66,17 @@ public class ContactDatabase extends SQLiteOpenHelper {
     }
     res.close();
     return rssFeed;
+  }
+
+  public String getNameFromNumber(String phone) {
+    String name = "";
+    SQLiteDatabase database = this.getReadableDatabase();
+    Cursor cursor = database.rawQuery("select * from " + TABLE_NAME + " where " + CONTACT_NUMBER + " ='"+ phone + "'", null);
+    while (cursor.moveToNext()){
+      name = cursor.getString(cursor.getColumnIndex(CONTACT_NAME));
+      Log.e("PHONE", "getNameFromNumber: " + name);
+    }
+    cursor.close();
+    return name;
   }
 }

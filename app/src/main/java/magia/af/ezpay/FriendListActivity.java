@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.Parser.RSSItem;
 import magia.af.ezpay.Utilities.LocalPersistence;
+import magia.af.ezpay.helper.ContactDatabase;
 import magia.af.ezpay.interfaces.OnClickHandler;
 
 public class FriendListActivity extends BaseActivity implements OnClickHandler{
@@ -98,7 +99,8 @@ public class FriendListActivity extends BaseActivity implements OnClickHandler{
 
       final RSSItem fe = _feed.getItem(position);
 
-      FeedViewHolder.contactName.setText(fe.getContactName());
+      ContactDatabase database = new ContactDatabase(FriendListActivity.this);
+      FeedViewHolder.contactName.setText(database.getNameFromNumber(fe.getTelNo()));
       Glide.with(FriendListActivity.this).load("http://new.opaybot.ir"+fe.getContactImg()).into(FeedViewHolder.contactImage);
       FeedViewHolder.description.setText(fe.getComment());
       FeedViewHolder.pay.setText(fe.getLastChatAmount()+"");

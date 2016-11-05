@@ -36,19 +36,15 @@ public class Splash extends BaseActivity {
           GetContact getContact = new GetContact();
 
           RSSFeed databaseContact = database.getAllData();
-          Log.e("000000000", "run: "+databaseContact.getItemCount() );
           RSSFeed phoneContact = getContact.getNewContact(Splash.this);
-          Log.e("1111111", "run: "+phoneContact.getItemCount() );
           for (int i = 0; i < phoneContact.getItemCount(); i++) {
             for (int j = 0; j < databaseContact.getItemCount(); j++) {
               if (phoneContact.getItem(i).getTelNo().equals(databaseContact.getItem(j).getTelNo())
                 &&phoneContact.getItem(i).getContactName().equals(databaseContact.getItem(j).getContactName()) ) {
-                Log.e("))))))))))", "run: $$$$$ "+i );
                 phoneContact.removeItem(i);
               }
             }
           }
-          Log.e("2222222222", "run: "+phoneContact.getItemCount() );
           JSONArray jsonArray = new JSONArray();
           for (int i = 0; i < phoneContact.getItemCount(); i++) {
             JSONObject jsonObject = new JSONObject();
