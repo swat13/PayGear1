@@ -98,9 +98,9 @@ public class FriendListActivity extends BaseActivity implements OnClickHandler{
     public void onBindViewHolder(final FeedViewHolder FeedViewHolder, final int position) {
 
       final RSSItem fe = _feed.getItem(position);
-
       ContactDatabase database = new ContactDatabase(FriendListActivity.this);
-      FeedViewHolder.contactName.setText(database.getNameFromNumber(fe.getTelNo()));
+      fe.setContactName(database.getNameFromNumber(fe.getTelNo()));
+      FeedViewHolder.contactName.setText(fe.getContactName());
       Glide.with(FriendListActivity.this).load("http://new.opaybot.ir"+fe.getContactImg()).into(FeedViewHolder.contactImage);
       FeedViewHolder.description.setText(fe.getComment());
       FeedViewHolder.pay.setText(fe.getLastChatAmount()+"");
