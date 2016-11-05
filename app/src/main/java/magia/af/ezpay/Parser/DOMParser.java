@@ -680,7 +680,7 @@ public class DOMParser {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
 
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("id", id);
+            jsonObject.put("id", Integer.parseInt(id));
             jsonObject.put("paymentDetails", detail);
 
             Log.e("999999999", "activateSong: " + jsonObject);
@@ -714,7 +714,7 @@ public class DOMParser {
                 }
             }
 
-            Log.e("@@@@@@", sb.toString());
+            Log.e("accpay111111", sb.toString());
 
             PayLogItem payLogItem = new PayLogItem();
             JSONObject jsonObject1 = new JSONObject(sb.toString());

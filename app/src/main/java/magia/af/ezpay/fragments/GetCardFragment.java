@@ -27,13 +27,23 @@ public class GetCardFragment extends Fragment {
     Typeface typeface;
     boolean isCommit = false;
     private String card = "";
+    static boolean type_m = false;
     static String comment;
     static int amount;
+    static int id;
 
     public static GetCardFragment newInstance(int Amount,String Comment) {
         GetCardFragment fragmentDemo = new GetCardFragment();
+        type_m = false;
         amount=Amount;
         comment=Comment;
+        return fragmentDemo;
+    }
+
+    public static GetCardFragment newInstance(int Id) {
+        GetCardFragment fragmentDemo = new GetCardFragment();
+        type_m = true;
+        id=Id;
         return fragmentDemo;
     }
 
@@ -218,15 +228,22 @@ public class GetCardFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         Log.e("00000000", "onDestroy: ))))(((((" );
-        ((ChatPageActivity) getActivity()).fragment_status = 1;
-        if (isCommit) {
+        if (!type_m && isCommit) {
 
+            ((ChatPageActivity) getActivity()).fragment_status = 1;
             ((ChatPageActivity) getActivity()).sendPay(card,comment,amount);
 //            ((ChatPageActivity) getActivity()).fragment_status = 1;
             getActivity().onBackPressed();
         }
+        else if (type_m && isCommit){
+            ((ChatPageActivity) getActivity()).fragment_status = 0;
 
-//        ((ChatPageActivity) getActivity()).darkDialog.setVisibility(View.GONE);
+            ((ChatPageActivity) getActivity()).accPay(id,card);
+
+
+        }
+        ((ChatPageActivity) getActivity()).darkDialog.setVisibility(View.GONE);
+
 
     }
 }
