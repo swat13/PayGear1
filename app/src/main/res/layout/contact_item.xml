@@ -8,7 +8,8 @@
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground"
     android:onClick="onClick"
-    app:cardElevation="0dp"
+    app:cardElevation="1dp"
+    android:layout_marginBottom="1dp"
     app:cardBackgroundColor="#e7e8da">
 
     <RelativeLayout

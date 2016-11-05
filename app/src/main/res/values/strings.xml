@@ -15,4 +15,7 @@
     <string name="time_placeholder">--:--</string>
     <string name="contact_list">لیست مخاطبین</string>
     <string name="invite_friends">دعوت دوستان</string>
+    <string name="cancel_payment">انصراف</string>
+    <string name="cancel_text">لغو</string>
+    <string name="accept_text">تایید</string>
 </resources>

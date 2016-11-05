@@ -20,6 +20,15 @@ public class RSSItem implements Serializable {
   private String lastChatDate;
   private boolean lastChatOrderByFromOrTo;
   private String comment;
+  private int position;
+
+  public int getPosition() {
+    return position;
+  }
+
+  public void setPosition(int position) {
+    this.position = position;
+  }
 
   public int getLastChatId() {
     return lastChatId;
