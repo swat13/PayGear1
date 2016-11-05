@@ -2,7 +2,7 @@ package magia.af.ezpay;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,37 +15,39 @@ import com.bumptech.glide.Glide;
 
 import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.Parser.RSSItem;
+import magia.af.ezpay.Utilities.LocalPersistence;
+import magia.af.ezpay.helper.ContactDatabase;
 import magia.af.ezpay.fragments.BarCodeGet;
 import magia.af.ezpay.fragments.LoginFragment;
 import magia.af.ezpay.interfaces.OnClickHandler;
 
-public class FriendListActivity extends BaseActivity implements OnClickHandler {
+public class FriendListActivity extends BaseActivity implements OnClickHandler{
 
-    RSSFeed _feed;
-    RecyclerView recBills;
-    ListAdapter adapter;
+  RSSFeed _feed;
+  RecyclerView recBills;
+  ListAdapter adapter;
     public int fragment_status = 0;
 
 
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_friend_list);
-        recBills = (RecyclerView) findViewById(R.id.contact_recycler);
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_friend_list);
+    recBills = (RecyclerView) findViewById(R.id.contact_recycler);
 //    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 //
 //    StrictMode.setThreadPolicy(policy);
-        _feed = (RSSFeed) getIntent().getSerializableExtra("contact");
-        if (_feed != null && _feed.getItemCount() != 0) {
-            adapter = new ListAdapter(FriendListActivity.this);
-            recBills.setAdapter(adapter);
-            LinearLayoutManager llm = new LinearLayoutManager(FriendListActivity.this);
-            llm.setOrientation(LinearLayoutManager.VERTICAL);
-            recBills.setNestedScrollingEnabled(true);
-            recBills.setLayoutManager(llm);
-            adapter.notifyDataSetChanged();
-        }
+      _feed = (RSSFeed) getIntent().getSerializableExtra("contact");
+      if (_feed != null && _feed.getItemCount() != 0) {
+          adapter = new ListAdapter(FriendListActivity.this);
+          recBills.setAdapter(adapter);
+          LinearLayoutManager llm = new LinearLayoutManager(FriendListActivity.this);
+          llm.setOrientation(LinearLayoutManager.VERTICAL);
+          recBills.setNestedScrollingEnabled(true);
+          recBills.setLayoutManager(llm);
+          adapter.notifyDataSetChanged();
+      }
 
 //        findViewById(R.id.barcode_reader).setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -85,49 +87,66 @@ public class FriendListActivity extends BaseActivity implements OnClickHandler {
         goToChatPageActivity.putExtra("image", rssFeed.getContactImg());
         startActivity(goToChatPageActivity);
     }
+  }
 
-    public class FeedViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+  @Override
+  public void onClick(RSSItem rssFeed) {
+    Intent goToChatPageActivity = new Intent(this , ChatPageActivity.class);
+    goToChatPageActivity.putExtra("phone", rssFeed.getTelNo());
+    goToChatPageActivity.putExtra("contactName", rssFeed.getContactName());
+    goToChatPageActivity.putExtra("image", rssFeed.getContactImg());
+    startActivity(goToChatPageActivity);
+  }
 
-        TextView contactName;
-        ImageView contactImage;
-        ImageView contactStat;
-        OnClickHandler onClickHandler;
+  public class FeedViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public FeedViewHolder(View v, OnClickHandler onClickHandler) {
-            super(v);
-            contactName = (TextView) v.findViewById(R.id.name_text);
-            contactImage = (ImageView) v.findViewById(R.id.contact_img);
-            contactStat = (ImageView) v.findViewById(R.id.status_circle);
-            v.setOnClickListener(this);
-            this.onClickHandler = onClickHandler;
-        }
-
-        @Override
-        public void onClick(View v) {
-            RSSItem rssItem = _feed.getItem(getAdapterPosition());
-            onClickHandler.onClick(rssItem);
-        }
+    TextView contactName;
+    TextView description;
+    TextView pay;
+    ImageView contactImage;
+    ImageView contactStat;
+    OnClickHandler onClickHandler;
+    public FeedViewHolder(View v , OnClickHandler onClickHandler) {
+      super(v);
+      contactName = (TextView) v.findViewById(R.id.txt_contact_item_name);
+      description = (TextView) v.findViewById(R.id.txt_contact_item_description);
+      pay = (TextView) v.findViewById(R.id.txt_contact_item_pay);
+      contactImage = (ImageView) v.findViewById(R.id.contact_img);
+      contactStat = (ImageView) v.findViewById(R.id.status_circle);
+      v.setOnClickListener(this);
+      this.onClickHandler = onClickHandler;
     }
 
-    public class ListAdapter extends RecyclerView.Adapter<FeedViewHolder> {
-        OnClickHandler onClickHandler;
+    @Override
+    public void onClick(View v) {
+      RSSItem rssItem = _feed.getItem(getAdapterPosition());
+      onClickHandler.onClick(rssItem);
+    }
+  }
 
-        public ListAdapter(OnClickHandler onClickHandler) {
-            this.onClickHandler = onClickHandler;
-        }
+  public class ListAdapter extends RecyclerView.Adapter<FeedViewHolder> {
+    OnClickHandler onClickHandler;
 
-        @Override
-        public int getItemCount() {
-            return _feed.getItemCount();
-        }
+    public ListAdapter(OnClickHandler onClickHandler) {
+      this.onClickHandler = onClickHandler;
+    }
 
-        @Override
-        public void onBindViewHolder(final FeedViewHolder FeedViewHolder, final int position) {
+    @Override
+    public int getItemCount() {
+      return _feed.getItemCount();
+    }
 
-            final RSSItem fe = _feed.getItem(position);
+    @Override
+    public void onBindViewHolder(final FeedViewHolder FeedViewHolder, final int position) {
 
-            FeedViewHolder.contactName.setText(fe.getContactName());
-            Glide.with(FriendListActivity.this).load("http://new.opaybot.ir" + fe.getContactImg()).into(FeedViewHolder.contactImage);
+      final RSSItem fe = _feed.getItem(position);
+      ContactDatabase database = new ContactDatabase(FriendListActivity.this);
+      fe.setContactName(database.getNameFromNumber(fe.getTelNo()));
+      FeedViewHolder.contactName.setText(fe.getContactName());
+      Glide.with(FriendListActivity.this).load("http://new.opaybot.ir"+fe.getContactImg()).into(FeedViewHolder.contactImage);
+      FeedViewHolder.description.setText(fe.getComment());
+      FeedViewHolder.pay.setText(fe.getLastChatAmount()+"");
+
 //        FeedViewHolder.contactImage.setImageDrawable(fe.getContactImg());
 
             /*if (fe.isContactStatus()) {
@@ -145,6 +164,6 @@ public class FriendListActivity extends BaseActivity implements OnClickHandler {
             return new FeedViewHolder(itemView, onClickHandler);
         }
 
-    }
+  }
 
 }

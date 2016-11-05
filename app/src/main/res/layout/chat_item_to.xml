@@ -24,7 +24,18 @@
             android:gravity="left"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/txt_date"
+                android:text="2016-16-16"
+                android:textColor="#78c118"
+                android:textSize="12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:gravity="center"/>
+
             <LinearLayout
+                android:layout_marginRight="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="right"
@@ -78,6 +89,19 @@
                 android:text="توضیحات:بابت دنگ مسافرت شمال" />
         </LinearLayout>
     </RelativeLayout>
+    <TextView
+        android:id="@+id/txt_clock"
+        android:layout_marginLeft="-25dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"
+        android:gravity="center|bottom"
+        android:paddingBottom="5dp"
+        android:drawableTop="@drawable/ic_time_little"
+        android:layout_gravity="center"
+        android:background="@drawable/circle_clock_text_background"
+        android:text="12:58"/>
 
     <ImageButton
         android:id="@+id/btn_replay_pay_from"

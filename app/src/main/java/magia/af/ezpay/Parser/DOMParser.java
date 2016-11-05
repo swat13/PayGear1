@@ -14,19 +14,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.security.spec.InvalidKeySpecException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 
 public class DOMParser {
 
@@ -34,252 +25,251 @@ public class DOMParser {
         this.token = token;
     }
 
-    public DOMParser() {
-    }
+  public DOMParser() {
+  }
 
 
-    private String mainUrl = "http://new.opaybot.ir/";
-    private String token = "";
+  private String mainUrl = "http://new.opaybot.ir/";
+  private String token = "";
 
 
-    /**
-     * @param phoneNumber
-     * @return
-     **/
-    public boolean register(String phoneNumber) {
+  /**
+   * @param phoneNumber
+   * @return
+   **/
+  public boolean register(String phoneNumber) {
 
-        try {
+    try {
 
-            URL url = new URL(mainUrl + "api/Account/RegisterByMobile");
-            Log.e("1111111", "doInBackground: " + url);
-            HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
-            httpConn.setDoOutput(true);
-            httpConn.setDoInput(true);
-            httpConn.setAllowUserInteraction(false);
-            httpConn.setRequestMethod("POST");
-            httpConn.setConnectTimeout(10000);
-            httpConn.setReadTimeout(10000);
-            httpConn.setRequestProperty("Content-Type", "application/json");
+      URL url = new URL(mainUrl + "api/Account/RegisterByMobile");
+      Log.e("1111111", "doInBackground: " + url);
+      HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
+      httpConn.setDoOutput(true);
+      httpConn.setDoInput(true);
+      httpConn.setAllowUserInteraction(false);
+      httpConn.setRequestMethod("POST");
+      httpConn.setConnectTimeout(10000);
+      httpConn.setReadTimeout(10000);
+      httpConn.setRequestProperty("Content-Type", "application/json");
 
-            OutputStream os = httpConn.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+      OutputStream os = httpConn.getOutputStream();
+      BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
 
-            String request = "{\n" +
-                    "\"mobile\" : \"" + phoneNumber + "\"\n" +
-                    "}";
+      String request = "{\n" +
+        "\"mobile\" : \"" + phoneNumber + "\"\n" +
+        "}";
 
-            Log.e("999999999", "activateSong: " + request);
-            writer.write(request);
-            writer.flush();
-            writer.close();
-            os.close();
+      Log.e("999999999", "activateSong: " + request);
+      writer.write(request);
+      writer.flush();
+      writer.close();
+      os.close();
 
-            int resCode = httpConn.getResponseCode();
-            Log.e("0000000", "doInBackground: " + resCode);
-            if (resCode == 200) {
-                return true;
-            } else
-                return false;
-
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+      int resCode = httpConn.getResponseCode();
+      Log.e("0000000", "doInBackground: " + resCode);
+      if (resCode == 200) {
+        return true;
+      } else
         return false;
 
+
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+    } catch (ProtocolException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
     }
 
-    public String resendSMS(String phoneNumber) {
+    return false;
 
-        try {
+  }
 
-            URL url = new URL(mainUrl + "accounts/user/activation/resend/09" + phoneNumber);
-            Log.e("1111111", "doInBackground: " + url);
-            HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
-            httpConn.setDoOutput(true);
-            httpConn.setDoInput(true);
-            httpConn.setAllowUserInteraction(false);
-            httpConn.setRequestMethod("PUT");
-            httpConn.setConnectTimeout(10000);
-            httpConn.setReadTimeout(10000);
-            httpConn.setRequestProperty("Content-Type", "application/json");
+  public String resendSMS(String phoneNumber) {
+
+    try {
+
+      URL url = new URL(mainUrl + "accounts/user/activation/resend/09" + phoneNumber);
+      Log.e("1111111", "doInBackground: " + url);
+      HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
+      httpConn.setDoOutput(true);
+      httpConn.setDoInput(true);
+      httpConn.setAllowUserInteraction(false);
+      httpConn.setRequestMethod("PUT");
+      httpConn.setConnectTimeout(10000);
+      httpConn.setReadTimeout(10000);
+      httpConn.setRequestProperty("Content-Type", "application/json");
 
 
-            int resCode = httpConn.getResponseCode();
-            Log.e("0000000", "doInBackground: " + resCode);
-            if (resCode == 500) {
-                return "NI";
-            }
-
-            InputStream in = httpConn.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            StringBuilder sb = new StringBuilder();
-
-            String line = null;
-            try {
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            Log.e("@@@@@@", sb.toString());
-            return "ok";
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+      int resCode = httpConn.getResponseCode();
+      Log.e("0000000", "doInBackground: " + resCode);
+      if (resCode == 500) {
         return "NI";
+      }
 
-    }
+      InputStream in = httpConn.getInputStream();
+      BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+      StringBuilder sb = new StringBuilder();
 
-    /**
-     * @param username
-     * @param activeCode
-     * @return
-     **/
-    public String Verify_Login_Activation_Code(String username, String activeCode) {
-
-        try {
-
-            URL url = new URL(mainUrl + "api/Account/VerifySMSCode");
-            Log.e("1111111", "doInBackground: " + url);
-            HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
-            httpConn.setDoOutput(true);
-            httpConn.setDoInput(true);
-            httpConn.setAllowUserInteraction(false);
-            httpConn.setRequestMethod("POST");
-            httpConn.setConnectTimeout(10000);
-            httpConn.setReadTimeout(10000);
-            httpConn.setRequestProperty("Content-Type", "application/json");
-
-            OutputStream os = httpConn.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-
-            String request = "{\n" +
-                    "\"mobile\" : \"" + username + "\",\n" +
-                    "\"code\" : " + activeCode + "\n" +
-                    "}";
-
-            Log.e("999999999", "activateSong: " + request);
-            writer.write(request);
-            writer.flush();
-            writer.close();
-            os.close();
-
-            int resCode = httpConn.getResponseCode();
-            Log.e("0000000", "doInBackground: " + resCode);
-            if (resCode == 400) {
-                return "wrong";
-            }
-
-            InputStream in = httpConn.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            StringBuilder sb = new StringBuilder();
-
-            String line = null;
-            try {
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            Log.e("@@@@@@", sb.toString());
-            JSONObject jsonObject = new JSONObject(sb.toString());
-            String token = jsonObject.getString("access_token");
-            String id = jsonObject.getString("id");
-            return token;
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
+      String line = null;
+      try {
+        while ((line = reader.readLine()) != null) {
+          sb.append(line);
         }
+      } catch (IOException e) {
+        e.printStackTrace();
+      } finally {
+        try {
+          in.close();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+      Log.e("@@@@@@", sb.toString());
+      return "ok";
 
-        return "NI";
-
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+    } catch (ProtocolException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
     }
 
-    /**
-     * @return
-     **/
-    public RSSFeed getContact(String json) {
+    return "NI";
 
+  }
+
+  /**
+   * @param username
+   * @param activeCode
+   * @return
+   **/
+  public String Verify_Login_Activation_Code(String username, String activeCode) {
+
+    try {
+
+      URL url = new URL(mainUrl + "api/Account/VerifySMSCode");
+      Log.e("1111111", "doInBackground: " + url);
+      HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
+      httpConn.setDoOutput(true);
+      httpConn.setDoInput(true);
+      httpConn.setAllowUserInteraction(false);
+      httpConn.setRequestMethod("POST");
+      httpConn.setConnectTimeout(10000);
+      httpConn.setReadTimeout(10000);
+      httpConn.setRequestProperty("Content-Type", "application/json");
+
+      OutputStream os = httpConn.getOutputStream();
+      BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+
+      String request = "{\n" +
+        "\"mobile\" : \"" + username + "\",\n" +
+        "\"code\" : " + activeCode + "\n" +
+        "}";
+
+      Log.e("999999999", "activateSong: " + request);
+      writer.write(request);
+      writer.flush();
+      writer.close();
+      os.close();
+
+      int resCode = httpConn.getResponseCode();
+      Log.e("0000000", "doInBackground: " + resCode);
+      if (resCode == 400) {
+        return "wrong";
+      }
+
+      InputStream in = httpConn.getInputStream();
+      BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+      StringBuilder sb = new StringBuilder();
+
+      String line = null;
+      try {
+        while ((line = reader.readLine()) != null) {
+          sb.append(line);
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+      } finally {
         try {
+          in.close();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
 
-            URL url = new URL(mainUrl + "api/Account/CheckContactList");
-            Log.e("1111111", "doInBackground: " + url);
-            HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
-            httpConn.setDoOutput(true);
-            httpConn.setDoInput(true);
-            httpConn.setAllowUserInteraction(false);
-            httpConn.setRequestMethod("POST");
-            httpConn.setConnectTimeout(20000);
-            httpConn.setReadTimeout(20000);
-            httpConn.setRequestProperty("Content-Type", "application/json");
-            httpConn.setRequestProperty("Authorization", "bearer " + token);
+      Log.e("@@@@@@", sb.toString());
+      JSONObject jsonObject = new JSONObject(sb.toString());
+      String token = jsonObject.getString("access_token");
+      return token;
 
-            OutputStream os = httpConn.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+    } catch (ProtocolException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
 
-            Log.e("999999999", "activateSong: " + json);
-            writer.write(json);
-            writer.flush();
-            writer.close();
-            os.close();
+    return "NI";
 
-            int resCode = httpConn.getResponseCode();
-            Log.e("0000000", "doInBackground: " + resCode);
-            if (resCode == 400) {
-                return null;
-            }
+  }
 
-            InputStream in = httpConn.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            StringBuilder sb = new StringBuilder();
+  /**
+   * @return
+   **/
+  public RSSFeed getContact(String json) {
 
-            String line = null;
-            try {
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+    try {
+
+      URL url = new URL(mainUrl + "api/Account/CheckContactList");
+      Log.e("1111111", "doInBackground: " + url);
+      HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
+      httpConn.setDoOutput(true);
+      httpConn.setDoInput(true);
+      httpConn.setAllowUserInteraction(false);
+      httpConn.setRequestMethod("POST");
+      httpConn.setConnectTimeout(20000);
+      httpConn.setReadTimeout(20000);
+      httpConn.setRequestProperty("Content-Type", "application/json");
+      httpConn.setRequestProperty("Authorization", "bearer " + token);
+
+      OutputStream os = httpConn.getOutputStream();
+      BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+
+      Log.e("999999999", "activateSong: " + json);
+      writer.write(json);
+      writer.flush();
+      writer.close();
+      os.close();
+
+      int resCode = httpConn.getResponseCode();
+      Log.e("0000000", "doInBackground: " + resCode);
+      if (resCode == 400) {
+        return null;
+      }
+
+      InputStream in = httpConn.getInputStream();
+      BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+      StringBuilder sb = new StringBuilder();
+
+      String line = null;
+      try {
+        while ((line = reader.readLine()) != null) {
+          sb.append(line);
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+      } finally {
+        try {
+          in.close();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
 
             Log.e("@@@@@@", sb.toString());
             JSONArray jsonArray = new JSONArray(sb.toString());
@@ -294,427 +284,242 @@ public class DOMParser {
                     rssItem.setTelNo(jsonObject.getString("mobile"));
                     rssItem.setContactName(getContactName(jsonObject.getString("mobile"), json));
                     rssItem.setContactImg(jsonObject.getString("photo"));
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                rssFeed.addItem(rssItem);
-            }
-
-            return rssFeed;
-
-            /**
-             * TODO: check if activated then return the token to Splash class
-             *
-             * */
-
-
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
-
-    }
-
-
-    public String getAcount() {
-
-        try {
-
-            URL url = new URL(mainUrl + "api/Account");
-            Log.e("1111111", "doInBackground: " + url);
-            HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
-            httpConn.setDoInput(true);
-            httpConn.setAllowUserInteraction(false);
-            httpConn.setRequestMethod("GET");
-            httpConn.setConnectTimeout(13000);
-            httpConn.setReadTimeout(13000);
-            httpConn.setRequestProperty("Authorization", "bearer " + token);
-
-            int resCode = httpConn.getResponseCode();
-            Log.e("0000000", "doInBackground: " + resCode);
-            if (resCode == 400) {
-                return null;
-            }
-
-            InputStream in = httpConn.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            StringBuilder sb = new StringBuilder();
-
-            String line = null;
-            try {
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-
-            Log.e("@@@@@@", sb.toString());
-            JSONObject jsonObject = new JSONObject(sb.toString());
-            String photo = jsonObject.getString("photo");
-            String number = jsonObject.getString("number");
-            String id = jsonObject.getString("id");
-            String title = jsonObject.getString("title");
-            Log.e("info:", photo+" "+number+" "+id+" "+title );
-
-            return id;
-
-
-
-
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-
-
-    public String getQR() {
-
-        try {
-
-            URL url = new URL(mainUrl + "api/QR");
-            Log.e("1111111", "doInBackground: " + url);
-            HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
-            httpConn.setDoOutput(true);
-            httpConn.setDoInput(true);
-            httpConn.setAllowUserInteraction(false);
-            httpConn.setRequestMethod("GET");
-            httpConn.setConnectTimeout(20000);
-            httpConn.setReadTimeout(20000);
-            httpConn.setRequestProperty("Authorization", "bearer " + token);
-
-
-            int resCode = httpConn.getResponseCode();
-            Log.e("0000000", "doInBackground: " + resCode);
-            if (resCode == 400) {
-                return null;
-            }
-
-            InputStream in = httpConn.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            StringBuilder sb = new StringBuilder();
-
-            String line = null;
-            try {
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            Log.e("@@@@@@", sb.toString());
-
-
-
-
-            return sb.toString();
-
-            /**
-             * TODO: check if activated then return the token to Splash class
-             *
-             * */
-
-
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return "a";
-
-    }
-
-
-    public String getQRid(String id) {
-
-        try {
-
-            URL url = new URL(mainUrl + "api/QR/"+id);
-            Log.e("1111111", "doInBackground: " + url);
-            HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
-            httpConn.setDoOutput(true);
-            httpConn.setDoInput(true);
-            httpConn.setAllowUserInteraction(false);
-            httpConn.setRequestMethod("GET");
-            httpConn.setConnectTimeout(20000);
-            httpConn.setReadTimeout(20000);
-
-
-            int resCode = httpConn.getResponseCode();
-            Log.e("0000000", "doInBackground: " + resCode);
-            if (resCode == 400) {
-                return null;
-            }
-
-            InputStream in = httpConn.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            StringBuilder sb = new StringBuilder();
-
-            String line = null;
-            try {
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            Log.e("@@@@@@", sb.toString());
-
-
-
-
-            return sb.toString();
-
-            /**
-             * TODO: check if activated then return the token to Splash class
-             *
-             * */
-
-
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return "a";
-
-    }
-
-
-    public String getContactName(String phoneNumber, String jsons) {
-        try {
-            JSONArray jsonArray = new JSONArray(jsons);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                if (jsonObject.getString("m").equals(phoneNumber)) {
-                    return jsonObject.getString("t");
-                }
-            }
+                    if (!jsonObject.isNull("lastchat")) {
+                        JSONObject object = jsonObject.getJSONObject("lastchat");
+                        rssItem.setLastChatId(object.getInt("id"));
+                        rssItem.setLastChatFrom(object.getString("f"));
+                        rssItem.setLastChatTo(object.getString("t"));
+                        rssItem.setLastChatAmount(object.getInt("a"));
+                        rssItem.setLastChatDate(object.getString("d"));
+                        rssItem.setLastChatOrderByFromOrTo(object.getBoolean("o"));
+                        rssItem.setComment(object.getString("c"));
+                    }
 
         } catch (JSONException e) {
-            e.printStackTrace();
+          e.printStackTrace();
         }
-        return null;
+        rssFeed.addItem(rssItem);
+      }
+
+      return rssFeed;
+
+      /**
+       * TODO: check if activated then return the token to Splash class
+       *
+       * */
 
 
+    } catch (ProtocolException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (JSONException e) {
+      e.printStackTrace();
     }
+    return null;
 
-    public PayLogFeed payLogWithAnother(String phone) {
+  }
 
+  public String getContactName(String phoneNumber, String jsons) {
+    try {
+      JSONArray jsonArray = new JSONArray(jsons);
+      for (int i = 0; i < jsonArray.length(); i++) {
+        JSONObject jsonObject = jsonArray.getJSONObject(i);
+        if (jsonObject.getString("m").equals(phoneNumber)) {
+          return jsonObject.getString("t");
+        }
+      }
+
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
+    return null;
+
+
+  }
+
+  public PayLogFeed payLogWithAnother(String phone) {
+
+    try {
+
+      URL url = new URL(mainUrl + "api/payment/PayLogWithAnother");
+      Log.e("1111111", "doInBackground: " + url);
+      HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
+      httpConn.setDoOutput(true);
+      httpConn.setDoInput(true);
+      httpConn.setAllowUserInteraction(false);
+      httpConn.setRequestMethod("POST");
+      httpConn.setConnectTimeout(20000);
+      httpConn.setReadTimeout(20000);
+      httpConn.setRequestProperty("Content-Type", "application/json");
+      httpConn.setRequestProperty("Authorization", "bearer " + token);
+
+      OutputStream os = httpConn.getOutputStream();
+      BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+
+      String request = "{\n" +
+        "\"anotherMobile\" : \"" + phone + "\"\n" +
+        "}";
+
+      Log.e("999999999", "activateSong: " + phone);
+      writer.write(request);
+      writer.flush();
+      writer.close();
+      os.close();
+
+      int resCode = httpConn.getResponseCode();
+      Log.e("0000000", "doInBackground: " + resCode);
+      if (resCode == 400) {
+        return null;
+      }
+
+      InputStream in = httpConn.getInputStream();
+      BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+      StringBuilder sb = new StringBuilder();
+
+      String line = null;
+      try {
+        while ((line = reader.readLine()) != null) {
+          sb.append(line);
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+      } finally {
         try {
-
-            URL url = new URL(mainUrl + "api/payment/PayLogWithAnother");
-            Log.e("1111111", "doInBackground: " + url);
-            HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
-            httpConn.setDoOutput(true);
-            httpConn.setDoInput(true);
-            httpConn.setAllowUserInteraction(false);
-            httpConn.setRequestMethod("POST");
-            httpConn.setConnectTimeout(20000);
-            httpConn.setReadTimeout(20000);
-            httpConn.setRequestProperty("Content-Type", "application/json");
-            httpConn.setRequestProperty("Authorization", "bearer " + token);
-
-            OutputStream os = httpConn.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-
-            String request = "{\n" +
-                    "\"anotherMobile\" : \"" + phone + "\"\n" +
-                    "}";
-
-            Log.e("999999999", "activateSong: " + phone);
-            writer.write(request);
-            writer.flush();
-            writer.close();
-            os.close();
-
-            int resCode = httpConn.getResponseCode();
-            Log.e("0000000", "doInBackground: " + resCode);
-            if (resCode == 400) {
-                return null;
-            }
-
-            InputStream in = httpConn.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            StringBuilder sb = new StringBuilder();
-
-            String line = null;
-            try {
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            Log.e("@@@@@@", sb.toString());
-            JSONArray jsonArray = new JSONArray(sb.toString());
-
-            PayLogFeed payLogFeed = new PayLogFeed();
-
-            for (int i = 0; i < jsonArray.length(); i++) {
-                PayLogItem payLogItem1 = new PayLogItem();
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                //kk
-                try {
-                    payLogItem1.setId(jsonObject.getInt("id"));
-                    payLogItem1.setFrom(jsonObject.getString("f"));
-                    payLogItem1.setTo(jsonObject.getString("t"));
-                    payLogItem1.setAmount(jsonObject.getInt("a"));
-                    payLogItem1.setDate(jsonObject.getString("d"));
-                    payLogItem1.setPaideBool(jsonObject.getBoolean("o"));
-                    payLogItem1.setComment(jsonObject.getString("c"));
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                payLogFeed.addItem(payLogItem1);
-            }
-
-            return payLogFeed;
-
-            /**
-             * TODO: check if activated then return the token to Splash class
-             *
-             * */
-
-
-        } catch (ProtocolException e) {
-            e.printStackTrace();
+          in.close();
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
+          e.printStackTrace();
         }
-        return null;
+      }
 
-    }
+      Log.e("@@@@@@", sb.toString());
+      JSONArray jsonArray = new JSONArray(sb.toString());
 
-    public PayLogItem sendPaymentRequest(String phone, String detail, String comment, String amount) {
+      PayLogFeed payLogFeed = new PayLogFeed();
 
+      for (int i = 0; i < jsonArray.length(); i++) {
+        PayLogItem payLogItem1 = new PayLogItem();
+        JSONObject jsonObject = jsonArray.getJSONObject(i);
+        //kk
         try {
+          payLogItem1.setId(jsonObject.getInt("id"));
+          payLogItem1.setFrom(jsonObject.getString("f"));
+          payLogItem1.setTo(jsonObject.getString("t"));
+          payLogItem1.setAmount(jsonObject.getInt("a"));
+          payLogItem1.setDate(jsonObject.getString("d"));
+          payLogItem1.setPaideBool(jsonObject.getBoolean("o"));
+          payLogItem1.setComment(jsonObject.getString("c"));
 
-            URL url = new URL(mainUrl + "api/payment/PayToAnotherWithTF");
-            Log.e("1111111", "doInBackground: " + url);
-            HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
-            httpConn.setDoOutput(true);
-            httpConn.setDoInput(true);
-            httpConn.setAllowUserInteraction(false);
-            httpConn.setRequestMethod("POST");
-            httpConn.setConnectTimeout(20000);
-            httpConn.setReadTimeout(20000);
-            httpConn.setRequestProperty("Content-Type", "application/json");
-            httpConn.setRequestProperty("Authorization", "bearer " + token);
-
-            OutputStream os = httpConn.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("anotherMobile", phone);
-            jsonObject.put("paymentDetails", detail);
-            jsonObject.put("amount", Integer.parseInt(amount));
-            jsonObject.put("comment", comment);
-
-            Log.e("999999999", "activateSong: " + jsonObject);
-            writer.write(jsonObject.toString());
-            writer.flush();
-            writer.close();
-            os.close();
-
-            int resCode = httpConn.getResponseCode();
-            Log.e("0000000", "doInBackground: " + resCode);
-            if (resCode == 400) {
-                return null;
-            }
-
-            InputStream in = httpConn.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            StringBuilder sb = new StringBuilder();
-
-            String line = null;
-            try {
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            Log.e("@@@@@@", sb.toString());
-
-            PayLogItem payLogItem = new PayLogItem();
-            JSONObject jsonObject1 = new JSONObject(sb.toString());
-            try {
-                payLogItem.setId(jsonObject1.getInt("id"));
-                payLogItem.setFrom(jsonObject1.getString("f"));
-                payLogItem.setTo(jsonObject1.getString("t"));
-                payLogItem.setAmount(jsonObject1.getInt("a"));
-                payLogItem.setDate(jsonObject1.getString("d"));
-                payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
-                payLogItem.setComment(jsonObject1.getString("c"));
-
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            return payLogItem;
-
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (JSONException e) {
-            e.printStackTrace();
+          e.printStackTrace();
         }
-        return null;
+        payLogFeed.addItem(payLogItem1);
+      }
 
+      return payLogFeed;
+
+      /**
+       * TODO: check if activated then return the token to Splash class
+       *
+       * */
+
+
+    } catch (ProtocolException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (JSONException e) {
+      e.printStackTrace();
     }
+    return null;
+
+  }
+
+  public PayLogItem sendPaymentRequest(String phone, String detail, String comment, String amount) {
+
+    try {
+
+      URL url = new URL(mainUrl + "api/payment/PayToAnotherWithTF");
+      Log.e("1111111", "doInBackground: " + url);
+      HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
+      httpConn.setDoOutput(true);
+      httpConn.setDoInput(true);
+      httpConn.setAllowUserInteraction(false);
+      httpConn.setRequestMethod("POST");
+      httpConn.setConnectTimeout(20000);
+      httpConn.setReadTimeout(20000);
+      httpConn.setRequestProperty("Content-Type", "application/json");
+      httpConn.setRequestProperty("Authorization", "bearer " + token);
+
+      OutputStream os = httpConn.getOutputStream();
+      BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+
+      JSONObject jsonObject = new JSONObject();
+      jsonObject.put("anotherMobile", phone);
+      jsonObject.put("paymentDetails", detail);
+      jsonObject.put("amount", Integer.parseInt(amount));
+      jsonObject.put("comment", comment);
+
+      Log.e("999999999", "activateSong: " + jsonObject);
+      writer.write(jsonObject.toString());
+      writer.flush();
+      writer.close();
+      os.close();
+
+      int resCode = httpConn.getResponseCode();
+      Log.e("0000000", "doInBackground: " + resCode);
+      if (resCode == 400) {
+        return null;
+      }
+
+      InputStream in = httpConn.getInputStream();
+      BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+      StringBuilder sb = new StringBuilder();
+
+      String line = null;
+      try {
+        while ((line = reader.readLine()) != null) {
+          sb.append(line);
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+      } finally {
+        try {
+          in.close();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+
+      Log.e("@@@@@@", sb.toString());
+
+      PayLogItem payLogItem = new PayLogItem();
+      JSONObject jsonObject1 = new JSONObject(sb.toString());
+      try {
+        payLogItem.setId(jsonObject1.getInt("id"));
+        payLogItem.setFrom(jsonObject1.getString("f"));
+        payLogItem.setTo(jsonObject1.getString("t"));
+        payLogItem.setAmount(jsonObject1.getInt("a"));
+        payLogItem.setDate(jsonObject1.getString("d"));
+        payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
+        payLogItem.setComment(jsonObject1.getString("c"));
+
+
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      return payLogItem;
+
+    } catch (ProtocolException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
+    return null;
+
+  }
 
 }

@@ -23,6 +23,7 @@ import magia.af.ezpay.Parser.PayLogItem;
 import magia.af.ezpay.Utilities.LocalPersistence;
 import magia.af.ezpay.fragments.GetCardFragment;
 import magia.af.ezpay.fragments.PaymentFragment;
+import magia.af.ezpay.helper.CalendarConversion;
 
 public class ChatPageActivity extends BaseActivity {
     private String phone;
@@ -170,10 +171,20 @@ public class ChatPageActivity extends BaseActivity {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
+            int year = 0;
+            int month = 0;
+            int day = 0;
+            CalendarConversion conversion = null;
             int pos = feed.getItemCount() - position - 1;
             if (holder.getItemViewType() == 0) {
+                year = Integer.parseInt(feed.getItem(pos).getDate().substring(0,4));
+                month = Integer.parseInt(feed.getItem(pos).getDate().substring(5,7));
+                day = Integer.parseInt(feed.getItem(pos).getDate().substring(8,10));
+                conversion = new CalendarConversion(year,month,day);
                 holder.txt_price.setText(feed.getItem(pos).getAmount() + "");
                 holder.txt_status.setText(feed.getItem(pos).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
+                holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11,16)+"");
+                holder.txt_date.setText(conversion.getIranianDate()+"");
                 holder.txt_description.setText(feed.getItem(pos).getComment());
                 holder.btn_replay.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -182,7 +193,13 @@ public class ChatPageActivity extends BaseActivity {
                     }
                 });
             } else {
+                year = Integer.parseInt(feed.getItem(pos).getDate().substring(0,4));
+                month = Integer.parseInt(feed.getItem(pos).getDate().substring(5,7));
+                day = Integer.parseInt(feed.getItem(pos).getDate().substring(8,10));
+                conversion = new CalendarConversion(year,month,day);
                 holder.txt_price.setText(feed.getItem(pos).getAmount() + "");
+                holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11,16)+"");
+                holder.txt_date.setText(conversion.getIranianDate()+"");
                 holder.txt_status.setText(feed.getItem(pos).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
                 holder.txt_description.setText(feed.getItem(pos).getComment());
                 holder.btn_replay.setOnClickListener(new View.OnClickListener() {
@@ -204,10 +221,14 @@ public class ChatPageActivity extends BaseActivity {
             TextView txt_description;
             ImageButton btn_replay;
             TextView txt_price;
+            TextView txt_clock;
+            TextView txt_date;
 
             ViewHolder(View itemView) {
                 super(itemView);
                 txt_price = (TextView) itemView.findViewById(R.id.txt_priceFrom);
+                txt_clock = (TextView) itemView.findViewById(R.id.txt_clock);
+                txt_date = (TextView) itemView.findViewById(R.id.txt_date);
                 txt_status = (TextView) itemView.findViewById(R.id.txt_status_payed_from);
                 txt_description = (TextView) itemView.findViewById(R.id.txt_description_from);
                 btn_replay = (ImageButton) itemView.findViewById(R.id.btn_replay_pay_from);
