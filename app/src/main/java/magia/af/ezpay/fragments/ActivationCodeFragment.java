@@ -29,6 +29,7 @@ import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
 import magia.af.ezpay.FriendListActivity;
 import magia.af.ezpay.LoginActivity;
+import magia.af.ezpay.MainActivity;
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.R;
@@ -183,7 +184,7 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
         protected void onPostExecute(RSSFeed result) {
             ((LoginActivity) getActivity()).waitingDialog.setVisibility(View.GONE);
             if (result != null) {
-                startActivity(new Intent(getActivity(), FriendListActivity.class).putExtra("contact", result));
+                startActivity(new Intent(getActivity(), MainActivity.class).putExtra("contact", result));
             } else
                 Toast.makeText(getActivity(), "problem in connection!", Toast.LENGTH_SHORT).show();
 

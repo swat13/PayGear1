@@ -50,7 +50,7 @@ public class Splash extends BaseActivity {
         protected void onPostExecute(RSSFeed result) {
             if (result != null) {
 
-                startActivity(new Intent(Splash.this, FriendListActivity.class).putExtra("contact", result));
+                startActivity(new Intent(Splash.this, MainActivity.class).putExtra("contact", result));
                 finish();
             } else
                 Toast.makeText(Splash.this, "problem in connection!", Toast.LENGTH_SHORT).show();
