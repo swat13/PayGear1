@@ -165,7 +165,7 @@ public class RequestPaymentFragment extends Fragment {
                 result = number.substring(0, i) + number.substring(i + 1);
             }
         }
-        return Integer.valueOf(result);
+        return Integer.valueOf(number.replace(",",""));
     }
 
 

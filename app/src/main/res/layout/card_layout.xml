@@ -51,6 +51,9 @@
                     android:inputType="phone|number"
                     android:maxLength="19"
                     android:textDirection="ltr"
+                    android:imeOptions="actionNext"
+                    android:singleLine="true"
+                    android:maxLines="1"
                     />
 
                 <EditText
@@ -64,6 +67,9 @@
                     android:padding="10dp"
                     android:inputType="numberPassword"
                     android:textDirection="ltr"
+                    android:imeOptions="actionDone"
+                    android:singleLine="true"
+                    android:maxLines="1"
                     android:maxLength="15" />
 
             </LinearLayout>

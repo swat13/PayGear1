@@ -60,6 +60,9 @@
                     android:gravity="center"
                     android:hint="توضیحات"
                     android:padding="10dp"
+                    android:imeOptions="actionDone"
+                    android:singleLine="true"
+                    android:maxLines="1"
                     android:textColorHint="#a69291" />
 
             </LinearLayout>

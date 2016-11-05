@@ -1,24 +1,13 @@
 package magia.af.ezpay.fragments;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
-
-import org.json.JSONObject;
-
-import magia.af.ezpay.FriendListActivity;
 import magia.af.ezpay.MainActivity;
-import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.R;
-import magia.af.ezpay.Splash;
 
 /**
  * Created by erfan on 11/3/2016.

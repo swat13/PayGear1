@@ -2,6 +2,7 @@ package magia.af.ezpay.fragments;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.inputmethodservice.InputMethodService;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -75,7 +77,7 @@ public class PaymentFragment extends Fragment {
         texx = (TextView) view.findViewById(R.id.texx);
         final EditText PayAmount = (EditText) view.findViewById(R.id.payAmount);
         final EditText Comments = (EditText) view.findViewById(R.id.comments);
-
+        Comments.setImeOptions(EditorInfo.IME_ACTION_DONE);
         texx.setText(new StringBuilder("پرداخت وجه به" + " " + ((ChatPageActivity) getActivity()).contactName));
 
         PayAmount.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -215,13 +217,13 @@ public class PaymentFragment extends Fragment {
     }
 
     private int correctNum(String number) {
-        String result = number;
-        for (int i = 0; i < number.length(); i++) {
-            if (number.charAt(i) == ',') {
-                result = number.substring(0, i) + number.substring(i + 1);
-            }
-        }
-        return Integer.valueOf(result);
+//        String result = number;
+//        for (int i = 0; i < number.length(); i++) {
+//            if (number.charAt(i) == ',') {
+//                result = number.substring(0, i) + number.substring(i + 1);
+//            }
+//        }
+        return Integer.valueOf(number.replace("," , ""));
     }
 
 

@@ -29,18 +29,18 @@ import magia.af.ezpay.fragments.RequestPaymentFragment;
 import magia.af.ezpay.helper.CalendarConversion;
 
 public class ChatPageActivity extends BaseActivity {
-    private String phone;
-    public String contactName;
-    private String imageUrl = "http://new.opaybot.ir";
-    RecyclerView recyclerView;
-    PayLogFeed feed;
-    ChatPageAdapter adapter;
-    static boolean isOpen = false;
-    public RelativeLayout darkDialog;
-    public GetCardFragment getCardFragment;
-    public PaymentFragment paymentFragment;
-    public RequestPaymentFragment requestPaymentFragment;
-    public int fragment_status = 0;
+  private String phone;
+  public String contactName;
+  private String imageUrl = "http://new.opaybot.ir";
+  RecyclerView recyclerView;
+  PayLogFeed feed;
+  ChatPageAdapter adapter;
+  static boolean isOpen = false;
+  public RelativeLayout darkDialog;
+  public GetCardFragment getCardFragment;
+  public PaymentFragment paymentFragment;
+  public RequestPaymentFragment requestPaymentFragment;
+  public int fragment_status = 0;
 
   public String description;
   public int amount;
@@ -95,28 +95,28 @@ public class ChatPageActivity extends BaseActivity {
       }
     });
 
-        findViewById(R.id.btn_receive).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+    findViewById(R.id.btn_receive).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
 
-                Log.e("Receive", "onClick: " );
-                FragmentTransaction ft;
-                darkDialog.setVisibility(View.VISIBLE);
-                requestPaymentFragment = RequestPaymentFragment.newInstance();
-                ft = getFragmentManager().beginTransaction();
-                ft.setCustomAnimations(R.animator.enter_from_right, R.animator.exit_to_right);
-                ft.add(android.R.id.content, requestPaymentFragment).commit();
-                isOpen = false;
+        Log.e("Receive", "onClick: ");
+        FragmentTransaction ft;
+        darkDialog.setVisibility(View.VISIBLE);
+        requestPaymentFragment = RequestPaymentFragment.newInstance();
+        ft = getFragmentManager().beginTransaction();
+        ft.setCustomAnimations(R.animator.enter_from_right, R.animator.exit_to_right);
+        ft.add(android.R.id.content, requestPaymentFragment).commit();
+        isOpen = false;
 
-            }
-        });
+      }
+    });
 
-        findViewById(R.id.btn_back).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
+    findViewById(R.id.btn_back).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        onBackPressed();
+      }
+    });
 
   }
 
@@ -145,55 +145,55 @@ public class ChatPageActivity extends BaseActivity {
   }
 
 
-    private class requestFromAnother extends AsyncTask<String, Void, PayLogItem> {
+  private class requestFromAnother extends AsyncTask<String, Void, PayLogItem> {
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected PayLogItem doInBackground(String... params) {
-            DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
-            return domParser.RequestFromAnother(params[0], params[1], params[2]);
-        }
-
-        @Override
-        protected void onPostExecute(PayLogItem result) {
-            if (result != null) {
-                feed.addItem(result);
-                new LocalPersistence().writeObjectToFile(ChatPageActivity.this, feed, "Payment_Chat_List");
-                adapter.notifyDataSetChanged();
-            } else
-                Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
-        }
+    @Override
+    protected void onPreExecute() {
+      super.onPreExecute();
     }
 
-
-    private class accPaymentRequest extends AsyncTask<String, Void, PayLogItem> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected PayLogItem doInBackground(String... params) {
-            DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
-            return domParser.accPaymentRequest(getSharedPreferences("EZpay", 0).getString("id", ""), params[1]);
-
-        }
-
-        @Override
-        protected void onPostExecute(PayLogItem result) {
-            if (result != null) {
-                feed.addItem(result);
-                new LocalPersistence().writeObjectToFile(ChatPageActivity.this, feed, "Payment_Chat_List");
-                adapter.notifyDataSetChanged();
-            } else
-                Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
-        }
+    @Override
+    protected PayLogItem doInBackground(String... params) {
+      DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
+      return domParser.RequestFromAnother(params[0], params[1], params[2]);
     }
+
+    @Override
+    protected void onPostExecute(PayLogItem result) {
+      if (result != null) {
+        feed.addItem(result);
+        new LocalPersistence().writeObjectToFile(ChatPageActivity.this, feed, "Payment_Chat_List");
+        adapter.notifyDataSetChanged();
+      } else
+        Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
+    }
+  }
+
+
+  private class accPaymentRequest extends AsyncTask<String, Void, PayLogItem> {
+
+    @Override
+    protected void onPreExecute() {
+      super.onPreExecute();
+    }
+
+    @Override
+    protected PayLogItem doInBackground(String... params) {
+      DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
+      return domParser.accPaymentRequest(getSharedPreferences("EZpay", 0).getString("id", ""), params[1]);
+
+    }
+
+    @Override
+    protected void onPostExecute(PayLogItem result) {
+      if (result != null) {
+        feed.addItem(result);
+        new LocalPersistence().writeObjectToFile(ChatPageActivity.this, feed, "Payment_Chat_List");
+        adapter.notifyDataSetChanged();
+      } else
+        Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
+    }
+  }
 
 
   private class getChatLog extends AsyncTask<String, Void, PayLogFeed> {
@@ -244,15 +244,13 @@ public class ChatPageActivity extends BaseActivity {
       if (feed.getItem(pos).getFrom().equals(phone)) {
         if (feed.getItem(pos).isPaideBool()) {
           return 0;
-        }
-        else
+        } else
           return 2;
 
       } else {
         if (feed.getItem(pos).isPaideBool()) {
           return 1;
-        }
-        else
+        } else
           return 3;
       }
     }
@@ -262,13 +260,11 @@ public class ChatPageActivity extends BaseActivity {
       View rootView;
       if (viewType == 0) {
         rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_to, parent, false);
-      } else if (viewType == 1){
+      } else if (viewType == 1) {
         rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_from, parent, false);
-      }
-      else if (viewType == 2){
+      } else if (viewType == 2) {
         rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_pay_from, parent, false);
-      }
-      else {
+      } else {
         rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_pay_to, parent, false);
       }
       return new ViewHolder(rootView);
@@ -286,8 +282,8 @@ public class ChatPageActivity extends BaseActivity {
         month = Integer.parseInt(feed.getItem(pos).getDate().substring(5, 7));
         day = Integer.parseInt(feed.getItem(pos).getDate().substring(8, 10));
         conversion = new CalendarConversion(year, month, day);
-        holder.txt_price.setText(feed.getItem(pos).getAmount() + "");
-        holder.txt_status.setText(feed.getItem(pos).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
+        holder.txt_price.setText(getDividedToman((long) feed.getItem(pos).getAmount()) + "");
+        holder.txt_status.setText("دریافت شد");
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
         holder.txt_description.setText(feed.getItem(pos).getComment());
@@ -297,37 +293,13 @@ public class ChatPageActivity extends BaseActivity {
             Toast.makeText(ChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
           }
         });
-      }
-      else if (holder.getItemViewType() == 2){
+      } else if (holder.getItemViewType() == 2) {
         year = Integer.parseInt(feed.getItem(pos).getDate().substring(0, 4));
         month = Integer.parseInt(feed.getItem(pos).getDate().substring(5, 7));
         day = Integer.parseInt(feed.getItem(pos).getDate().substring(8, 10));
         conversion = new CalendarConversion(year, month, day);
-        holder.txt_price.setText(feed.getItem(pos).getAmount() + "");
-        holder.txt_status.setText(feed.getItem(pos).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
-        holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
-        holder.txt_date.setText(conversion.getIranianDate() + "");
-        holder.txt_description.setText(feed.getItem(pos).getComment());
-        holder.btn_cancel.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            Toast.makeText(ChatPageActivity.this, "آیا برای انصراف مطمئن هستید؟", Toast.LENGTH_SHORT).show();
-          }
-        });
-        holder.btn_replay.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            Toast.makeText(ChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
-          }
-        });
-      }
-      else if (holder.getItemViewType() == 3){
-        year = Integer.parseInt(feed.getItem(pos).getDate().substring(0, 4));
-        month = Integer.parseInt(feed.getItem(pos).getDate().substring(5, 7));
-        day = Integer.parseInt(feed.getItem(pos).getDate().substring(8, 10));
-        conversion = new CalendarConversion(year, month, day);
-        holder.txt_price.setText(feed.getItem(pos).getAmount() + "");
-        holder.txt_status.setText(feed.getItem(pos).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
+        holder.txt_price.setText(getDividedToman((long) feed.getItem(pos).getAmount()) + "");
+        holder.txt_status.setText("درخواست داده شده");
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
         holder.txt_description.setText(feed.getItem(pos).getComment());
@@ -343,16 +315,43 @@ public class ChatPageActivity extends BaseActivity {
             Toast.makeText(ChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
           }
         });
-      }
-      else {
+      } else if (holder.getItemViewType() == 3) {
         year = Integer.parseInt(feed.getItem(pos).getDate().substring(0, 4));
         month = Integer.parseInt(feed.getItem(pos).getDate().substring(5, 7));
         day = Integer.parseInt(feed.getItem(pos).getDate().substring(8, 10));
         conversion = new CalendarConversion(year, month, day);
-        holder.txt_price.setText(feed.getItem(pos).getAmount() + "");
+        holder.txt_price.setText(getDividedToman((long) feed.getItem(pos).getAmount()) + "");
+        holder.txt_status.setText("درخواست داده شده");
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
-        holder.txt_status.setText(feed.getItem(pos).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
+        holder.txt_description.setText(feed.getItem(pos).getComment());
+        holder.btn_accept.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+
+          }
+        });
+        holder.btn_cancel.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            Toast.makeText(ChatPageActivity.this, "آیا برای انصراف مطمئن هستید؟", Toast.LENGTH_SHORT).show();
+          }
+        });
+        holder.btn_replay.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            Toast.makeText(ChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
+          }
+        });
+      } else {
+        year = Integer.parseInt(feed.getItem(pos).getDate().substring(0, 4));
+        month = Integer.parseInt(feed.getItem(pos).getDate().substring(5, 7));
+        day = Integer.parseInt(feed.getItem(pos).getDate().substring(8, 10));
+        conversion = new CalendarConversion(year, month, day);
+        holder.txt_price.setText(getDividedToman((long) feed.getItem(pos).getAmount()) + "");
+        holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
+        holder.txt_date.setText(conversion.getIranianDate() + "");
+        holder.txt_status.setText("پرداخت شد");
         holder.txt_description.setText(feed.getItem(pos).getComment());
         holder.btn_replay.setOnClickListener(new View.OnClickListener() {
           @Override
@@ -376,6 +375,8 @@ public class ChatPageActivity extends BaseActivity {
       TextView txt_clock;
       TextView txt_date;
       Button btn_cancel;
+      Button btn_accept;
+
       ViewHolder(View itemView) {
         super(itemView);
         txt_price = (TextView) itemView.findViewById(R.id.txt_priceFrom);
@@ -384,7 +385,8 @@ public class ChatPageActivity extends BaseActivity {
         txt_status = (TextView) itemView.findViewById(R.id.txt_status_payed_from);
         txt_description = (TextView) itemView.findViewById(R.id.txt_description_from);
         btn_replay = (ImageButton) itemView.findViewById(R.id.btn_replay_pay_from);
-        btn_cancel = (Button)itemView.findViewById(R.id.btn_cancel_pay);
+        btn_cancel = (Button) itemView.findViewById(R.id.btn_cancel_pay);
+        btn_accept = (Button) itemView.findViewById(R.id.btn_accept_pay);
 //        btn_cancel.setOnClickListener(this);
       }
 
@@ -397,10 +399,12 @@ public class ChatPageActivity extends BaseActivity {
   }
 
 
+  public void sendReqPay(int amount, String comment) {
+    description = comment;
+    this.amount = amount;
+    new requestFromAnother().execute(phone, amount + "", comment);
+  }
 
-    public void sendReqPay(int amount,String comment) {
-        new requestFromAnother().execute(phone,  amount+"", comment);
-    }
   public void sendPay(String detail, String comment, int amount) {
     description = comment;
     this.amount = amount;
@@ -422,10 +426,10 @@ public class ChatPageActivity extends BaseActivity {
       getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(paymentFragment).commit();
     } else if (fragment_status == 2) {
       getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(getCardFragment).commit();
-    }else if (fragment_status == 3) {
-        getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(requestPaymentFragment).commit();
+    } else if (fragment_status == 3) {
+      getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(requestPaymentFragment).commit();
     } else if (description != null) {
-      Intent intent = new Intent(this, FriendListActivity.class);
+      Intent intent = new Intent(this, MainActivity.class);
       intent.putExtra("description", description);
       intent.putExtra("amount", amount);
       intent.putExtra("pos", position);
@@ -434,5 +438,28 @@ public class ChatPageActivity extends BaseActivity {
     } else
       finish();
 
+  }
+
+  private String getDividedToman(Long price) {
+    if (price == 0) {
+      return price+"";
+    }
+    StringBuilder stringBuilder = new StringBuilder();
+    for (int i = 0; i < price.toString().length(); i+=3) {
+      try {
+        if (i==0)
+          stringBuilder.insert(0, price.toString().substring(price.toString().length() - 3 - i, price.toString().length() - i));
+        else
+          stringBuilder.insert(0, price.toString().substring(price.toString().length() - 3 - i, price.toString().length()-i)+",");
+      } catch (Exception e) {
+        try {
+          stringBuilder.insert(0, price.toString().substring(price.toString().length() - 2 - i, price.toString().length()-i)+",");
+        } catch (Exception e1) {
+          stringBuilder.insert(0, price.toString().substring(price.toString().length() - 1 - i, price.toString().length()-i)+",");
+        }
+      }
+
+    }
+    return stringBuilder.toString();
   }
 }

@@ -45,6 +45,6 @@ public class LoginActivity extends BaseActivity {
 
 
   private void checkPermissions() {
-    ActivityCompat.requestPermissions(LoginActivity.this, new String[]{Manifest.permission.READ_CONTACTS}, 0);
+    ActivityCompat.requestPermissions(LoginActivity.this, new String[]{Manifest.permission.READ_CONTACTS,Manifest.permission.CAMERA}, 0);
   }
 }

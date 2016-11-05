@@ -7,13 +7,9 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,14 +23,11 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
-import magia.af.ezpay.FriendListActivity;
 import magia.af.ezpay.LoginActivity;
 import magia.af.ezpay.MainActivity;
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.R;
-import magia.af.ezpay.Splash;
-import magia.af.ezpay.Utilities.LocalPersistence;
 import magia.af.ezpay.helper.GetContact;
 import magia.af.ezpay.interfaces.EventCallbackHandler;
 

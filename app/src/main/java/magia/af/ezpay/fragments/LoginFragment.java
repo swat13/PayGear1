@@ -1,7 +1,6 @@
 package magia.af.ezpay.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,13 +14,11 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
-import magia.af.ezpay.FriendListActivity;
 import magia.af.ezpay.LoginActivity;
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.R;

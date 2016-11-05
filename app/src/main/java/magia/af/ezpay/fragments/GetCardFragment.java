@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -50,6 +51,7 @@ public class GetCardFragment extends Fragment {
     public void show_dialog_get_pay_card(final View view) {
 
         final EditText card_ed = (EditText) view.findViewById(R.id.payAmount);
+        card_ed.setImeOptions(EditorInfo.IME_ACTION_NEXT);
         final EditText pin_ed = (EditText) view.findViewById(R.id.comments);
 //        card_ed.setTypeface(typeface);
 
