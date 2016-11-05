@@ -17,6 +17,8 @@ import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.Parser.RSSItem;
 import magia.af.ezpay.Utilities.LocalPersistence;
 import magia.af.ezpay.helper.ContactDatabase;
+import magia.af.ezpay.fragments.BarCodeGet;
+import magia.af.ezpay.fragments.LoginFragment;
 import magia.af.ezpay.interfaces.OnClickHandler;
 
 public class FriendListActivity extends BaseActivity implements OnClickHandler {
@@ -24,6 +26,8 @@ public class FriendListActivity extends BaseActivity implements OnClickHandler {
   RSSFeed _feed;
   RecyclerView recBills;
   ListAdapter adapter;
+    public int fragment_status = 0;
+
   String description;
   int amount;
   int pos;

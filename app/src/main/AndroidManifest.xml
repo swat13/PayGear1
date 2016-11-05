@@ -35,7 +35,7 @@
             android:name=".LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".FriendListActivity">
+        <activity android:name=".MainActivity">
         </activity>
         <activity android:name=".ChatPageActivity">
         </activity>
