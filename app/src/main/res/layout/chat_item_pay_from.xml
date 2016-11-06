@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:src="@drawable/ic_reply" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -51,8 +52,6 @@
                         android:layout_weight="0.5"
                         android:background="@drawable/text_background"
                         android:gravity="center"
-                        android:paddingLeft="20dp"
-                        android:paddingRight="20dp"
                         android:text="پرداخت شد"
                         android:textColor="#FFFFFF" />
 

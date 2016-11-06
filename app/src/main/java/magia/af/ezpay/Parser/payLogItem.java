@@ -14,6 +14,34 @@ public class PayLogItem implements Serializable {
 	private int Amount;
 	private String Date;
 	private String comment;
+  private boolean paideBool;
+  private boolean deleted;
+  private boolean accepted;
+  private boolean status;
+
+  public boolean isStatus() {
+    return status;
+  }
+
+  public void setStatus(boolean status) {
+    this.status = status;
+  }
+
+  public boolean isDeleted() {
+    return deleted;
+  }
+
+  public void setDeleted(boolean deleted) {
+    this.deleted = deleted;
+  }
+
+  public boolean isAccepted() {
+    return accepted;
+  }
+
+  public void setAccepted(boolean accepted) {
+    this.accepted = accepted;
+  }
 
   public String getComment() {
     return comment;
@@ -23,7 +51,6 @@ public class PayLogItem implements Serializable {
     this.comment = comment;
   }
 
-  private boolean paideBool;
 
 
     public boolean isPaideBool() {

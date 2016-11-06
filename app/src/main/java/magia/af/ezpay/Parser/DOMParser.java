@@ -1,5 +1,6 @@
 package magia.af.ezpay.Parser;
 
+import android.media.audiofx.BassBoost;
 import android.util.Log;
 
 
@@ -791,6 +792,7 @@ public class DOMParser {
                 payLogItem.setDate(jsonObject1.getString("d"));
                 payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
                 payLogItem.setComment(jsonObject1.getString("c"));
+                payLogItem.setStatus(jsonObject1.getBoolean("s"));
 
 
             } catch (JSONException e) {
@@ -808,6 +810,48 @@ public class DOMParser {
         }
         return null;
 
+    }
+
+    public boolean deletePayment(int id) {
+        boolean state = false;
+        try {
+
+            URL url = new URL(mainUrl + "api/Payment/"+id);
+            Log.e("1111111", "doInBackground: " + url);
+            HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
+            httpConn.setDoOutput(true);
+            httpConn.setDoInput(true);
+            httpConn.setAllowUserInteraction(false);
+            httpConn.setRequestMethod("POST");
+            httpConn.setConnectTimeout(20000);
+            httpConn.setReadTimeout(20000);
+            httpConn.setRequestProperty("Content-Type", "application/json");
+            httpConn.setRequestProperty("Authorization", "bearer " + token);
+
+            OutputStream os = httpConn.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", id);
+
+            Log.e("999999999", "activateSong: " + jsonObject);
+            writer.write(jsonObject.toString());
+            writer.flush();
+            writer.close();
+            os.close();
+
+            int resCode = httpConn.getResponseCode();
+            Log.e("0000000", "doInBackground: " + resCode);
+            if (resCode == 200) {
+                state = true;
+            }
+            else state = false;
+
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+
+        return state;
     }
 
 
