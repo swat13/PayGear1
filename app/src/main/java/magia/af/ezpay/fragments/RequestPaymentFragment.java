@@ -165,7 +165,7 @@ public class RequestPaymentFragment extends Fragment {
                 result = number.substring(0, i) + number.substring(i + 1);
             }
         }
-        return Integer.valueOf(number.replace(",",""));
+        return Integer.valueOf(number.replace(",", ""));
     }
 
 
@@ -191,7 +191,6 @@ public class RequestPaymentFragment extends Fragment {
 
         ((ChatPageActivity) getActivity()).fragment_status = 0;
         ((ChatPageActivity) getActivity()).darkDialog.setVisibility(View.GONE);
-
 
 
     }

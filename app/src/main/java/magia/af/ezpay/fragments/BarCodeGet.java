@@ -1,12 +1,16 @@
 package magia.af.ezpay.fragments;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+
 import magia.af.ezpay.MainActivity;
+import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.R;
 
 /**
@@ -28,45 +32,45 @@ public class BarCodeGet extends android.app.Fragment {
         View v = inflater.inflate(R.layout.barcode_scanner, container, false);
         ((MainActivity) getActivity()).fragment_status = 4;
         imageView=(ImageView) v.findViewById(R.id.QrCode);
-//        new getQr().execute();
+        new getQr().execute();
         return v;
     }
 
 
-//    public class getQr extends AsyncTask<String, Void, String> {
-//
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-////            ((FriendListActivity) getActivity()).waitingDialog.setVisibility(View.VISIBLE);
-////            GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(((FriendListActivity) getActivity()).imageView);
-////            Glide.with(getActivity()).load(R.drawable.gif_loading).into(imageViewTarget);
-//
-//        }
-//
-//
-//        @Override
-//        protected String doInBackground(String... params) {
-//
-//            DOMParser domParser = new DOMParser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
-//            return null;
-//
-//        }
-//
-//        @Override
-//        protected void onPostExecute(String jsons) {
-////            ((FriendListActivity) getActivity()).waitingDialog.setVisibility(View.GONE);
-//
-//
-//            Glide.with(getActivity()).load("http://new.opaybot.ir/api/QR").into(imageView);
-//
-//
-//
-//
-//
-//
-//        }
-//    }
+    public class getQr extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+//            ((FriendListActivity) getActivity()).waitingDialog.setVisibility(View.VISIBLE);
+//            GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(((FriendListActivity) getActivity()).imageView);
+//            Glide.with(getActivity()).load(R.drawable.gif_loading).into(imageViewTarget);
+
+        }
+
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            DOMParser domParser = new DOMParser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
+            return null;
+
+        }
+
+        @Override
+        protected void onPostExecute(String jsons) {
+//            ((FriendListActivity) getActivity()).waitingDialog.setVisibility(View.GONE);
+
+
+            Glide.with(getActivity()).load("http://new.opaybot.ir/api/QR").into(imageView);
+
+
+
+
+
+
+        }
+    }
 
 
 }
