@@ -198,6 +198,73 @@ public class DOMParser {
     }
 
 
+    public RSSItem getAccountId(String id) {
+
+        try {
+
+            URL url = new URL(mainUrl + "api/account/" + id );
+            Log.e("1111111", "doInBackground: " + url);
+            HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
+            httpConn.setDoInput(true);
+            httpConn.setAllowUserInteraction(false);
+            httpConn.setRequestMethod("GET");
+            httpConn.setConnectTimeout(13000);
+            httpConn.setReadTimeout(13000);
+            httpConn.setRequestProperty("Authorization", "bearer " + token);
+
+            int resCode = httpConn.getResponseCode();
+            Log.e("0000000", "doInBackground: " + resCode);
+            if (resCode == 400) {
+                return null;
+            }
+
+            InputStream in = httpConn.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            StringBuilder sb = new StringBuilder();
+
+            String line = null;
+            try {
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            Log.e("@@@@@@", sb.toString());
+            JSONObject jsonObject = new JSONObject(sb.toString());
+            RSSItem rssItem = new RSSItem();
+
+            try {
+                rssItem.setContactImg(jsonObject.getString("photo"));
+                rssItem.setTelNo(jsonObject.getString("mobile"));
+                rssItem.setId(Integer.parseInt(jsonObject.getString("id")));
+                rssItem.setContactName(jsonObject.getString("title"));
+            } catch (Exception e) {
+                e.printStackTrace();
+
+            }
+            return rssItem;
+
+
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
     public JSONObject getQRid(String id) {
 
         try {
@@ -268,7 +335,6 @@ public class DOMParser {
         }
         return null;
     }
-
 
 
     /**
@@ -571,7 +637,7 @@ public class DOMParser {
 
     }
 
-    public PayLogItem RequestFromAnother(String phone,String Amount,String cm) {
+    public PayLogItem RequestFromAnother(String phone, String Amount, String cm) {
 
         try {
 
@@ -628,7 +694,6 @@ public class DOMParser {
             }
 
             Log.e("@@@@@@", sb.toString());
-
 
 
             PayLogItem payLogItem = new PayLogItem();
@@ -744,7 +809,6 @@ public class DOMParser {
         return null;
 
     }
-
 
 
     public PayLogItem sendPaymentRequest(String phone, String detail, String comment, String amount) {

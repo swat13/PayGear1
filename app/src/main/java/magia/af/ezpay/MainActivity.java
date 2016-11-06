@@ -1,10 +1,14 @@
 package magia.af.ezpay;
 
+import android.Manifest;
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -45,6 +49,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     _feed = (RSSFeed) getIntent().getSerializableExtra("contact");
 
 
+
     android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
     if (fm != null) {
       friendsListFragment = new FriendsListFragment().getInstance(_feed);
@@ -78,7 +83,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
 
         Log.e("clicked", "onClick: ");
-        startActivity(new Intent(MainActivity.this, SimpleScannerActivity.class));
+        startActivity(new Intent(MainActivity.this, SimpleScannerActivity.class).putExtra("contact",_feed));
+
+
+
+
 
         break;
 

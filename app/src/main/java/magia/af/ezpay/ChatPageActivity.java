@@ -29,18 +29,18 @@ import magia.af.ezpay.fragments.RequestPaymentFragment;
 import magia.af.ezpay.helper.CalendarConversion;
 
 public class ChatPageActivity extends BaseActivity {
-  private String phone;
-  public String contactName;
-  private String imageUrl = "http://new.opaybot.ir";
-  RecyclerView recyclerView;
-  PayLogFeed feed;
-  ChatPageAdapter adapter;
-  static boolean isOpen = false;
-  public RelativeLayout darkDialog;
-  public GetCardFragment getCardFragment;
-  public PaymentFragment paymentFragment;
-  public RequestPaymentFragment requestPaymentFragment;
-  public int fragment_status = 0;
+    private String phone;
+    public String contactName;
+    private String imageUrl = "http://new.opaybot.ir";
+    RecyclerView recyclerView;
+    PayLogFeed feed;
+    ChatPageAdapter adapter;
+    static boolean isOpen = false;
+    public RelativeLayout darkDialog;
+    public GetCardFragment getCardFragment;
+    public PaymentFragment paymentFragment;
+    public RequestPaymentFragment requestPaymentFragment;
+    public int fragment_status = 0;
 
     public String description;
     public int amount;
@@ -58,6 +58,7 @@ public class ChatPageActivity extends BaseActivity {
             position = bundle.getInt("pos");
             Log.i("#%^&@%^&@", phone);
             contactName = bundle.getString("contactName");
+            Log.e("ContactName", "contactName"+contactName );
             imageUrl = imageUrl + bundle.getString("image");
         }
 
@@ -96,9 +97,9 @@ public class ChatPageActivity extends BaseActivity {
             }
         });
 
-    findViewById(R.id.btn_receive).setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
+        findViewById(R.id.btn_receive).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
                 Log.e("Receive", "onClick: ");
                 FragmentTransaction ft;
@@ -109,41 +110,41 @@ public class ChatPageActivity extends BaseActivity {
                 ft.add(android.R.id.content, requestPaymentFragment).commit();
                 isOpen = false;
 
-      }
-    });
+            }
+        });
 
-    findViewById(R.id.btn_back).setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        onBackPressed();
-      }
-    });
+        findViewById(R.id.btn_back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
     }
 
     private class sendPaymentRequest extends AsyncTask<String, Void, PayLogItem> {
 
-    @Override
-    protected void onPreExecute() {
-      super.onPreExecute();
-    }
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
 
-    @Override
-    protected PayLogItem doInBackground(String... params) {
-      DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
-      return domParser.sendPaymentRequest(params[0], params[1], params[2], params[3]);
-    }
+        @Override
+        protected PayLogItem doInBackground(String... params) {
+            DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
+            return domParser.sendPaymentRequest(params[0], params[1], params[2], params[3]);
+        }
 
-    @Override
-    protected void onPostExecute(PayLogItem result) {
-      if (result != null) {
-        feed.addItem(result);
-        new LocalPersistence().writeObjectToFile(ChatPageActivity.this, feed, "Payment_Chat_List");
-        adapter.notifyDataSetChanged();
-      } else
-        Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
+        @Override
+        protected void onPostExecute(PayLogItem result) {
+            if (result != null) {
+                feed.addItem(result);
+                new LocalPersistence().writeObjectToFile(ChatPageActivity.this, feed, "Payment_Chat_List");
+                adapter.notifyDataSetChanged();
+            } else
+                Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
+        }
     }
-  }
 
 
     private class requestFromAnother extends AsyncTask<String, Void, PayLogItem> {
@@ -184,7 +185,7 @@ public class ChatPageActivity extends BaseActivity {
             Log.e("0000", "accpayment0000: " + getSharedPreferences("EZpay", 0).getString("id", ""));
             return domParser.accPaymentRequest(params[0], params[1]);
 
-    }
+        }
 
         @Override
         protected void onPostExecute(PayLogItem result) {
@@ -198,47 +199,47 @@ public class ChatPageActivity extends BaseActivity {
     }
 
 
-  private class getChatLog extends AsyncTask<String, Void, PayLogFeed> {
+    private class getChatLog extends AsyncTask<String, Void, PayLogFeed> {
 
-    @Override
-    protected void onPreExecute() {
-      super.onPreExecute();
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
 
 
-    }
-
-    @Override
-    protected PayLogFeed doInBackground(String... params) {
-      DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
-      return domParser.payLogWithAnother(params[0]);
-    }
-
-    @Override
-    protected void onPostExecute(PayLogFeed result) {
-      if (result != null) {
-        Log.e("0000000000", "onPostExecute: ");
-        if (feed == null || feed.getItemCount() == 0) {
-          Log.e("1111111111", "onPostExecute: ");
-          feed = result;
-          Log.i("PAY", result.toString());
-          adapter = new ChatPageAdapter();
-          recyclerView.setAdapter(adapter);
-          adapter.notifyDataSetChanged();
-        } else {
-          Log.e("222222222", "onPostExecute: ");
-          feed = result;
-          adapter.notifyDataSetChanged();
         }
-      } else {
-        Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
-      }
-    }
-  }
 
-  public class ChatPageAdapter extends RecyclerView.Adapter<ChatPageAdapter.ViewHolder> {
-    public ChatPageAdapter() {
+        @Override
+        protected PayLogFeed doInBackground(String... params) {
+            DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
+            return domParser.payLogWithAnother(params[0]);
+        }
 
+        @Override
+        protected void onPostExecute(PayLogFeed result) {
+            if (result != null) {
+                Log.e("0000000000", "onPostExecute: ");
+                if (feed == null || feed.getItemCount() == 0) {
+                    Log.e("1111111111", "onPostExecute: ");
+                    feed = result;
+                    Log.i("PAY", result.toString());
+                    adapter = new ChatPageAdapter();
+                    recyclerView.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                } else {
+                    Log.e("222222222", "onPostExecute: ");
+                    feed = result;
+                    adapter.notifyDataSetChanged();
+                }
+            } else {
+                Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
+
+    public class ChatPageAdapter extends RecyclerView.Adapter<ChatPageAdapter.ViewHolder> {
+        public ChatPageAdapter() {
+
+        }
 
         @Override
         public int getItemViewType(int position) {
@@ -402,28 +403,28 @@ public class ChatPageActivity extends BaseActivity {
                 btn_cancel = (Button) itemView.findViewById(R.id.btn_cancel_pay);
                 btn_accept = (Button) itemView.findViewById(R.id.btn_accept_pay);
 //        btn_cancel.setOnClickListener(this);
-      }
+            }
 
-      @Override
-      public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
 
-      }
+            }
+        }
+
     }
 
-  }
 
+    public void sendReqPay(int amount, String comment) {
+        description = comment;
+        this.amount = amount;
+        new requestFromAnother().execute(phone, amount + "", comment);
+    }
 
-  public void sendReqPay(int amount, String comment) {
-    description = comment;
-    this.amount = amount;
-    new requestFromAnother().execute(phone, amount + "", comment);
-  }
-
-  public void sendPay(String detail, String comment, int amount) {
-    description = comment;
-    this.amount = amount;
-    new sendPaymentRequest().execute(phone, detail, comment, String.valueOf(amount));
-  }
+    public void sendPay(String detail, String comment, int amount) {
+        description = comment;
+        this.amount = amount;
+        new sendPaymentRequest().execute(phone, detail, comment, String.valueOf(amount));
+    }
 
 
     public void accPay(int id, String detail) {
@@ -440,46 +441,46 @@ public class ChatPageActivity extends BaseActivity {
     }
 
 
-  @Override
-  public void onBackPressed() {
-    if (fragment_status == 1) {
-      getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(paymentFragment).commit();
-    } else if (fragment_status == 2) {
-      getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(getCardFragment).commit();
-    } else if (fragment_status == 3) {
-      getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(requestPaymentFragment).commit();
-    } else if (description != null) {
-      Intent intent = new Intent(this, MainActivity.class);
-      intent.putExtra("description", description);
-      intent.putExtra("amount", amount);
-      intent.putExtra("pos", position);
-      setResult(10, intent);
-      finish();
-    } else
-      finish();
+    @Override
+    public void onBackPressed() {
+        if (fragment_status == 1) {
+            getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(paymentFragment).commit();
+        } else if (fragment_status == 2) {
+            getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(getCardFragment).commit();
+        } else if (fragment_status == 3) {
+            getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(requestPaymentFragment).commit();
+        } else if (description != null) {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("description", description);
+            intent.putExtra("amount", amount);
+            intent.putExtra("pos", position);
+            setResult(10, intent);
+            finish();
+        } else
+            finish();
 
-  }
-
-  private String getDividedToman(Long price) {
-    if (price == 0) {
-      return price+"";
     }
-    StringBuilder stringBuilder = new StringBuilder();
-    for (int i = 0; i < price.toString().length(); i+=3) {
-      try {
-        if (i==0)
-          stringBuilder.insert(0, price.toString().substring(price.toString().length() - 3 - i, price.toString().length() - i));
-        else
-          stringBuilder.insert(0, price.toString().substring(price.toString().length() - 3 - i, price.toString().length()-i)+",");
-      } catch (Exception e) {
-        try {
-          stringBuilder.insert(0, price.toString().substring(price.toString().length() - 2 - i, price.toString().length()-i)+",");
-        } catch (Exception e1) {
-          stringBuilder.insert(0, price.toString().substring(price.toString().length() - 1 - i, price.toString().length()-i)+",");
+
+    private String getDividedToman(Long price) {
+        if (price == 0) {
+            return price + "";
         }
-      }
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < price.toString().length(); i += 3) {
+            try {
+                if (i == 0)
+                    stringBuilder.insert(0, price.toString().substring(price.toString().length() - 3 - i, price.toString().length() - i));
+                else
+                    stringBuilder.insert(0, price.toString().substring(price.toString().length() - 3 - i, price.toString().length() - i) + ",");
+            } catch (Exception e) {
+                try {
+                    stringBuilder.insert(0, price.toString().substring(price.toString().length() - 2 - i, price.toString().length() - i) + ",");
+                } catch (Exception e1) {
+                    stringBuilder.insert(0, price.toString().substring(price.toString().length() - 1 - i, price.toString().length() - i) + ",");
+                }
+            }
 
+        }
+        return stringBuilder.toString();
     }
-    return stringBuilder.toString();
-  }
 }
