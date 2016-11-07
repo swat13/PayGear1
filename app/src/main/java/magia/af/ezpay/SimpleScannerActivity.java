@@ -1,10 +1,14 @@
 package magia.af.ezpay;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.zxing.Result;
@@ -12,16 +16,21 @@ import com.google.zxing.Result;
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.Parser.RSSItem;
+import magia.af.ezpay.fragments.QRCodeDetailsFragment;
+import magia.af.ezpay.fragments.RequestPaymentFragment;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
-public class SimpleScannerActivity extends Activity implements ZXingScannerView.ResultHandler {
+public class SimpleScannerActivity extends BaseActivity implements ZXingScannerView.ResultHandler {
     private ZXingScannerView mScannerView;
     RSSFeed rssFeed;
     private String id;
     private boolean commit = false;
     int pos;
+    public RelativeLayout darkDialog;
+    public QRCodeDetailsFragment qrCodeDetailsFragment;
+    static boolean isOpen = false;
 
     @Override
     public void onCreate(Bundle state) {
@@ -31,19 +40,12 @@ public class SimpleScannerActivity extends Activity implements ZXingScannerView.
         setContentView(mScannerView);
         // Set the scanner view as the content view
 
+//        darkDialog = (RelativeLayout) findViewById(R.id.dark_dialog);
         rssFeed = (RSSFeed) getIntent().getSerializableExtra("contact");
 
         Log.e("Feeed", String.valueOf(rssFeed));
 
 
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mScannerView.setResultHandler(this); // Register ourselves as a handler for scan results.
-        mScannerView.startCamera();          // Start camera on resume
-//        rssFeed= (RSSFeed) getIntent().getSerializableExtra("contact");
     }
 
 
@@ -111,7 +113,8 @@ public class SimpleScannerActivity extends Activity implements ZXingScannerView.
 
                 rssFeed.addItem(jsons);
                 pos = rssFeed.getItemCount() - 1;
-                finish();
+                openDialog();
+//                finish();
             } else {
                 Log.e(TAG, "onPostExecute: 1111111111");
                 Toast.makeText(getApplicationContext(), "Json Is Null!", Toast.LENGTH_SHORT).show();
@@ -121,20 +124,66 @@ public class SimpleScannerActivity extends Activity implements ZXingScannerView.
         }
     }
 
+    private void openDialog() {
+        if (commit) {
+            FragmentTransaction ft;
+//            darkDialog.setVisibility(View.VISIBLE);
+            Bundle bundle = new Bundle();
+            Log.e("ssssssssssss", "openDialog: "+ rssFeed.getItem(pos).getContactName());
+            bundle.putString("phone",rssFeed.getItem(pos).getTelNo());
+            bundle.putString("contactName" , rssFeed.getItem(pos).getContactName());
+            bundle.putString("image" , rssFeed.getItem(pos).getContactImg());
+            bundle.putInt("pos" , pos);
+            qrCodeDetailsFragment = QRCodeDetailsFragment.newInstance();
+            qrCodeDetailsFragment.setArguments(bundle);
+            ft = getFragmentManager().beginTransaction();
+            ft.setCustomAnimations(R.animator.enter_from_right, R.animator.exit_to_right);
+            ft.add(android.R.id.content, qrCodeDetailsFragment).commit();
+            isOpen = false;
+//            Intent goToChatPageActivity = new Intent(this, ChatPageActivity.class);
+//            goToChatPageActivity.putExtra("phone", rssFeed.getItem(pos).getTelNo());
+//            goToChatPageActivity.putExtra("contactName", rssFeed.getItem(pos).getContactName());
+//            goToChatPageActivity.putExtra("image", rssFeed.getItem(pos).getContactImg());
+//            goToChatPageActivity.putExtra("pos", pos);
+//            startActivityForResult(goToChatPageActivity, 10);
+
+
+        }else
+            finish();
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mScannerView.setResultHandler(this); // Register ourselves as a handler for scan results.
+        mScannerView.startCamera();          // Start camera on resume
+//        rssFeed= (RSSFeed) getIntent().getSerializableExtra("contact");
+    }
+
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (commit) {
-            Intent goToChatPageActivity = new Intent(this, ChatPageActivity.class);
-            goToChatPageActivity.putExtra("phone", rssFeed.getItem(pos).getTelNo());
-            goToChatPageActivity.putExtra("contactName", rssFeed.getItem(pos).getContactName());
-            goToChatPageActivity.putExtra("image", rssFeed.getItem(pos).getContactImg());
-            goToChatPageActivity.putExtra("pos", pos);
-            startActivityForResult(goToChatPageActivity, 10);
-
-        }else
-            finish();
+//        mScannerView.stopCamera();
+//        if (commit) {
+//            FragmentTransaction ft;
+////            darkDialog.setVisibility(View.VISIBLE);
+//            qrCodeDetailsFragment = QRCodeDetailsFragment.newInstance();
+//            ft = getFragmentManager().beginTransaction();
+//            ft.setCustomAnimations(R.animator.enter_from_right, R.animator.exit_to_right);
+//            ft.add(android.R.id.content, qrCodeDetailsFragment).commit();
+//            isOpen = false;
+////            Intent goToChatPageActivity = new Intent(this, ChatPageActivity.class);
+////            goToChatPageActivity.putExtra("phone", rssFeed.getItem(pos).getTelNo());
+////            goToChatPageActivity.putExtra("contactName", rssFeed.getItem(pos).getContactName());
+////            goToChatPageActivity.putExtra("image", rssFeed.getItem(pos).getContactImg());
+////            goToChatPageActivity.putExtra("pos", pos);
+////            startActivityForResult(goToChatPageActivity, 10);
+//
+//
+//        }else
+//            finish();
 
     }
 }

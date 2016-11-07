@@ -18,4 +18,5 @@
     <string name="cancel_payment">انصراف</string>
     <string name="cancel_text">لغو</string>
     <string name="accept_text">تایید</string>
+    <string name="qr_scan_info">اطلاعات اسکن</string>
 </resources>

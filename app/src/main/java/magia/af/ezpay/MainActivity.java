@@ -75,8 +75,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         break;
 
       case R.id.barcode_reader:
-        Log.e("clicked", "onClick: ");
-        startActivity(new Intent(MainActivity.this, SimpleScannerActivity.class).putExtra("contact",_feed));
+
+        barCodeGet = new BarCodeGet().getInstance();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("contact" , _feed);
+        BarCodeGet barCodeGet = new BarCodeGet();
+        barCodeGet.setArguments(bundle);
+        getFragmentManager().beginTransaction().replace(R.id.detail_fragment, barCodeGet).addToBackStack(null).commit();
+
+        friendsLayout.setAlpha((float) 0.45);
+        barcodeGet.setAlpha((float) 0.45);
+        barcodeReader.setAlpha((float) 1);
+//        Log.e("clicked", "onClick: ");
+//        startActivity(new Intent(MainActivity.this, SimpleScannerActivity.class).putExtra("contact",_feed));
 
         break;
 
@@ -87,7 +98,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         friendsLayout.setAlpha((float) 0.45);
         barcodeReader.setAlpha((float) 0.45);
-        barcodeGet.setAlpha((float) 1);
+        barcodeGet.setAlpha((float)1);
 
         break;
 
