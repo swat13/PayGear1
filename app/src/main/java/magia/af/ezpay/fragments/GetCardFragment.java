@@ -32,18 +32,18 @@ public class GetCardFragment extends Fragment {
     static int amount;
     static int id;
 
-    public static GetCardFragment newInstance(int Amount,String Comment) {
+    public static GetCardFragment newInstance(int Amount, String Comment) {
         GetCardFragment fragmentDemo = new GetCardFragment();
         type_m = false;
-        amount=Amount;
-        comment=Comment;
+        amount = Amount;
+        comment = Comment;
         return fragmentDemo;
     }
 
     public static GetCardFragment newInstance(int Id) {
         GetCardFragment fragmentDemo = new GetCardFragment();
         type_m = true;
-        id=Id;
+        id = Id;
         return fragmentDemo;
     }
 
@@ -140,11 +140,13 @@ public class GetCardFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
+                if (s.length() == 19) {
+                    pin_ed.requestFocus();
+                }
                 if (s.length() == 0) {
 
                     card_ed.setGravity(Gravity.RIGHT);
                     card_ed.setHint("شماره کارت");
-
 
                 } else {
                     card_ed.setGravity(Gravity.LEFT);
@@ -191,7 +193,7 @@ public class GetCardFragment extends Fragment {
                     Toast.makeText(getActivity(), "شماره کارت و یا رمز صحیح نمی باشد!", Toast.LENGTH_SHORT).show();
                 } else {
                     isCommit = true;
-                    card = card_ed.getText().toString()+ pin_ed.getText().toString();
+                    card = card_ed.getText().toString() + pin_ed.getText().toString();
                     hideKey(view);
                     getActivity().getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(GetCardFragment.this).commit();
                 }
@@ -227,22 +229,22 @@ public class GetCardFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.e("00000000", "onDestroy: ))))(((((" );
-        if (!type_m && isCommit) {
-
+        Log.e("00000000", "onDestroy: ))))(((((");
+        if (!type_m ) {
             ((ChatPageActivity) getActivity()).fragment_status = 1;
-            ((ChatPageActivity) getActivity()).sendPay(card,comment,amount);
-//            ((ChatPageActivity) getActivity()).fragment_status = 1;
-            getActivity().onBackPressed();
-        }
-        else if (type_m && isCommit){
+            if (isCommit) {
+                ((ChatPageActivity) getActivity()).sendPay(card, comment, amount);
+                getActivity().onBackPressed();
+            }
+        } else {
             ((ChatPageActivity) getActivity()).fragment_status = 0;
-
-            ((ChatPageActivity) getActivity()).accPay(id,card);
+            ((ChatPageActivity) getActivity()).darkDialog.setVisibility(View.GONE);
+            if (isCommit) {
+                ((ChatPageActivity) getActivity()).accPay(id, card);
+            }
 
 
         }
-        ((ChatPageActivity) getActivity()).darkDialog.setVisibility(View.GONE);
 
 
     }

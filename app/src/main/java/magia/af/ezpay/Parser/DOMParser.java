@@ -343,7 +343,7 @@ public class DOMParser {
      * @param activeCode
      * @return
      **/
-    public String[] Verify_Login_Activation_Code(String username, String activeCode) {
+    public String[] Verify_Login_Activation_Code(String username, String activeCode,String newName) {
 
         try {
 
@@ -363,7 +363,8 @@ public class DOMParser {
 
             String request = "{\n" +
                     "\"mobile\" : \"" + username + "\",\n" +
-                    "\"code\" : " + activeCode + "\n" +
+                    "\"code\" : " + activeCode + ",\n" +
+                    "\"newName\" : \"" + newName + "\"\n" +
                     "}";
 
             Log.e("999999999", "activateSong: " + request);
@@ -376,6 +377,11 @@ public class DOMParser {
             Log.e("0000000", "doInBackground: " + resCode);
             if (resCode == 400) {
                 return null;
+            } else if (resCode == 500) {
+                String[] Wrong = new String[2];
+                Wrong[0]="Wrong";
+                Wrong[1]="Wrong";
+                return Wrong;
             }
 
             InputStream in = httpConn.getInputStream();
@@ -659,7 +665,7 @@ public class DOMParser {
 
             String request = "{\n" +
                     "\"anotherMobile\" : \"" + phone + "\",\n" +
-                    "\"amount\" : \"" + Amount + "\",\n" +
+                    "\"amount\" : " + Amount + ",\n" +
                     "\"comment\" : \"" + cm + "\"\n" +
                     "}";
 

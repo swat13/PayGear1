@@ -38,10 +38,12 @@ import magia.af.ezpay.interfaces.EventCallbackHandler;
 public class ActivationCodeFragment extends Fragment implements View.OnClickListener, EventCallbackHandler {
     private Button btn_send_activation_code_again;
     private ImageButton btn_send_activation_code;
-    private EditText edtInputPhoneNumber;
+    private EditText edtInputPhoneNumber, nameEditText;
     private TextView timerText;
     private String phone;
     private String activationCode;
+    private String newName;
+
 
     public static ActivationCodeFragment getInstance() {
 
@@ -54,6 +56,7 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
         final View rootView = inflater.inflate(R.layout.fragment_activation_code, null);
         btn_send_activation_code_again = (Button) rootView.findViewById(R.id.btn_send_activation_code_again);
         btn_send_activation_code = (ImageButton) rootView.findViewById(R.id.btn_send_activation_code);
+        nameEditText = (EditText) rootView.findViewById(R.id.name_edittext);
         edtInputPhoneNumber = (EditText) rootView.findViewById(R.id.edt_input_activation_code);
         edtInputPhoneNumber.addTextChangedListener(new TextWatcher() {
             @Override
@@ -64,8 +67,10 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
                 if (s.length() == 4) {
-                    btn_send_activation_code.setVisibility(View.VISIBLE);
-                    hideKey(rootView);
+                    nameEditText.requestFocus();
+                    if (nameEditText.length() > 1) {
+                        btn_send_activation_code.setVisibility(View.VISIBLE);
+                    }
                 } else {
                     btn_send_activation_code.setVisibility(View.GONE);
 
@@ -74,6 +79,30 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
 
             @Override
             public void afterTextChanged(Editable s) {
+            }
+        });
+
+        nameEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                if (s.length() > 1 && edtInputPhoneNumber.length() == 4) {
+                    btn_send_activation_code.setVisibility(View.VISIBLE);
+                } else {
+                    btn_send_activation_code.setVisibility(View.GONE);
+
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
 
@@ -107,9 +136,11 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
         switch (v.getId()) {
             case R.id.btn_send_activation_code:
 //                ((LoginActivity) getActivity()).darkDialog.setVisibility(View.VISIBLE);
+                hideKey(v);
                 activationCode = edtInputPhoneNumber.getText().toString();
+                newName = nameEditText.getText().toString();
                 Log.e("((((((((((", "onClick: 00000");
-                new verifyActiveCode().execute(phone, edtInputPhoneNumber.getText().toString());
+                new verifyActiveCode().execute(phone, edtInputPhoneNumber.getText().toString(), nameEditText.getText().toString());
                 break;
 
 
@@ -142,29 +173,31 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
         @Override
         protected String[] doInBackground(String... params) {
             DOMParser domParser = new DOMParser();
-            return domParser.Verify_Login_Activation_Code(params[0], params[1]);
+            return domParser.Verify_Login_Activation_Code(params[0], params[1], params[2]);
         }
 
         @Override
         protected void onPostExecute(String[] result) {
-            Log.e("11111111111111", "onPostExecute: " + result);
-            String tok=result[0];
-            String id=result[1];
-            if (tok.length() > 10) {
-                Log.e("55555555555", "onPostExecute: " + tok);
-                getActivity().getSharedPreferences("EZpay", 0).edit().putString("token", tok).apply();
-                getActivity().getSharedPreferences("EZpay", 0).edit().putString("id", id).apply();
-                new fillContact().execute();
-            } else if (result.equals("wrong")) {
+//            Log.e("11111111111111", "onPostExecute: " + result);
+            if (result != null && !result[1].contains("Wrong")) {
+                String tok = result[0];
+                String id = result[1];
+                if (tok.length() > 10) {
+                    Log.e("55555555555", "onPostExecute: " + tok);
+                    getActivity().getSharedPreferences("EZpay", 0).edit().putString("token", tok).apply();
+                    getActivity().getSharedPreferences("EZpay", 0).edit().putString("id", id).apply();
+                    new fillContact().execute();
+                }
+            } else if (result != null && result[0].contains("Wrong")) {
                 Toast.makeText(getActivity(), "کد فعال سازی صحیح نمی باشد!", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getActivity(), "مشکل در برقراری ارتباط!", Toast.LENGTH_SHORT).show();
             }
+            ((LoginActivity) getActivity()).waitingDialog.setVisibility(View.GONE);
         }
     }
 
     private class fillContact extends AsyncTask<Void, Void, RSSFeed> {
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -183,11 +216,6 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
                 startActivity(new Intent(getActivity(), MainActivity.class).putExtra("contact", result));
             } else
                 Toast.makeText(getActivity(), "problem in connection!", Toast.LENGTH_SHORT).show();
-
         }
-
     }
-
-
-
 }

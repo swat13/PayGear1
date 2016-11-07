@@ -1,15 +1,10 @@
 package magia.af.ezpay;
 
-import android.Manifest;
-import android.app.FragmentManager;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -50,7 +45,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
 
 
-    android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+    FragmentManager fm = getSupportFragmentManager();
     if (fm != null) {
       friendsListFragment = new FriendsListFragment().getInstance(_feed);
       fm.beginTransaction().replace(R.id.detail_fragment, friendsListFragment).addToBackStack(null).commit();
@@ -80,14 +75,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         break;
 
       case R.id.barcode_reader:
-
-
         Log.e("clicked", "onClick: ");
         startActivity(new Intent(MainActivity.this, SimpleScannerActivity.class).putExtra("contact",_feed));
-
-
-
-
 
         break;
 

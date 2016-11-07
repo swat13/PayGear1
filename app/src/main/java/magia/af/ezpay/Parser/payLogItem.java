@@ -4,53 +4,52 @@ import java.io.Serializable;
 
 public class PayLogItem implements Serializable {
 
-  //jkkjjmkjk
-  //jkjkijkjk
-	private static final long serialVersionUID = 1L;
-	private String _telNo;
-	private int id;
-	private String From;
-	private String To;
-	private int Amount;
-	private String Date;
-	private String comment;
-  private boolean paideBool;
-  private boolean deleted;
-  private boolean accepted;
-  private boolean status;
+    //jkkjjmkjk
+    //jkjkijkjk
+    private static final long serialVersionUID = 1L;
+    private String _telNo;
+    private int id;
+    private String From;
+    private String To;
+    private int Amount;
+    private String Date;
+    private String comment;
+    private boolean paideBool;
+    private boolean deleted;
+    private boolean accepted;
+    private boolean status;
 
-  public boolean isStatus() {
-    return status;
-  }
+    public boolean isStatus() {
+        return status;
+    }
 
-  public void setStatus(boolean status) {
-    this.status = status;
-  }
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
 
-  public boolean isDeleted() {
-    return deleted;
-  }
+    public boolean isDeleted() {
+        return deleted;
+    }
 
-  public void setDeleted(boolean deleted) {
-    this.deleted = deleted;
-  }
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
 
-  public boolean isAccepted() {
-    return accepted;
-  }
+    public boolean isAccepted() {
+        return accepted;
+    }
 
-  public void setAccepted(boolean accepted) {
-    this.accepted = accepted;
-  }
+    public void setAccepted(boolean accepted) {
+        this.accepted = accepted;
+    }
 
-  public String getComment() {
-    return comment;
-  }
+    public String getComment() {
+        return comment;
+    }
 
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
-
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 
 
     public boolean isPaideBool() {
@@ -94,19 +93,19 @@ public class PayLogItem implements Serializable {
     }
 
     public int getId() {
-    return id;
-  }
+        return id;
+    }
 
     public void setId(int id) {
-    this.id = id;
-  }
+        this.id = id;
+    }
 
     public void setTelNo(String telNo) {
-		_telNo = telNo;
-	}
+        _telNo = telNo;
+    }
 
-	public String getTelNo() {
-		return _telNo;
-	}
+    public String getTelNo() {
+        return _telNo;
+    }
 
 }
