@@ -28,13 +28,13 @@ public class Splash extends BaseActivity {
 
     ContactDatabase database;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
+
+
         // Here, thisActivity is the current activity
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_CONTACTS)
@@ -107,6 +107,7 @@ public class Splash extends BaseActivity {
         }, 1500);
 
     }
+
 
     public String newContact(JSONArray jsonArray) {
         return jsonArray.toString();

@@ -22,6 +22,7 @@ import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import magia.af.ezpay.LoginActivity;
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.R;
+import magia.af.ezpay.Splash;
 
 /**
  * Created by Saeid Yazdany on 10/26/2016.
@@ -42,6 +43,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_login,container,false);
+        Log.e("77777777777", "onCreateView: " );
+        ((LoginActivity) getActivity()).fragment_status = 1;
         btn_done = (ImageButton) rootView.findViewById(R.id.btn_done);
         btn_done.setOnClickListener(this);
         edtInputPhoneNumber = (EditText) rootView.findViewById(R.id.edt_input_phone_number);
@@ -116,15 +119,17 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             ((LoginActivity) getActivity()).waitingDialog.setVisibility(View.GONE);
             Log.e("^^^^^^^^^", "onPostExecute: " + result);
             if (result) {
-                Bundle bundle = new Bundle();
-                bundle.putString("number", phone);
-                Log.i("Input phone", phone);
-                ActivationCodeFragment activationCodeFragment = ActivationCodeFragment.getInstance();
-                activationCodeFragment.setArguments(bundle);
-                getActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.container, activationCodeFragment).addToBackStack(null)
-                        .commit();
+//                Bundle bundle = new Bundle();
+//                bundle.putString("number", phone);
+//                Log.i("Input phone", phone);
+//                ActivationCodeFragment activationCodeFragment = ActivationCodeFragment.getInstance();
+//                activationCodeFragment.setArguments(bundle);
+//                getActivity().getSupportFragmentManager()
+//                        .beginTransaction()
+//                        .replace(R.id.container, activationCodeFragment).addToBackStack(null)
+//                        .commit();
+
+                ((LoginActivity)getActivity()).loadActiveFragment(phone);
 
 
             } else {

@@ -24,7 +24,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
   public RelativeLayout darkDialog, waitingDialog;
   public FriendsListFragment friendsListFragment;
   public BarCodeGet barCodeGet;
-  public LinearLayout friendsLayout, barcodeGet, barcodeReader;
+  public LinearLayout friendsLayout, barcodeReader;
   public int fragment_status = 0;
   RSSFeed _feed;
   public String description;
@@ -38,7 +38,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     darkDialog = (RelativeLayout) findViewById(R.id.dark_dialog);
     waitingDialog = (RelativeLayout) findViewById(R.id.wait_layout);
     friendsLayout = (LinearLayout) findViewById(R.id.friends_layout);
-    barcodeGet = (LinearLayout) findViewById(R.id.barcode_reader1);
     barcodeReader = (LinearLayout) findViewById(R.id.barcode_reader);
 
     _feed = (RSSFeed) getIntent().getSerializableExtra("contact");
@@ -70,7 +69,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         friendsLayout.setAlpha((float) 1);
         barcodeReader.setAlpha((float) 0.45);
-        barcodeGet.setAlpha((float) 0.45);
 
         break;
 
@@ -84,23 +82,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         getFragmentManager().beginTransaction().replace(R.id.detail_fragment, barCodeGet).addToBackStack(null).commit();
 
         friendsLayout.setAlpha((float) 0.45);
-        barcodeGet.setAlpha((float) 0.45);
         barcodeReader.setAlpha((float) 1);
 //        Log.e("clicked", "onClick: ");
 //        startActivity(new Intent(MainActivity.this, SimpleScannerActivity.class).putExtra("contact",_feed));
 
         break;
 
-      case R.id.barcode_reader1:
+//      case R.id.barcode_reader1:
+//
+//        barCodeGet = new BarCodeGet().getInstance();
+//        getFragmentManager().beginTransaction().replace(R.id.detail_fragment, barCodeGet).addToBackStack(null).commit();
+//
+//        friendsLayout.setAlpha((float) 0.45);
+//        barcodeReader.setAlpha((float) 0.45);
+//        barcodeGet.setAlpha((float)1);
 
-        barCodeGet = new BarCodeGet().getInstance();
-        getFragmentManager().beginTransaction().replace(R.id.detail_fragment, barCodeGet).addToBackStack(null).commit();
-
-        friendsLayout.setAlpha((float) 0.45);
-        barcodeReader.setAlpha((float) 0.45);
-        barcodeGet.setAlpha((float)1);
-
-        break;
+//        break;
 
       default:
         break;
@@ -132,6 +129,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
   @Override
   public void onBackPressed() {
+    Log.e("Finish", "onBackPressed: " );
     finish();
 
   }

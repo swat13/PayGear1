@@ -10,16 +10,34 @@
         android:id="@+id/detail_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/btm_menu"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_above="@+id/btm_menu"/>
+        android:layout_alignParentStart="true" />
+
+    <RelativeLayout
+        android:id="@+id/wait_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/loading_bg2"
+        android:clickable="true"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/btm_menu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical">
+        android:layout_toRightOf="@+id/wait_layout"
+        android:layout_toEndOf="@+id/wait_layout">
 
         <View
             android:layout_width="match_parent"
@@ -33,8 +51,7 @@
             android:layout_height="?actionBarSize"
             android:background="#eceff1"
             android:orientation="horizontal"
-            android:padding="@dimen/btm_padding"
-            >
+            android:padding="@dimen/btm_padding">
 
             <LinearLayout
                 android:id="@+id/profile_layout"
@@ -76,8 +93,8 @@
 
                 <Button
                     android:id="@+id/report_list4"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="40dp"
+                    android:layout_height="30dp"
                     android:background="@drawable/group"
                     android:clickable="false" />
 
@@ -100,8 +117,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="0.2"
                 android:alpha="0.45"
-                android:onClick="onClick"
                 android:gravity="center"
+                android:onClick="onClick"
                 android:orientation="vertical">
 
                 <Button
@@ -122,32 +139,6 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/barcode_reader1"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0.2"
-                android:alpha="0.45"
-                android:onClick="onClick"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <Button
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:background="@drawable/radar"
-                    android:clickable="false" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="false"
-                    android:text="بارکدخوان"
-                    android:textColor="#a0817f"
-                    android:textSize="10dp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/rss_feed"
@@ -160,8 +151,8 @@
                 android:orientation="vertical">
 
                 <Button
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:background="@drawable/feed"
                     android:clickable="false" />
 
@@ -181,21 +172,5 @@
         </LinearLayout>
 
     </LinearLayout>
-
-    <RelativeLayout
-        android:id="@+id/wait_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/loading_bg2"
-        android:clickable="true"
-        android:visibility="gone">
-
-        <ImageView
-            android:id="@+id/image_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
-
-    </RelativeLayout>
 
 </RelativeLayout>
