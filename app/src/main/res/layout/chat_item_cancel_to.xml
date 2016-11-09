@@ -49,9 +49,11 @@
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="10dp"
                     android:layout_weight="0.5"
-                    android:background="@drawable/text_background2"
+                    android:background="@drawable/canceled_text_background"
                     android:gravity="center"
-                    android:text="دریافت شد"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:text="لغو شد"
                     android:textColor="#FFFFFF" />
 
                 <TextView
@@ -84,37 +86,10 @@
                 android:layout_marginLeft="80dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
                 android:text="توضیحات:بابت دنگ مسافرت شمال" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <Button
-                    android:id="@+id/btn_cancel_pay"
-                    android:textColor="#7a7a7a"
-                    android:layout_marginRight="1dp"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:background="@drawable/btn_cancel_from_background"
-                    android:text="@string/cancel_text"
-                    android:layout_weight="0.5"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"/>
-                <Button
-                    android:id="@+id/btn_accept_pay"
-                    android:textColor="#7a7a7a"
-                    android:layout_marginLeft="1dp"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:background="@drawable/btn_cancel_from_background"
-                    android:text="@string/accept_text"
-                    android:layout_weight="0.5"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"/>
-            </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
     <TextView
-        android:layout_marginTop="-20dp"
         android:id="@+id/txt_clock"
         android:layout_marginLeft="-25dp"
         android:layout_width="40dp"

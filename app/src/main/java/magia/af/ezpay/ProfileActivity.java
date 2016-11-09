@@ -8,8 +8,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
+import magia.af.ezpay.Parser.RSSFeed;
+
 public class ProfileActivity extends BaseActivity {
 
+  RSSFeed rssFeed;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);

@@ -622,6 +622,8 @@ public class DOMParser {
                     payLogItem1.setAmount(jsonObject.getInt("a"));
                     payLogItem1.setDate(jsonObject.getString("d"));
                     payLogItem1.setPaideBool(jsonObject.getBoolean("o"));
+                    payLogItem1.setStatus(jsonObject.getBoolean("s"));
+
                     payLogItem1.setComment(jsonObject.getString("c"));
 
                 } catch (JSONException e) {
@@ -833,24 +835,13 @@ public class DOMParser {
             httpConn.setDoOutput(true);
             httpConn.setDoInput(true);
             httpConn.setAllowUserInteraction(false);
-            httpConn.setRequestMethod("POST");
+            httpConn.setRequestMethod("DELETE");
             httpConn.setConnectTimeout(20000);
             httpConn.setReadTimeout(20000);
             httpConn.setRequestProperty("Content-Type", "application/json");
             httpConn.setRequestProperty("Authorization", "bearer " + token);
 
-            OutputStream os = httpConn.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("id", id);
-
-            Log.e("999999999", "activateSong: " + jsonObject);
-            writer.write(jsonObject.toString());
-            writer.flush();
-            writer.close();
-            os.close();
-
+            Log.e("Auth", "deletePayment: " + token);
             int resCode = httpConn.getResponseCode();
             Log.e("0000000", "doInBackground: " + resCode);
             if (resCode == 200) {
@@ -858,7 +849,7 @@ public class DOMParser {
             }
             else state = false;
 
-        } catch (IOException | JSONException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -933,6 +924,8 @@ public class DOMParser {
                 payLogItem.setAmount(jsonObject1.getInt("a"));
                 payLogItem.setDate(jsonObject1.getString("d"));
                 payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
+                payLogItem.setStatus(jsonObject1.getBoolean("s"));
+
                 payLogItem.setComment(jsonObject1.getString("c"));
 
 

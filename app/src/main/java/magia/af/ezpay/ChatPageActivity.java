@@ -172,7 +172,7 @@ public class ChatPageActivity extends BaseActivity {
         getStatus = true;
       } else
         getStatus = false;
-        Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
+      Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
     }
   }
 
@@ -240,7 +240,11 @@ public class ChatPageActivity extends BaseActivity {
     protected void onPostExecute(Boolean result) {
       if (result != null) {
         Log.e("TEst", "onClick: " + result);
-        adapter.notifyDataSetChanged();
+        if (result) {
+          Log.e("TEst", "onClick: " + pos);
+          feed.getItem(pos).setStatus(true);
+          adapter.notifyDataSetChanged();
+        }
       } else
         Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
     }
@@ -291,47 +295,67 @@ public class ChatPageActivity extends BaseActivity {
     @Override
     public int getItemViewType(int position) {
       int pos = feed.getItemCount() - position - 1;
+      int viewType;
       if (feed.getItem(pos).getFrom().equals(phone)) {
-        if (feed.getItem(pos).isPaideBool()) {
-          if (feed.getItem(pos).isDeleted()) {
-            return 4;
-          }
-          return 0;
-        } else
-          return 2;
+        if (feed.getItem(pos).isStatus()) {
+          viewType = 1;
+        } else if (feed.getItem(pos).isPaideBool()) {
+          viewType = 5;
 
-      } else {
-        if (feed.getItem(pos).isPaideBool()) {
-          if (feed.getItem(pos).isDeleted()) {
-            return 5;
-          }
-          return 1;
         } else
-          return 3;
+          viewType = 2;
+      } else {
+        if (feed.getItem(pos).isStatus()) {
+          viewType = 0;
+        } else if (feed.getItem(pos).isPaideBool()) {
+          viewType = 4;
+
+        } else
+          viewType = 3;
       }
+
+//      if (feed.getItem(pos).getFrom().equals(phone)) {
+//        if (feed.getItem(pos).isPaideBool()) {
+//          if (feed.getItem(pos).isStatus()) {
+//            return 4;
+//          }
+//          return 0;
+//        } else
+//          return 2;
+//      } else {
+//        if (feed.getItem(pos).isPaideBool()) {
+//          if (!feed.getItem(pos).isStatus()) {
+//            return 5;
+//          }
+//          return 1;
+//        } else
+//          return 3;
+//      }
+      return viewType;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
       View rootView;
       if (viewType == 0) {
-        rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_to, parent, false);
+        rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_cancel_from, parent, false);
       } else if (viewType == 1) {
-        rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_from, parent, false);
+        rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_cancel_to, parent, false);
       } else if (viewType == 2) {
         rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_pay_from, parent, false);
+      } else if (viewType == 3) {
+        rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_pay_to, parent, false);
       } else if (viewType == 4) {
         rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_from, parent, false);
-      } else if (viewType == 5) {
-        rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_to, parent, false);
       } else {
-        rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_pay_to, parent, false);
+        rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_to, parent, false);
       }
       return new ViewHolder(rootView);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
+      Log.e("ffffff", "onBindViewHolder: " + holder.getItemViewType());
       int year = 0;
       int month = 0;
       int day = 0;
@@ -344,7 +368,7 @@ public class ChatPageActivity extends BaseActivity {
         day = Integer.parseInt(feed.getItem(pos).getDate().substring(8, 10));
         conversion = new CalendarConversion(year, month, day);
         holder.txt_price.setText(feed.getItem(pos).getAmount() + "");
-        holder.txt_status.setText(feed.getItem(pos).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
+        //holder.txt_status.setText(feed.getItem(pos).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
         holder.txt_description.setText(feed.getItem(pos).getComment());
@@ -361,23 +385,15 @@ public class ChatPageActivity extends BaseActivity {
         day = Integer.parseInt(feed.getItem(pos).getDate().substring(8, 10));
         conversion = new CalendarConversion(year, month, day);
         holder.txt_price.setText(feed.getItem(pos).getAmount() + "");
-        if (getStatus) {
-          holder.txt_status.setText("درخواست داده شده");
-        }
-        if (success) {
-          holder.txt_status.setText("پرداخت شد");
-        } else {
-          holder.txt_status.setText("درخواست داده شده");
-        }
+
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
         holder.txt_description.setText(feed.getItem(pos).getComment());
         holder.btn_cancel.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
-            new DeletePaymentRequest().execute(feed.getItem(pos).getId());
-            holder.btn_cancel.setVisibility(View.GONE);
-            holder.txt_status.setText("پراخت نشد");
+            pos = feed.getItemCount() - holder.getAdapterPosition() - 1;
+            Log.e("eeeeeeeee", "onClick: " + pos);
             new DeletePaymentRequest().execute(feed.getItem(pos).getId());
           }
         });
@@ -395,14 +411,7 @@ public class ChatPageActivity extends BaseActivity {
         day = Integer.parseInt(feed.getItem(pos).getDate().substring(8, 10));
         conversion = new CalendarConversion(year, month, day);
         holder.txt_price.setText(feed.getItem(pos).getAmount() + "");
-        if (getStatus) {
-          holder.txt_status.setText("درخواست داده شده");
-        }
-        if (success) {
-          holder.txt_status.setText("پرداخت شد");
-        } else {
-          holder.txt_status.setText("درخواست داده شده");
-        }
+
 //        holder.txt_status.setText(feed.getItem(pos).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
@@ -431,32 +440,11 @@ public class ChatPageActivity extends BaseActivity {
         holder.btn_cancel.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
-            holder.btn_cancel.setVisibility(View.GONE);
-            holder.btn_accept.setVisibility(View.GONE);
+            pos = feed.getItemCount() - holder.getAdapterPosition() - 1;
+            Log.e("eeeeeeeee", "onClick: " + pos);
+            new DeletePaymentRequest().execute(feed.getItem(pos).getId());
           }
         });
-        holder.btn_replay.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            Toast.makeText(ChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
-          }
-        });
-      }
-      if (holder.getItemViewType() == 5) {
-        pos = feed.getItemCount() - position - 1;
-        year = Integer.parseInt(feed.getItem(pos).getDate().substring(0, 4));
-        month = Integer.parseInt(feed.getItem(pos).getDate().substring(5, 7));
-        day = Integer.parseInt(feed.getItem(pos).getDate().substring(8, 10));
-        conversion = new CalendarConversion(year, month, day);
-        holder.txt_price.setText(feed.getItem(pos).getAmount() + "");
-        if (feed.getItem(pos).isDeleted()) {
-          holder.txt_status.setText("پرداخت نشد");
-        } else {
-          holder.txt_status.setText("پرداخت شد");
-        }
-        holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
-        holder.txt_date.setText(conversion.getIranianDate() + "");
-        holder.txt_description.setText(feed.getItem(pos).getComment());
         holder.btn_replay.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
@@ -471,11 +459,25 @@ public class ChatPageActivity extends BaseActivity {
         day = Integer.parseInt(feed.getItem(pos).getDate().substring(8, 10));
         conversion = new CalendarConversion(year, month, day);
         holder.txt_price.setText(feed.getItem(pos).getAmount() + "");
-        if (feed.getItem(pos).isDeleted()) {
-          holder.txt_status.setText("پرداخت نشد");
-        } else {
-          holder.txt_status.setText("پرداخت شد");
-        }
+       // holder.txt_status.setText("پرداخت شد");
+        holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
+        holder.txt_date.setText(conversion.getIranianDate() + "");
+        holder.txt_description.setText(feed.getItem(pos).getComment());
+        holder.btn_replay.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            Toast.makeText(ChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
+          }
+        });
+      }
+      if (holder.getItemViewType() == 5) {
+        pos = feed.getItemCount() - position - 1;
+        year = Integer.parseInt(feed.getItem(pos).getDate().substring(0, 4));
+        month = Integer.parseInt(feed.getItem(pos).getDate().substring(5, 7));
+        day = Integer.parseInt(feed.getItem(pos).getDate().substring(8, 10));
+        conversion = new CalendarConversion(year, month, day);
+        holder.txt_price.setText(feed.getItem(pos).getAmount() + "");
+       // holder.txt_status.setText("لغو شد");
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
         holder.txt_description.setText(feed.getItem(pos).getComment());
@@ -494,8 +496,7 @@ public class ChatPageActivity extends BaseActivity {
         holder.txt_price.setText(feed.getItem(pos).getAmount() + "");
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
-        holder.txt_status.setText(feed.getItem(pos).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
-        holder.txt_description.setText(feed.getItem(pos).getComment());
+         holder.txt_description.setText(feed.getItem(pos).getComment());
         holder.btn_replay.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
@@ -552,7 +553,7 @@ public class ChatPageActivity extends BaseActivity {
     super.onResume();
   }
 
-  public void update(ChatPageAdapter adapter){
+  public void update(ChatPageAdapter adapter) {
     adapter.notifyDataSetChanged();
   }
 

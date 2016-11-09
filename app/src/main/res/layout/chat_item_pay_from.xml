@@ -4,8 +4,8 @@
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
     android:orientation="horizontal"
-    android:paddingLeft="5dp"
-    android:paddingRight="20dp">
+    android:paddingLeft="25dp"
+    android:paddingRight="0dp">
 
 
     <ImageButton
@@ -52,7 +52,7 @@
                         android:layout_weight="0.5"
                         android:background="@drawable/text_background"
                         android:gravity="center"
-                        android:text="پرداخت شد"
+                        android:text="درخواست شد"
                         android:textColor="#FFFFFF" />
 
                     <TextView
