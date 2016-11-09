@@ -64,47 +64,24 @@
                 android:layout_marginTop="30dp"
                 android:layout_below="@+id/user_avatar">
 
-                <EditText
-                    android:layout_margin="5dp"
-                    android:layout_weight="0.5"
-                    android:hint="نام خانوادگی"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/edt_userLastName"/>
 
                 <EditText
                     android:id="@+id/edt_username"
                     android:layout_margin="5dp"
                     android:hint="نام"
-                    android:layout_weight="0.5"
+                    android:gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
 
             </LinearLayout>
 
+
             <LinearLayout
-                android:id="@+id/layout_biography"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="10dp"
                 android:layout_below="@+id/edit_text_placeholder">
-
-                <EditText
-                    android:hint="بیوگرافی این کاربر"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/edt_userBiography"/>
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="10dp"
-                android:layout_below="@+id/layout_biography">
 
                 <Button
                     android:textColor="#FFFFFF"
@@ -112,6 +89,9 @@
                     android:background="@drawable/btn_request_pay_background"
                     android:layout_weight="0.5"
                     android:id="@+id/btn_pay"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
 
@@ -120,6 +100,9 @@
                     android:background="@drawable/btn_pay_background"
                     android:text="پرداخت"
                     android:layout_weight="0.5"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="5dp"
                     android:id="@+id/btn_request_pay"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>

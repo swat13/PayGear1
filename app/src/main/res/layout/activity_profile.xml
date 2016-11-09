@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="magia.af.ezpay.zxing.ProfileActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/app_bar_height"
+        android:fitsSystemWindows="true"
+        android:theme="@style/AppTheme.NoActionBar.AppBarOverlay">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/toolbar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:contentScrim="?attr/colorPrimary"
+            app:titleEnabled="false"
+            app:title="   "
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <RelativeLayout
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                android:layout_marginTop="?android:attr/actionBarSize"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="10dp">
+                <RelativeLayout
+                    android:id="@+id/profile_placeholder"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_width="85dp"
+                        android:layout_height="85dp"
+                        android:layout_alignParentRight="true"
+                        android:src="@drawable/ali"
+                        android:layout_marginLeft="10dp"
+                        app:civ_border_color="#936c67"
+                        android:id="@+id/user_avatar"
+                        app:civ_border_width="5dp"/>
+                    <TextView
+                        android:id="@+id/txt_user_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#FFFFFF"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@+id/user_avatar"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                        android:text="Ali Freydooni"/>
+                    <RelativeLayout
+                        android:layout_width="65dp"
+                        android:layout_height="65dp"
+                        android:alpha="0.5"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/camera_placeholder">
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/ic_camera"/>
+                    </RelativeLayout>
+                </RelativeLayout>
+                <TextView
+                    android:id="@+id/txt_availability"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/profile_placeholder"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="#fcdddb"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:text="موجودی (ریال)"
+                    />
+                <TextView
+                    android:id="@+id/txt_account_availability"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/txt_availability"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="#fcdddb"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                    android:text="92,651,000"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="20dp"
+                    />
+                <Button
+                    android:id="@+id/btn_add"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_toLeftOf="@+id/txt_account_availability"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/txt_availability"
+                    android:background="@drawable/add_placeholder"
+                    android:text="+"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    />
+                <android.support.v7.widget.CardView
+                    app:cardElevation="2dp"
+                    app:cardUseCompatPadding="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/txt_account_availability"
+                    android:layout_centerHorizontal="true"
+                    app:cardBackgroundColor="#f9f8f3">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <RelativeLayout
+                            android:layout_weight="0.5"
+                            android:padding="10dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <Button
+                                android:layout_marginLeft="30dp"
+                                android:text="ویرایش پروفایل"
+                                android:drawableLeft="@drawable/ic_profile"
+                                android:background="@drawable/button_style"
+                                android:textColor="#aeadb2"
+                                android:layout_width="match_parent"
+                                android:layout_height="35dp"
+                                android:layout_marginBottom="10dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_centerHorizontal="true"
+                                android:id="@+id/button"/>
+
+                            <TextView
+                                android:text="نام کاربری"
+                                android:textColor="#b6b6aa"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/button"
+                                android:layout_marginBottom="2dp"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                                android:layout_centerHorizontal="true"
+                                android:id="@+id/textView"/>
+
+                            <TextView
+                                android:text="AliFreydooni@"
+                                android:textColor="#b6b6aa"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/textView"
+                                android:layout_centerHorizontal="true"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                                android:id="@+id/textView2"/>
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_weight="0.5"
+                            android:padding="10dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:id="@+id/txt_account_info"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="#cb5958"
+                                android:layout_marginBottom="10dp"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                                android:text="اطلاعات کاربری"
+                                android:layout_alignParentRight="true"/>
+                            <TextView
+                                android:id="@+id/txt_phone"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_below="@+id/txt_account_info"
+                                android:text="شماره همراه"
+                                android:layout_marginBottom="10dp"
+                                android:textColor="#b8b8ac"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+                            <TextView
+                                android:id="@+id/txt_phone_number"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_below="@+id/txt_phone"
+                                android:layout_marginBottom="10dp"
+                                android:gravity="right"
+                                android:text="+989127764165"
+                                android:textColor="#939484"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+                        </RelativeLayout>
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+            </RelativeLayout>
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:titleEnabled="false"
+                app:title="   "
+                app:popupTheme="@style/AppTheme.NoActionBar.PopupOverlay">
+            </android.support.v7.widget.Toolbar>
+
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <include layout="@layout/content_profile"/>
+
+</android.support.design.widget.CoordinatorLayout>

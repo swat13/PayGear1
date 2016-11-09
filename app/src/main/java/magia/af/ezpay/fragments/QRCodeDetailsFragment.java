@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +13,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import magia.af.ezpay.ChatPageActivity;
 import magia.af.ezpay.R;
-import magia.af.ezpay.helper.NumberTextWatcher;
 
 /**
  * Created by erfan on 10/29/2016.
@@ -38,6 +35,7 @@ public class QRCodeDetailsFragment extends Fragment {
     String phone;
     String contactImage;
     int pos;
+    private volatile boolean isOnDestroyCalled = false;
 
     ChatPageActivity chatPageActivity;
 
@@ -51,7 +49,7 @@ public class QRCodeDetailsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.qr_code_result_layout, null);
+        View v = inflater.inflate(R.layout.qr_code_result_layout, container , false);
         contactName = getArguments().getString("contactName");
         Log.e("sssss", contactName + "");
         phone = getArguments().getString("phone");
@@ -75,6 +73,7 @@ public class QRCodeDetailsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 getActivity().getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(QRCodeDetailsFragment.this).commit();
+                getActivity().finish();
             }
         });
 
@@ -96,7 +95,11 @@ public class QRCodeDetailsFragment extends Fragment {
     }
 
 
-//    @Override
+//    public boolean isDestroyed(){
+//        return this.isOnDestroyCalled;
+//    }
+
+    //    @Override
 //    public void onDestroy() {
 //        Log.e("((((((((111111111", "onDestroy: ");
 //        super.onDestroy();

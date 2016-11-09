@@ -184,18 +184,18 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
             ((LoginActivity) getActivity()).waitingDialog.setVisibility(View.VISIBLE);
             GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(((LoginActivity) getActivity()).imageView);
             Glide.with(getActivity()).load(R.drawable.gif_loading).into(imageViewTarget);
-            ((LoginActivity) getActivity()).fragment_status = 3;
+//            ((LoginActivity) getActivity()).fragment_status = 3;
         }
 
         @Override
         protected String[] doInBackground(String... params) {
             DOMParser domParser = new DOMParser();
-            while (running) {
+            /*while (running) {
                 if (isCancelled()) {
                     return null;
 
                 }
-            }
+            }*/
             return domParser.Verify_Login_Activation_Code(params[0], params[1], params[2]);
         }
 
@@ -211,7 +211,7 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
                     Log.e("55555555555", "onPostExecute: " + tok);
                     getActivity().getSharedPreferences("EZpay", 0).edit().putString("token", tok).apply();
                     getActivity().getSharedPreferences("EZpay", 0).edit().putString("id", id).apply();
-                    ffillContact.execute();
+                    new fillContact().execute();
                 }
             } else if (result != null && result[0].contains("Wrong")) {
                 Toast.makeText(getActivity(), "کد فعال سازی صحیح نمی باشد!", Toast.LENGTH_SHORT).show();
@@ -242,12 +242,12 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
 
             DOMParser domParser = new DOMParser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
 
-            while (running) {
+            /*while (running) {
                 if (isCancelled()) {
                     return null;
 
                 }
-            }
+            }*/
             return domParser.getContact(new GetContact().getContact(getActivity()));
 
         }

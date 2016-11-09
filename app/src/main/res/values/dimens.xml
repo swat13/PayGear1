@@ -15,5 +15,7 @@
     <dimen name="splash_ratio">200dp</dimen>
     <dimen name="text_margin">16dp</dimen>
     <dimen name="btm_padding">5dp</dimen>
+    <dimen name="app_bar_height">420dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 
 </resources>

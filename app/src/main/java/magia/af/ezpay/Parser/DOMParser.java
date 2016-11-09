@@ -239,15 +239,16 @@ public class DOMParser {
             }
 
 
-            Log.e("@@@@@@", sb.toString());
+            Log.e("@@@@@@2222", sb.toString());
             JSONObject jsonObject = new JSONObject(sb.toString());
             RSSItem rssItem = new RSSItem();
 
             try {
                 rssItem.setContactImg(jsonObject.getString("photo"));
                 rssItem.setTelNo(jsonObject.getString("mobile"));
-                rssItem.setId(Integer.parseInt(jsonObject.getString("id")));
+                rssItem.setUserId(jsonObject.getString("id"));
                 rssItem.setContactName(jsonObject.getString("title"));
+                Log.e("Name",rssItem.getContactName());
             } catch (Exception e) {
                 e.printStackTrace();
 
@@ -361,14 +362,18 @@ public class DOMParser {
             OutputStream os = httpConn.getOutputStream();
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
 
-            String request = "{\n" +
-                    "\"mobile\" : \"" + username + "\",\n" +
-                    "\"code\" : " + activeCode + ",\n" +
-                    "\"newName\" : \"" + newName + "\"\n" +
-                    "}";
+            JSONObject object = new JSONObject();
+            object.put("mobile",username);
+            object.put("code" , activeCode);
+            object.put("newName",newName);
+//            String request = "{\n" +
+//                    "\"mobile\" : \"" + username + "\",\n" +
+//                    "\"code\" : " + activeCode + ",\n" +
+//                    "\"newName\" : \"" + newName + "\"\n" +
+//                    "}";
 
-            Log.e("999999999", "activateSong: " + request);
-            writer.write(request);
+            Log.e("999999999", "activateSong: " + object.toString());
+            writer.write(object.toString());
             writer.flush();
             writer.close();
             os.close();

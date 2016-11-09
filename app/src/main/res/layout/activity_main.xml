@@ -3,8 +3,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#e6e9eb"
-    android:fitsSystemWindows="true">
+    android:background="#e6e9eb">
 
     <FrameLayout
         android:id="@+id/detail_fragment"

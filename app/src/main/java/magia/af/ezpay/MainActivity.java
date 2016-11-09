@@ -2,8 +2,6 @@ package magia.af.ezpay;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +11,7 @@ import android.widget.RelativeLayout;
 import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.fragments.BarCodeGet;
 import magia.af.ezpay.fragments.FriendsListFragment;
+import magia.af.ezpay.fragments.ProfileFragment;
 
 /**
  * Created by erfan on 11/3/2016.
@@ -24,7 +23,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
   public RelativeLayout darkDialog, waitingDialog;
   public FriendsListFragment friendsListFragment;
   public BarCodeGet barCodeGet;
-  public LinearLayout friendsLayout, barcodeReader;
+  public LinearLayout friendsLayout, barcodeReader,profileLayout;
   public int fragment_status = 0;
   RSSFeed _feed;
   public String description;
@@ -39,6 +38,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     waitingDialog = (RelativeLayout) findViewById(R.id.wait_layout);
     friendsLayout = (LinearLayout) findViewById(R.id.friends_layout);
     barcodeReader = (LinearLayout) findViewById(R.id.barcode_reader);
+    profileLayout = (LinearLayout) findViewById(R.id.profile_layout);
 
     _feed = (RSSFeed) getIntent().getSerializableExtra("contact");
 
@@ -69,6 +69,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         friendsLayout.setAlpha((float) 1);
         barcodeReader.setAlpha((float) 0.45);
+        profileLayout.setAlpha((float)0.45);
 
         break;
 
@@ -83,9 +84,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         friendsLayout.setAlpha((float) 0.45);
         barcodeReader.setAlpha((float) 1);
+        profileLayout.setAlpha((float)0.45);
 //        Log.e("clicked", "onClick: ");
 //        startActivity(new Intent(MainActivity.this, SimpleScannerActivity.class).putExtra("contact",_feed));
 
+        break;
+
+      case R.id.profile_layout:
+//        startActivity(new Intent(MainActivity.this , ProfileActivity.class));
+        ProfileFragment profileFragment = new ProfileFragment();
+        getSupportFragmentManager()
+          .beginTransaction()
+          .replace(R.id.detail_fragment , profileFragment)
+          .commit();
+        friendsLayout.setAlpha((float) 0.45);
+        barcodeReader.setAlpha((float) 0.45);
+        profileLayout.setAlpha((float)1);
         break;
 
 //      case R.id.barcode_reader1:

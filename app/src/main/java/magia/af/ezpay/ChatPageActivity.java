@@ -48,6 +48,7 @@ public class ChatPageActivity extends BaseActivity {
   int pos;
   boolean success = false;
   boolean getStatus;
+  int removePosition;
 
 
   @Override
@@ -171,7 +172,7 @@ public class ChatPageActivity extends BaseActivity {
         getStatus = true;
       } else
         getStatus = false;
-      Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
+        Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
     }
   }
 
@@ -198,16 +199,16 @@ public class ChatPageActivity extends BaseActivity {
         description = result.getComment();
         amount = result.getAmount();
         new LocalPersistence().writeObjectToFile(ChatPageActivity.this, feed, "Payment_Chat_List");
-        adapter.notifyDataSetChanged();
         success = true;
         Log.e("%%%%%%", "onPostExecute: accept" + success);
         if (success) {
-          feed.removeItem(feed.getItemCount() - 1);
-          adapter.notifyItemRemoved(adapter.getItemCount() - 1);
-          adapter.notifyItemRangeRemoved(adapter.getItemCount() - 1, adapter.getItemCount());
-          adapter.notifyItemRangeChanged(adapter.getItemCount() - 1, adapter.getItemCount());
+          Log.e("sssssssss", "onPostExecute: " + pos);
+          feed.removeItem(pos);
           adapter.notifyDataSetChanged();
-          recreate();
+          /*adapter.notifyItemRemoved(pos);
+          adapter.notifyItemRangeRemoved(removePosition, adapter.getItemCount());
+          adapter.notifyItemRangeChanged(removePosition, adapter.getItemCount());
+          adapter.notifyDataSetChanged();*/
         }
         Log.e("%%%%%%", "onPostExecute: accept");
 //                recreate();
@@ -416,14 +417,15 @@ public class ChatPageActivity extends BaseActivity {
             FragmentTransaction ft = getFragmentManager().beginTransaction();
             ft.setCustomAnimations(R.animator.enter_from_right, R.animator.exit_to_right);
             ft.add(android.R.id.content, getCardFragment).commit();
-            if (success) {
-              holder.btn_cancel.setVisibility(View.GONE);
-              holder.btn_accept.setVisibility(View.GONE);
-              holder.txt_status.setText("پرداخت شد");
-              adapter.notifyDataSetChanged();
-            }
+//            if (success) {
+//              holder.btn_cancel.setVisibility(View.GONE);
+//              holder.btn_accept.setVisibility(View.GONE);
+//              holder.txt_status.setText("پرداخت شد");
+//              adapter.notifyDataSetChanged();
+//            }
 //                        holder.removeAt(pos);
 //                        adapter.notifyDataSetChanged();
+            removePosition = holder.getAdapterPosition();
           }
         });
         holder.btn_cancel.setOnClickListener(new View.OnClickListener() {
