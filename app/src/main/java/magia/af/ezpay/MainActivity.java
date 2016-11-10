@@ -60,7 +60,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     switch (v.getId()) {
       case R.id.friends_layout:
 
-        friendsListFragment = new FriendsListFragment().getInstance(_feed);
+        friendsListFragment = FriendsListFragment.getInstance(_feed);
         getSupportFragmentManager()
           .beginTransaction()
           .replace(R.id.detail_fragment, friendsListFragment)
@@ -75,12 +75,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
       case R.id.barcode_reader:
 
-        barCodeGet = new BarCodeGet().getInstance();
+        barCodeGet = BarCodeGet.getInstance();
         Bundle bundle = new Bundle();
         bundle.putSerializable("contact" , _feed);
         BarCodeGet barCodeGet = new BarCodeGet();
         barCodeGet.setArguments(bundle);
-        getFragmentManager().beginTransaction().replace(R.id.detail_fragment, barCodeGet).addToBackStack(null).commit();
+        getSupportFragmentManager()
+          .beginTransaction()
+          .addToBackStack(null)
+          .replace(R.id.detail_fragment ,barCodeGet)
+          .commit();
 
         friendsLayout.setAlpha((float) 0.45);
         barcodeReader.setAlpha((float) 1);
@@ -92,6 +96,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
       case R.id.profile_layout:
 //        startActivity(new Intent(MainActivity.this , ProfileActivity.class));
+        barCodeGet = BarCodeGet.getInstance();
+        getSupportFragmentManager().beginTransaction().remove(barCodeGet).commit();
         ProfileFragment profileFragment = new ProfileFragment();
         getSupportFragmentManager()
           .beginTransaction()
@@ -127,7 +133,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
       description = data.getStringExtra("description");
       amount = data.getIntExtra("amount", 0);
       position = data.getIntExtra("pos", 0);
-      friendsListFragment = new FriendsListFragment().getInstance(_feed);
+      friendsListFragment = FriendsListFragment.getInstance(_feed);
       Bundle bundle = new Bundle();
       bundle.putString("description", description);
       bundle.putInt("amount", amount);

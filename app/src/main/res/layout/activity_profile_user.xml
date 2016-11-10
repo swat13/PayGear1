@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="#ffffff"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -21,62 +22,25 @@
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:titleEnabled="false"
             app:title="   "
-            app:titleEnabled="false">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
             <RelativeLayout
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                android:layout_marginTop="120dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="?android:attr/actionBarSize"
-                android:padding="10dp"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
-                <TextView
-                    android:id="@+id/txt_availability"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="50dp"
-                    android:text="موجودی (ریال)"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textColor="#fcdddb"
-                    />
-
-                <TextView
-                    android:id="@+id/txt_account_availability"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/txt_availability"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="20dp"
-                    android:layout_marginLeft="10dp"
-                    android:text="92,651,000"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                    android:textColor="#fcdddb"
-                    />
-
-                <Button
-                    android:id="@+id/btn_add"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_below="@id/txt_availability"
-                    android:layout_centerHorizontal="true"
-                    android:layout_toLeftOf="@+id/txt_account_availability"
-                    android:background="@drawable/add_placeholder"
-                    android:text="+"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                    />
-
+                android:padding="10dp">
                 <android.support.v7.widget.CardView
+                    app:cardElevation="2dp"
+                    app:cardUseCompatPadding="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/txt_account_availability"
                     android:layout_centerHorizontal="true"
-                    android:visibility="visible"
                     app:cardBackgroundColor="#f9f8f3"
-                    app:cardElevation="2dp"
-                    app:cardUseCompatPadding="true">
+                    android:visibility="visible">
+
 
 
                     <LinearLayout
@@ -85,153 +49,148 @@
                         android:orientation="vertical">
 
                         <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
                             android:paddingLeft="10dp"
                             android:paddingRight="10dp"
-                            android:paddingTop="5dp">
+                            android:paddingTop="5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
 
                             <TextView
                                 android:id="@+id/txt_account_info"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_alignParentRight="true"
+                                android:textColor="#cb5958"
                                 android:layout_centerVertical="true"
-                                android:text="اطلاعات کاربری"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                                android:textColor="#cb5958"/>
+                                android:text="اطلاعات کاربری"
+                                android:layout_alignParentRight="true"/>
 
                             <Button
-                                android:id="@+id/button"
-                                android:layout_width="wrap_content"
-                                android:layout_height="35dp"
-                                android:layout_alignParentLeft="true"
-                                android:layout_centerVertical="true"
-                                android:background="@drawable/button_style"
+                                android:visibility="gone"
+                                android:text="ویرایش پروفایل"
                                 android:drawableLeft="@drawable/ic_profile"
+                                android:background="@drawable/button_style"
+                                android:textColor="#aeadb2"
+                                android:layout_alignParentLeft="true"
+                                android:layout_width="wrap_content"
                                 android:paddingLeft="20dp"
                                 android:paddingRight="20dp"
-                                android:text="ویرایش پروفایل"
-                                android:textColor="#aeadb2"/>
+                                android:layout_height="35dp"
+                                android:layout_centerVertical="true"
+                                android:id="@+id/button"/>
                         </RelativeLayout>
 
                         <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
                             android:paddingLeft="10dp"
                             android:paddingRight="10dp"
-                            android:paddingTop="5dp">
-
+                            android:paddingTop="5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
                             <TextView
                                 android:id="@+id/txt_phone"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
+                                android:text="شماره همراه"
                                 android:layout_centerVertical="true"
                                 android:layout_marginBottom="10dp"
-                                android:text="شماره همراه"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                                android:textColor="#b8b8ac"/>
+                                android:textColor="#b8b8ac"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
                             <TextView
-                                android:id="@+id/textView"
-                                android:layout_width="150dp"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentLeft="true"
-                                android:layout_centerVertical="true"
-                                android:layout_marginBottom="2dp"
-                                android:gravity="center"
+                                android:visibility="visible"
                                 android:text="نام کاربری"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                                 android:textColor="#b6b6aa"
-                                android:visibility="visible"/>
+                                android:layout_width="150dp"
+                                android:gravity="center"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="2dp"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                                android:layout_centerVertical="true"
+                                android:layout_alignParentLeft="true"
+                                android:id="@+id/textView"/>
                         </RelativeLayout>
 
                         <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
                             android:paddingLeft="10dp"
                             android:paddingRight="10dp"
-                            android:paddingTop="5dp">
+                            android:paddingTop="5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
 
                             <TextView
+                                android:visibility="visible"
                                 android:id="@+id/txt_phone_number"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
-                                android:layout_centerVertical="true"
                                 android:layout_marginBottom="10dp"
                                 android:text=""
-                                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                                 android:textColor="#939484"
-                                android:visibility="visible"/>
+                                android:layout_centerVertical="true"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
                             <TextView
-                                android:id="@+id/textView2"
-                                android:layout_width="150dp"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentLeft="true"
-                                android:layout_centerVertical="true"
-                                android:gravity="center"
+                                android:visibility="visible"
                                 android:text="AliFreydooni@"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                                 android:textColor="#b6b6aa"
-                                android:visibility="visible"/>
+                                android:layout_width="150dp"
+                                android:gravity="center"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_alignParentLeft="true"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                                android:id="@+id/textView2"/>
                         </RelativeLayout>
                     </LinearLayout>
 
                 </android.support.v7.widget.CardView>
 
 
-            </RelativeLayout>
 
+            </RelativeLayout>
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
                 app:layout_collapseMode="pin"
-                app:popupTheme="@style/AppTheme.NoActionBar.PopupOverlay"
+                app:titleEnabled="false"
                 app:title="   "
-                app:titleEnabled="false">
-
+                app:popupTheme="@style/AppTheme.NoActionBar.PopupOverlay">
                 <RelativeLayout
+                    android:layout_marginRight="15dp"
                     android:id="@+id/profile_placeholder"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="15dp">
-
+                    android:layout_height="wrap_content">
                     <ImageView
-                        android:id="@+id/user_avatar"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:layout_alignParentRight="true"
+                        android:src="@drawable/ali"
                         android:layout_marginLeft="10dp"
-                        android:src="@drawable/ali"/>
-
+                        android:id="@+id/user_avatar"/>
                     <TextView
                         android:id="@+id/txt_user_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="#FFFFFF"
                         android:layout_centerVertical="true"
                         android:layout_toLeftOf="@+id/user_avatar"
-                        android:text="Ali Freydooni"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                        android:textColor="#FFFFFF"/>
-
+                        android:text="Ali Freydooni"/>
                     <ImageButton
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:layout_centerVertical="true"
                         android:alpha="0.5"
-                        android:background="@drawable/camera_placeholder"
-                        android:src="@drawable/ic_camera">
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/ic_camera"
+                        android:background="@drawable/camera_placeholder">
                     </ImageButton>
                 </RelativeLayout>
             </android.support.v7.widget.Toolbar>
 
 
         </android.support.design.widget.CollapsingToolbarLayout>
-
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_profile"/>

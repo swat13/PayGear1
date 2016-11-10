@@ -1,13 +1,8 @@
 package magia.af.ezpay.fragments;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapShader;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.os.Bundle;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -21,11 +16,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
-import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import magia.af.ezpay.ChatPageActivity;
 import magia.af.ezpay.MainActivity;
 import magia.af.ezpay.Parser.RSSFeed;
@@ -33,8 +25,6 @@ import magia.af.ezpay.Parser.RSSItem;
 import magia.af.ezpay.R;
 import magia.af.ezpay.helper.ContactDatabase;
 import magia.af.ezpay.interfaces.OnClickHandler;
-
-import static android.R.attr.resource;
 
 /**
  * Created by erfan on 11/3/2016.

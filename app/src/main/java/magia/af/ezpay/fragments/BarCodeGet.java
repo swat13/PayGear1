@@ -1,8 +1,8 @@
 package magia.af.ezpay.fragments;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 
 import magia.af.ezpay.MainActivity;
-import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.R;
 import magia.af.ezpay.SimpleScannerActivity;
@@ -21,7 +20,7 @@ import magia.af.ezpay.SimpleScannerActivity;
  * Created by erfan on 11/3/2016.
  */
 
-public class BarCodeGet extends android.app.Fragment {
+public class BarCodeGet extends Fragment {
 
   ImageView imageView;
   RSSFeed _feed;

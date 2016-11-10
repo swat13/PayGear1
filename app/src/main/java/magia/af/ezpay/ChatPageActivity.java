@@ -2,8 +2,11 @@ package magia.af.ezpay;
 
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.PayLogFeed;
@@ -63,14 +67,31 @@ public class ChatPageActivity extends BaseActivity {
       contactName = bundle.getString("contactName");
       Log.e("ContactName", "contactName" + contactName);
       imageUrl = imageUrl + bundle.getString("image");
+      Log.e("image", "image" + imageUrl);
     }
 
-    ImageView contactImage = (ImageView) findViewById(R.id.profile_image);
-    Glide.with(this).load(imageUrl).into(contactImage);
+    final ImageView contactImage = (ImageView) findViewById(R.id.profile_image);
+    Glide.with(this)
+      .load(imageUrl)
+      .asBitmap()
+      .centerCrop()
+      .placeholder(R.drawable.pic_profile)
+      .into(new BitmapImageViewTarget(contactImage) {
+        @Override
+        protected void setResource(Bitmap resource) {
+          RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
+          circularBitmapDrawable.setCornerRadius(700);
+          contactImage.setImageDrawable(circularBitmapDrawable);
+        }
+      });
     contactImage.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        startActivity(new Intent(ChatPageActivity.this , ProfileActivity.class));
+        Intent intent = new Intent(ChatPageActivity.this , ProfileActivity.class);
+        intent.putExtra("contactName",contactName);
+        intent.putExtra("phone",phone);
+        intent.putExtra("image",imageUrl);
+        startActivity(intent);
       }
     });
     TextView name = (TextView) findViewById(R.id.txt_user_name);

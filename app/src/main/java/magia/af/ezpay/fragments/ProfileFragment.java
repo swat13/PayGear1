@@ -19,13 +19,15 @@ import magia.af.ezpay.R;
  */
 
 public class ProfileFragment extends Fragment {
+  Toolbar toolbar;
+  AppBarLayout appBarLayout;
   @Nullable
   @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
     View rootView = inflater.inflate(R.layout.activity_profile_backup , container , false);
-    final Toolbar toolbar = (Toolbar)rootView.findViewById(R.id.toolbar);
+    toolbar = (Toolbar)rootView.findViewById(R.id.toolbar);
     ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
-    AppBarLayout appBarLayout = (AppBarLayout) rootView.findViewById(R.id.app_bar);
+    appBarLayout = (AppBarLayout) rootView.findViewById(R.id.app_bar);
     appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
       @Override
       public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
