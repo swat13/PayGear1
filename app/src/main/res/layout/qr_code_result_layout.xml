@@ -51,7 +51,7 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:id="@+id/user_avatar"
-                android:src="@drawable/ali"
+                android:src="@drawable/pic_profile"
                 android:layout_below="@+id/actionBar"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="-40dp"/>
@@ -85,7 +85,7 @@
 
                 <Button
                     android:textColor="#FFFFFF"
-                    android:text="درخواست"
+                    android:text="دریافت و پرداخت"
                     android:background="@drawable/btn_request_pay_background"
                     android:layout_weight="0.5"
                     android:id="@+id/btn_pay"
@@ -95,17 +95,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
 
-                <Button
-                    android:textColor="#FFFFFF"
-                    android:background="@drawable/btn_pay_background"
-                    android:text="پرداخت"
-                    android:layout_weight="0.5"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:id="@+id/btn_request_pay"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
 
             </LinearLayout>
 

@@ -67,6 +67,12 @@ public class ChatPageActivity extends BaseActivity {
 
     ImageView contactImage = (ImageView) findViewById(R.id.profile_image);
     Glide.with(this).load(imageUrl).into(contactImage);
+    contactImage.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        startActivity(new Intent(ChatPageActivity.this , ProfileActivity.class));
+      }
+    });
     TextView name = (TextView) findViewById(R.id.txt_user_name);
     name.setText(contactName);
     recyclerView = (RecyclerView) findViewById(R.id.pay_list_recycler);
@@ -459,7 +465,7 @@ public class ChatPageActivity extends BaseActivity {
         day = Integer.parseInt(feed.getItem(pos).getDate().substring(8, 10));
         conversion = new CalendarConversion(year, month, day);
         holder.txt_price.setText(feed.getItem(pos).getAmount() + "");
-       // holder.txt_status.setText("پرداخت شد");
+        // holder.txt_status.setText("پرداخت شد");
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
         holder.txt_description.setText(feed.getItem(pos).getComment());
@@ -477,7 +483,7 @@ public class ChatPageActivity extends BaseActivity {
         day = Integer.parseInt(feed.getItem(pos).getDate().substring(8, 10));
         conversion = new CalendarConversion(year, month, day);
         holder.txt_price.setText(feed.getItem(pos).getAmount() + "");
-       // holder.txt_status.setText("لغو شد");
+        // holder.txt_status.setText("لغو شد");
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
         holder.txt_description.setText(feed.getItem(pos).getComment());
@@ -496,7 +502,7 @@ public class ChatPageActivity extends BaseActivity {
         holder.txt_price.setText(feed.getItem(pos).getAmount() + "");
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
-         holder.txt_description.setText(feed.getItem(pos).getComment());
+        holder.txt_description.setText(feed.getItem(pos).getComment());
         holder.btn_replay.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
