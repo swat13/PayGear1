@@ -23,7 +23,6 @@ public class SimpleScannerActivity extends BaseActivity implements ZXingScannerV
   private String id;
   private boolean commit = false;
   int pos;
-  public RelativeLayout darkDialog;
   public QRCodeDetailsFragment qrCodeDetailsFragment;
   static boolean isOpen = false;
 
