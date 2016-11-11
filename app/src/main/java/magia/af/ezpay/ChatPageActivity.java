@@ -87,10 +87,10 @@ public class ChatPageActivity extends BaseActivity {
     contactImage.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        Intent intent = new Intent(ChatPageActivity.this , ProfileActivity.class);
-        intent.putExtra("contactName",contactName);
-        intent.putExtra("phone",phone);
-        intent.putExtra("image",imageUrl);
+        Intent intent = new Intent(ChatPageActivity.this, ProfileActivity.class);
+        intent.putExtra("contactName", contactName);
+        intent.putExtra("phone", phone);
+        intent.putExtra("image", imageUrl);
         startActivity(intent);
       }
     });
@@ -197,9 +197,11 @@ public class ChatPageActivity extends BaseActivity {
         new LocalPersistence().writeObjectToFile(ChatPageActivity.this, feed, "Payment_Chat_List");
         adapter.notifyDataSetChanged();
         getStatus = true;
-      } else
+      } else {
         getStatus = false;
-      Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
+        Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
+
+      }
     }
   }
 
@@ -243,7 +245,6 @@ public class ChatPageActivity extends BaseActivity {
         success = false;
         Log.e("%%%%%%", "onPostExecute: accept2" + success);
         Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
-
       }
     }
   }
@@ -272,8 +273,9 @@ public class ChatPageActivity extends BaseActivity {
           feed.getItem(pos).setStatus(true);
           adapter.notifyDataSetChanged();
         }
-      } else
+      } else {
         Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
+      }
     }
   }
 
