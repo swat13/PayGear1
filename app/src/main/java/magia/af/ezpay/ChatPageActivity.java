@@ -23,6 +23,10 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.PayLogFeed;
 import magia.af.ezpay.Parser.PayLogItem;
@@ -54,6 +58,12 @@ public class ChatPageActivity extends BaseActivity {
   boolean getStatus;
   int removePosition;
 
+  private boolean loading = true;
+  int pastVisiblesItems, visibleItemCount, totalItemCount;
+  int load = 10;
+  LinearLayoutManager manager;
+  String date;
+
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +72,8 @@ public class ChatPageActivity extends BaseActivity {
     Bundle bundle = getIntent().getExtras();
     if (bundle != null) {
       phone = bundle.getString("phone");
+      date = bundle.getString("date");
+      Log.i("date", date);
       position = bundle.getInt("pos");
       Log.i("#%^&@%^&@", phone);
       contactName = bundle.getString("contactName");
@@ -98,7 +110,7 @@ public class ChatPageActivity extends BaseActivity {
     name.setText(contactName);
     recyclerView = (RecyclerView) findViewById(R.id.pay_list_recycler);
     darkDialog = (RelativeLayout) findViewById(R.id.dark_dialog);
-    LinearLayoutManager manager = new LinearLayoutManager(this);
+    manager = new LinearLayoutManager(this);
     manager.setOrientation(LinearLayoutManager.VERTICAL);
     manager.setReverseLayout(true);
     manager.setStackFromEnd(false);
@@ -110,8 +122,38 @@ public class ChatPageActivity extends BaseActivity {
             recyclerView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }*/
+//    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+//    String maxDate = df.format(Calendar.getInstance().getTime());
+//    Log.e("MAX_DATE", "onCreate: " + maxDate);
+    new getChatLog().execute(phone, date, String.valueOf(position));
 
-    new getChatLog().execute(phone);
+    recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+      @Override
+      public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+        Log.e("dy", "" + dy);
+        if (dy == -10) //check for scroll down
+        {
+//          visibleItemCount = manager.getChildCount();
+//          Log.e("ddddd", "" + visibleItemCount);
+//          totalItemCount = manager.getItemCount();
+//          Log.e("ggggg", "" + totalItemCount);
+//          pastVisiblesItems = manager.findFirstVisibleItemPosition();
+//          Log.e("hhhhh", "" + pastVisiblesItems);
+          load += 10;
+//          DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+//          String maxDate = df.format(Calendar.getInstance().getTime());
+          new getChatLog().execute(phone, date, String.valueOf(load));
+
+//          if (loading) {
+//            if ((visibleItemCount - pastVisiblesItems) >= 1) {
+//              loading = false;
+//              Log.e("...", "Last Item Wow !");
+//            }
+//          }
+//          return;
+        }
+      }
+    });
 
     findViewById(R.id.btn_pey).setOnClickListener(new View.OnClickListener() {
       @Override
@@ -196,9 +238,7 @@ public class ChatPageActivity extends BaseActivity {
         feed.addItem(result);
         new LocalPersistence().writeObjectToFile(ChatPageActivity.this, feed, "Payment_Chat_List");
         adapter.notifyDataSetChanged();
-        getStatus = true;
       } else {
-        getStatus = false;
         Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
 
       }
@@ -290,8 +330,14 @@ public class ChatPageActivity extends BaseActivity {
 
     @Override
     protected PayLogFeed doInBackground(String... params) {
+      PayLogFeed payLogFeed = null;
       DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
-      return domParser.payLogWithAnother(params[0]);
+      try {
+        payLogFeed = domParser.payLogWithAnother(params[0], params[1], params[2]);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      return payLogFeed;
     }
 
     @Override

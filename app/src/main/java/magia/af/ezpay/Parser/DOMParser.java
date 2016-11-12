@@ -552,11 +552,11 @@ public class DOMParser {
 
     }
 
-    public PayLogFeed payLogWithAnother(String phone) {
+    public PayLogFeed payLogWithAnother(String phone,String maxDate,String maxpage) {
 
         try {
 
-            URL url = new URL(mainUrl + "api/payment/PayLogWithAnother");
+            URL url = new URL(mainUrl + "api/payment/PayLogWithAnother?pagesize="+maxpage+"&maxDate="+maxDate);
             Log.e("1111111", "doInBackground: " + url);
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
             httpConn.setDoOutput(true);
@@ -606,7 +606,7 @@ public class DOMParser {
                 }
             }
 
-            Log.e("@@@@@@", sb.toString());
+            Log.e("getchatlog@@@@@@", sb.toString());
             JSONArray jsonArray = new JSONArray(sb.toString());
 
             PayLogFeed payLogFeed = new PayLogFeed();
@@ -676,7 +676,7 @@ public class DOMParser {
                     "\"comment\" : \"" + cm + "\"\n" +
                     "}";
 
-            Log.e("999999999", "activateSong: " + phone);
+            Log.e("RR999999999", "activateSong: " + request);
             writer.write(request);
             writer.flush();
             writer.close();
@@ -707,7 +707,7 @@ public class DOMParser {
                 }
             }
 
-            Log.e("@@@@@@", sb.toString());
+            Log.e("R@@@@@@", sb.toString());
 
 
             PayLogItem payLogItem = new PayLogItem();
