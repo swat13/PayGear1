@@ -203,7 +203,7 @@ public class DOMParser {
 
         try {
 
-            URL url = new URL(mainUrl + "api/account/" + id );
+            URL url = new URL(mainUrl + "api/account/" + id);
             Log.e("1111111", "doInBackground: " + url);
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
             httpConn.setDoInput(true);
@@ -344,7 +344,7 @@ public class DOMParser {
      * @param activeCode
      * @return
      **/
-    public String[] Verify_Login_Activation_Code(String username, String activeCode,String newName) {
+    public String[] Verify_Login_Activation_Code(String username, String activeCode, String newName) {
 
         try {
 
@@ -384,8 +384,8 @@ public class DOMParser {
                 return null;
             } else if (resCode == 500) {
                 String[] Wrong = new String[2];
-                Wrong[0]="Wrong";
-                Wrong[1]="Wrong";
+                Wrong[0] = "Wrong";
+                Wrong[1] = "Wrong";
                 return Wrong;
             }
 
@@ -829,7 +829,7 @@ public class DOMParser {
         boolean state = false;
         try {
 
-            URL url = new URL(mainUrl + "api/Payment/"+id);
+            URL url = new URL(mainUrl + "api/Payment/" + id);
             Log.e("1111111", "doInBackground: " + url);
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
             httpConn.setDoOutput(true);
@@ -846,8 +846,7 @@ public class DOMParser {
             Log.e("0000000", "doInBackground: " + resCode);
             if (resCode == 200) {
                 state = true;
-            }
-            else state = false;
+            } else state = false;
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -855,7 +854,6 @@ public class DOMParser {
 
         return state;
     }
-
 
     public PayLogItem sendPaymentRequest(String phone, String detail, String comment, String amount) {
 

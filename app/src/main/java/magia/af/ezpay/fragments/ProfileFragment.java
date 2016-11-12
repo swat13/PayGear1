@@ -25,7 +25,7 @@ public class ProfileFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
     View rootView = inflater.inflate(R.layout.activity_profile_backup , container , false);
-    toolbar = (Toolbar)rootView.findViewById(R.id.toolbar);
+    /*toolbar = (Toolbar)rootView.findViewById(R.id.toolbar);
     ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
     appBarLayout = (AppBarLayout) rootView.findViewById(R.id.app_bar);
     appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
@@ -34,7 +34,7 @@ public class ProfileFragment extends Fragment {
         Log.e("Test1", "onOffsetChange: " + verticalOffset);
         toolbar.setBackgroundColor(Color.parseColor("#b07d79"));
       }
-    });
+    });*/
 
     return rootView;
   }
