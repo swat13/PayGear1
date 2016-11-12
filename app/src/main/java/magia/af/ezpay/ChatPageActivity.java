@@ -35,7 +35,7 @@ import magia.af.ezpay.fragments.GetCardFragment;
 import magia.af.ezpay.fragments.PaymentFragment;
 import magia.af.ezpay.fragments.RequestPaymentFragment;
 import magia.af.ezpay.helper.CalendarConversion;
-
+/*dd*/
 public class ChatPageActivity extends BaseActivity {
   private String phone;
   public String contactName;
