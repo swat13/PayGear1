@@ -162,13 +162,7 @@
                     android:id="@+id/profile_placeholder"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <ImageView
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:layout_alignParentRight="true"
-                        android:src="@drawable/ali"
-                        android:layout_marginLeft="10dp"
-                        android:id="@+id/user_avatar"/>
+
                     <TextView
                         android:id="@+id/txt_user_name"
                         android:layout_width="wrap_content"
@@ -186,6 +180,15 @@
                         android:src="@drawable/ic_camera"
                         android:background="@drawable/camera_placeholder">
                     </ImageButton>
+
+                    <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:src="@drawable/ali"
+                        android:id="@+id/user_avatar"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true" />
                 </RelativeLayout>
             </android.support.v7.widget.Toolbar>
 
