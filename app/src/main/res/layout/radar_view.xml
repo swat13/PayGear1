@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:background="#c48b84"
+              android:layout_height="match_parent">
+    <ImageView
+        android:layout_width="match_parent"
+        android:src="@drawable/radar_shape"
+        android:layout_centerInParent="true"
+        android:id="@+id/radar_line"
+        android:layout_height="match_parent"/>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="100dp"
+        android:src="@drawable/ali"
+        android:layout_centerInParent="true"
+        app:civ_border_color="#aab77c78"
+        app:civ_border_width="5dp"
+        android:layout_height="100dp"/>
+</RelativeLayout>

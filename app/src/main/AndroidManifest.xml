@@ -48,6 +48,8 @@
             android:name=".ProfileActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity android:name=".RadarActivity">
+        </activity>
     </application>
 
 </manifest>
