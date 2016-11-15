@@ -22,32 +22,32 @@ import magia.af.ezpay.SimpleScannerActivity;
 
 public class BarCodeGet extends Fragment {
 
-  ImageView imageView;
-  RSSFeed _feed;
+    ImageView imageView;
+    RSSFeed _feed;
 
 
-  public static BarCodeGet getInstance() {
-    return new BarCodeGet();
-  }
+    public static BarCodeGet getInstance() {
+        return new BarCodeGet();
+    }
 
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    View v = inflater.inflate(R.layout.barcode_scanner, container, false);
-    _feed = (RSSFeed) getArguments().getSerializable("contact");
-    ((MainActivity) getActivity()).fragment_status = 4;
-    imageView = (ImageView) v.findViewById(R.id.QrCode);
-    Button btnScanOtherQRCode = (Button) v.findViewById(R.id.btn_scan_other_users);
-    btnScanOtherQRCode.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        getActivity().startActivity(new Intent(getActivity(), SimpleScannerActivity.class).putExtra("contact",_feed));
-      }
-    });
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.barcode_scanner, container, false);
+        _feed = (RSSFeed) getArguments().getSerializable("contact");
+        ((MainActivity) getActivity()).fragment_status = 4;
+        imageView = (ImageView) v.findViewById(R.id.QrCode);
+        Button btnScanOtherQRCode = (Button) v.findViewById(R.id.btn_scan_other_users);
+        btnScanOtherQRCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().startActivity(new Intent(getActivity(), SimpleScannerActivity.class).putExtra("contact", _feed));
+            }
+        });
 //        new getQr().execute();
-    Glide.with(getActivity()).load("http://new.opaybot.ir/api/QR/" + getActivity().getSharedPreferences("EZpay", 0).getString("id", "")).into(imageView);
-    return v;
-  }
+        Glide.with(getActivity()).load("http://new.opaybot.ir/api/QR/" + getActivity().getSharedPreferences("EZpay", 0).getString("id", "")).into(imageView);
+        return v;
+    }
 
 //
 //    public class getQr extends AsyncTask<String, Void, String> {
