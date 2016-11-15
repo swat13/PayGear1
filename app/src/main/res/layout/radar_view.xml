@@ -3,6 +3,7 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:background="#c48b84"
+                android:id="@+id/container"
               android:layout_height="match_parent">
     <ImageView
         android:layout_width="match_parent"
@@ -10,6 +11,16 @@
         android:layout_centerInParent="true"
         android:id="@+id/radar_line"
         android:layout_height="match_parent"/>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="50dp"
+        android:src="@drawable/ali"
+        android:visibility="gone"
+        app:civ_border_color="#aab77c78"
+        app:civ_border_width="5dp"
+        android:id="@+id/user_avatar"
+        android:layout_height="50dp"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
         xmlns:app="http://schemas.android.com/apk/res-auto"
