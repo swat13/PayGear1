@@ -17,6 +17,6 @@ public class RadarActivity extends AppCompatActivity {
     Animation animation = AnimationUtils.loadAnimation(this,R.anim.rotate);
     imageView.setAnimation(animation);
     animation.start();
-
+    //radar
   }
 }
