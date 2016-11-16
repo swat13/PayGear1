@@ -1,33 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:background="#c48b84"
                 android:id="@+id/container"
-              android:layout_height="match_parent">
-    <ImageView
-        android:layout_width="match_parent"
-        android:src="@drawable/radar_shape"
-        android:layout_centerInParent="true"
-        android:id="@+id/radar_line"
-        android:layout_height="match_parent"/>
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#c48b84"
+                android:orientation="vertical"
+                android:paddingBottom="120dp"
+                android:paddingTop="120dp">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="50dp"
-        android:src="@drawable/ali"
-        android:visibility="gone"
-        app:civ_border_color="#aab77c78"
-        app:civ_border_width="5dp"
-        android:id="@+id/user_avatar"
-        android:layout_height="50dp"/>
+    <ImageView
+        android:id="@+id/radar_line"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:src="@drawable/radar_shape"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="100dp"
-        android:src="@drawable/ali"
+        android:layout_height="100dp"
         android:layout_centerInParent="true"
+        android:id="@+id/user_avatar"
+        android:src="@drawable/ali"
         app:civ_border_color="#aab77c78"
-        app:civ_border_width="5dp"
-        android:layout_height="100dp"/>
+        app:civ_border_width="5dp"/>
 </RelativeLayout>
