@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -19,6 +20,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+
+import magia.af.ezpay.helper.MultipartUtility;
 
 public class DOMParser {
 
@@ -1031,6 +1034,27 @@ public class DOMParser {
         }
         return null;
 
+    }
+
+    public boolean changeUserImage(String sourceFileUri) {
+
+        File uploadFile1 = new File(sourceFileUri);
+
+        Log.e("SSSSSSSSSSS", "changeUserImage: "+uploadFile1.getTotalSpace() );
+        try {
+            Log.e("&&&&&&&&&&&", "changeUserImage: " + token);
+            MultipartUtility multipart = new MultipartUtility(mainUrl + "api/account/setPhoto","UTF-8",token);
+            Log.e("(((((((((", "changeUserImage: " + mainUrl + "api/account/setPhoto");
+            multipart.addFilePart("image", uploadFile1);
+            multipart.addHeaderField("Authorization", "bearer " + token);
+//            httpConn.setRequestProperty("Authorization", );
+            String response = multipart.finish();
+            Log.e("++++++++++", "changeUserImage: " + response);
+        } catch (IOException ex) {
+            Log.e("////////////", "changeUserImage: " + ex);
+        }
+
+        return true;
     }
 
 

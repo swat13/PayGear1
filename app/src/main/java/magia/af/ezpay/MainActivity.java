@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -29,6 +30,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public String description;
     public int amount;
     private int position;
+    public ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +41,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         friendsLayout = (LinearLayout) findViewById(R.id.friends_layout);
         barcodeReader = (LinearLayout) findViewById(R.id.barcode_reader);
         profileLayout = (LinearLayout) findViewById(R.id.profile_layout);
+        imageView = (ImageView) findViewById(R.id.image_view);
+
 
         _feed = (RSSFeed) getIntent().getSerializableExtra("contact");
 

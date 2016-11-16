@@ -10,31 +10,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="?actionBarSize"/>
+        android:layout_marginBottom="?actionBarSize" />
 
-    <RelativeLayout
-        android:id="@+id/wait_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/loading_bg2"
-        android:clickable="true"
-        android:visibility="gone">
-
-        <ImageView
-            android:id="@+id/image_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
-
-    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/btm_menu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical">
 
         <View
             android:layout_width="match_parent"
@@ -169,5 +154,23 @@
         </LinearLayout>
 
     </LinearLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/wait_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/loading_bg2"
+        android:clickable="true"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+
+    </RelativeLayout>
+
 
 </RelativeLayout>
