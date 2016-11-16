@@ -63,15 +63,15 @@ public class LoginActivity extends BaseActivity {
 
 
     private void checkPermissions() {
-        ActivityCompat.requestPermissions(LoginActivity.this, new String[]{Manifest.permission.READ_CONTACTS, Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+        ActivityCompat.requestPermissions(LoginActivity.this, new String[]{Manifest.permission.READ_CONTACTS, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Log.e("onBackPressed: ", fragment_status+"" );
+        Log.e("onBackPressed: ", fragment_status + "");
         if (fragment_status == 3) {
-            Log.e("backkkk", "onBackPressed: " );
+            Log.e("backkkk", "onBackPressed: ");
             activationCodeFragment.cancelling();
 
 

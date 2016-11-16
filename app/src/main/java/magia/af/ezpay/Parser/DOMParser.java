@@ -1,6 +1,10 @@
 package magia.af.ezpay.Parser;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.audiofx.BassBoost;
+import android.os.Environment;
+import android.util.Base64;
 import android.util.Log;
 
 
@@ -8,9 +12,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -251,7 +259,7 @@ public class DOMParser {
                 rssItem.setTelNo(jsonObject.getString("mobile"));
                 rssItem.setUserId(jsonObject.getString("id"));
                 rssItem.setContactName(jsonObject.getString("title"));
-                Log.e("Name",rssItem.getContactName());
+                Log.e("Name", rssItem.getContactName());
             } catch (Exception e) {
                 e.printStackTrace();
 
@@ -366,9 +374,9 @@ public class DOMParser {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
 
             JSONObject object = new JSONObject();
-            object.put("mobile",username);
-            object.put("code" , activeCode);
-            object.put("newName",newName);
+            object.put("mobile", username);
+            object.put("code", activeCode);
+            object.put("newName", newName);
 //            String request = "{\n" +
 //                    "\"mobile\" : \"" + username + "\",\n" +
 //                    "\"code\" : " + activeCode + ",\n" +
@@ -488,7 +496,7 @@ public class DOMParser {
                 }
             }
 
-            Log.e("@@@@@@", sb.toString());
+            Log.e("Contact Log", sb.toString());
             JSONArray jsonArray = new JSONArray(sb.toString());
             RSSFeed rssFeed = new RSSFeed();
 
@@ -555,11 +563,11 @@ public class DOMParser {
 
     }
 
-    public PayLogFeed payLogWithAnother(String phone,String maxDate,String maxpage) {
+    public PayLogFeed payLogWithAnother(String phone, String maxDate, String maxpage) {
 
         try {
 
-            URL url = new URL(mainUrl + "api/payment/PayLogWithAnother?pagesize="+maxpage+"&maxDate="+maxDate);
+            URL url = new URL(mainUrl + "api/payment/PayLogWithAnother?pagesize=" + maxpage + "&maxDate=" + maxDate);
             Log.e("1111111", "doInBackground: " + url);
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
             httpConn.setDoOutput(true);
@@ -1036,26 +1044,59 @@ public class DOMParser {
 
     }
 
-    public boolean changeUserImage(String sourceFileUri) {
+    public boolean changeUserImage(String sourceFileUri) throws IOException {
 
         File uploadFile1 = new File(sourceFileUri);
 
-        Log.e("SSSSSSSSSSS", "changeUserImage: "+uploadFile1.getTotalSpace() );
-        try {
-            Log.e("&&&&&&&&&&&", "changeUserImage: " + token);
-            MultipartUtility multipart = new MultipartUtility(mainUrl + "api/account/setPhoto","UTF-8",token);
-            Log.e("(((((((((", "changeUserImage: " + mainUrl + "api/account/setPhoto");
-            multipart.addFilePart("image", uploadFile1);
-            multipart.addHeaderField("Authorization", "bearer " + token);
-//            httpConn.setRequestProperty("Authorization", );
-            String response = multipart.finish();
-            Log.e("++++++++++", "changeUserImage: " + response);
-        } catch (IOException ex) {
-            Log.e("////////////", "changeUserImage: " + ex);
-        }
 
+        int size = (int) uploadFile1.length();
+        byte[] bytes = new byte[size];
+        try {
+            BufferedInputStream buf = new BufferedInputStream(new FileInputStream(uploadFile1));
+            buf.read(bytes, 0, bytes.length);
+            buf.close();
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        String base64 = Base64.encodeToString(bytes, Base64.NO_WRAP);
+
+
+        URL url = new URL(mainUrl + "api/account/setPhotoBase64");
+        Log.e("1111111", "doInBackground: " + url);
+        HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
+        httpConn.setDoInput(true);
+        httpConn.setAllowUserInteraction(false);
+        httpConn.setRequestMethod("POST");
+        httpConn.setConnectTimeout(30000);
+        httpConn.setReadTimeout(30000);
+        httpConn.setRequestProperty("Authorization", "bearer " + token);
+        httpConn.setRequestProperty("Content-Type", "application/json");
+
+        OutputStream os = httpConn.getOutputStream();
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+
+
+        //writer.write(base64);
+        writer.write("{\"data\":\"" + base64 + "\"}");
+        writer.flush();
+        writer.close();
+        os.close();
+        int resCode = httpConn.getResponseCode();
+        Log.e("0000000", "doInBackground: " + resCode);
+        if (resCode != 200) {
+            return false;
+        }
         return true;
+
+
     }
+
+
+
 
 
 }

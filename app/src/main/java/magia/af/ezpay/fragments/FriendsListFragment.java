@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
 import magia.af.ezpay.ChatPageActivity;
@@ -185,6 +186,8 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
             Glide.with(getActivity())
                     .load("http://new.opaybot.ir" + fe.getContactImg())
                     .asBitmap()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
                     .centerCrop()
                     .placeholder(R.drawable.pic_profile)
                     .into(new BitmapImageViewTarget(FeedViewHolder.contactImage) {
