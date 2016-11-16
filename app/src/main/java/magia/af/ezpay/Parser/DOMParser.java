@@ -948,7 +948,7 @@ public class DOMParser {
     }
 
     public String sendPhoto(String phone, String detail, String comment, String amount) {
-
+/*ddd*/
         try {
 
             URL url = new URL(mainUrl + "api/account/setPhoto");
