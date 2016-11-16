@@ -1,18 +1,24 @@
 package magia.af.ezpay;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.security.Permission;
 
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.RSSFeed;
@@ -24,6 +30,13 @@ public class Splash extends BaseActivity {
   /*ddfdf*/
 
     ContactDatabase database;
+
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,37 +77,18 @@ public class Splash extends BaseActivity {
 
         }
 
-        if (ContextCompat.checkSelfPermission(this,
-          Manifest.permission.ACCESS_FINE_LOCATION)
-          != PackageManager.PERMISSION_GRANTED) {
+        int permission = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
-            // No expl
-            //
-            // anation needed, we can request the permission.
-
-            ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION);
-
-            // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-            // app-defined int constant. The callback method gets the
-            // result of the request.
-
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    this,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
         }
 
-        if (ContextCompat.checkSelfPermission(this,
-          Manifest.permission.ACCESS_COARSE_LOCATION)
-          != PackageManager.PERMISSION_GRANTED) {
 
-            // No expl
-            //
-            // anation needed, we can request the permission.
-
-            ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION);
-
-            // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-            // app-defined int constant. The callback method gets the
-            // result of the request.
-
-        }
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -141,6 +135,7 @@ public class Splash extends BaseActivity {
     public String newContact(JSONArray jsonArray) {
         return jsonArray.toString();
     }
+
 
     private class fillContact extends AsyncTask<String, Void, RSSFeed> {
 
