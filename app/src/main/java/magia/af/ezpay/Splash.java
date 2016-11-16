@@ -8,14 +8,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.security.Permission;
 
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.RSSFeed;
@@ -60,6 +57,38 @@ public class Splash extends BaseActivity {
             // anation needed, we can request the permission.
 
             ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA);
+
+            // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+            // app-defined int constant. The callback method gets the
+            // result of the request.
+
+        }
+
+        if (ContextCompat.checkSelfPermission(this,
+          Manifest.permission.ACCESS_FINE_LOCATION)
+          != PackageManager.PERMISSION_GRANTED) {
+
+            // No expl
+            //
+            // anation needed, we can request the permission.
+
+            ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION);
+
+            // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+            // app-defined int constant. The callback method gets the
+            // result of the request.
+
+        }
+
+        if (ContextCompat.checkSelfPermission(this,
+          Manifest.permission.ACCESS_COARSE_LOCATION)
+          != PackageManager.PERMISSION_GRANTED) {
+
+            // No expl
+            //
+            // anation needed, we can request the permission.
+
+            ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION);
 
             // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
             // app-defined int constant. The callback method gets the
