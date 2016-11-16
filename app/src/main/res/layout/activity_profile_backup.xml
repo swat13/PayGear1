@@ -48,7 +48,6 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="20dp"
                     android:layout_marginLeft="10dp"
-
                     android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                     android:textColor="#fcdddb"
                     />
@@ -170,7 +169,6 @@
                                 android:layout_alignParentLeft="true"
                                 android:layout_centerVertical="true"
                                 android:gravity="center"
-
                                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                                 android:textColor="#b6b6aa"
                                 android:visibility="visible"/>
@@ -203,6 +201,7 @@
                         android:layout_height="60dp"
                         android:layout_alignParentRight="true"
                         android:layout_marginLeft="10dp"
+
                         />
 
                     <TextView
@@ -211,7 +210,6 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_toLeftOf="@+id/user_avatar"
-
                         android:textAppearance="@style/TextAppearance.AppCompat.Title"
                         android:textColor="#FFFFFF"/>
 

@@ -21,6 +21,16 @@ public class RSSItem implements Serializable {
     private boolean lastChatOrderByFromOrTo;
     private String comment;
     private int position;
+
+    public int getCredit() {
+        return credit;
+    }
+
+    public void setCredit(int credit) {
+        this.credit = credit;
+    }
+
+    private int credit;
     private String userId;
 
     public String getUserId() {

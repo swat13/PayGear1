@@ -39,6 +39,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -54,11 +55,15 @@ import java.io.InputStreamReader;
 
 import magia.af.ezpay.MainActivity;
 import magia.af.ezpay.Parser.DOMParser;
+import magia.af.ezpay.Parser.RSSFeed;
+import magia.af.ezpay.Parser.RSSItem;
 import magia.af.ezpay.ProfileActivity;
 import magia.af.ezpay.R;
 
 import magia.af.ezpay.helper.ScalingUtilities;
 import magia.af.ezpay.helper.getPath;
+
+import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 /**
  * Created by pc on 11/9/2016.
@@ -68,6 +73,7 @@ public class ProfileFragment extends Fragment {
     Toolbar toolbar;
     AppBarLayout appBarLayout;
     private ImageView userAvatar;
+    private TextView contactName, amount, phoneNumber;
 
     private static final int PICK_IMAGE = 1;
     private Button upload;
@@ -75,6 +81,8 @@ public class ProfileFragment extends Fragment {
     private Bitmap bitmap;
     private ProgressDialog dialog;
     String Qpath;
+
+
 
     @Nullable
     @Override
@@ -91,8 +99,14 @@ public class ProfileFragment extends Fragment {
       }
     });*/
 
-        userAvatar = (ImageView) rootView.findViewById(R.id.user_avatar);
 
+        userAvatar = (ImageView) rootView.findViewById(R.id.user_avatar);
+        contactName = (TextView) rootView.findViewById(R.id.txt_user_name);
+        amount = (TextView) rootView.findViewById(R.id.txt_account_availability);
+        phoneNumber = (TextView) rootView.findViewById(R.id.txt_phone_number);
+
+
+        new getAccount().execute();
         userAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -382,5 +396,48 @@ public class ProfileFragment extends Fragment {
 
         return inSampleSize;
     }
+
+
+    public class getAccount extends AsyncTask<Void, Void, RSSItem> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+//            ((FriendListActivity) getActivity()).waitingDialog.setVisibility(View.VISIBLE);
+//            GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(((FriendListActivity) getActivity()).imageView);
+//            Glide.with(getActivity()).load(R.drawable.gif_loading).into(imageViewTarget);
+
+        }
+
+
+        @Override
+        protected RSSItem doInBackground(Void... params) {
+
+            DOMParser domParser = new DOMParser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
+            return domParser.getAccount();
+
+        }
+
+        @Override
+        protected void onPostExecute(RSSItem result) {
+            Log.e("jsons", String.valueOf(result));
+
+            if (result != null) {
+
+                contactName.setText(result.getContactName());
+                amount.setText(String.valueOf(result.getCredit()));
+                phoneNumber.setText(result.getTelNo());
+
+
+//                finish();
+            } else {
+                Log.e(TAG, "onPostExecute: 1111111111");
+                Toast.makeText(getActivity(), "Json Is Null!", Toast.LENGTH_SHORT).show();
+            }
+
+
+        }
+    }
+
 
 }
