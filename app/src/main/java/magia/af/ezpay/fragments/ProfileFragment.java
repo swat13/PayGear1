@@ -3,6 +3,7 @@ package magia.af.ezpay.fragments;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -45,60 +46,30 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 import magia.af.ezpay.MainActivity;
 import magia.af.ezpay.Parser.DOMParser;
-import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.Parser.RSSItem;
-import magia.af.ezpay.ProfileActivity;
 import magia.af.ezpay.R;
 
-import magia.af.ezpay.helper.ScalingUtilities;
-import magia.af.ezpay.helper.getPath;
-
-import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 /**
  * Created by pc on 11/9/2016.
  */
 
 public class ProfileFragment extends Fragment {
-    Toolbar toolbar;
-    AppBarLayout appBarLayout;
     private ImageView userAvatar;
     private TextView contactName, amount, phoneNumber;
-
-    private static final int PICK_IMAGE = 1;
-    private Button upload;
-    private EditText caption;
-    private Bitmap bitmap;
-    private ProgressDialog dialog;
-    String Qpath;
-
-
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_profile_backup, container, false);
-    /*toolbar = (Toolbar)rootView.findViewById(R.id.toolbar);
-    ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
-    appBarLayout = (AppBarLayout) rootView.findViewById(R.id.app_bar);
-    appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-      @Override
-      public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-        Log.e("Test1", "onOffsetChange: " + verticalOffset);
-        toolbar.setBackgroundColor(Color.parseColor("#b07d79"));
-      }
-    });*/
-
 
         userAvatar = (ImageView) rootView.findViewById(R.id.user_avatar);
         contactName = (TextView) rootView.findViewById(R.id.txt_user_name);
@@ -119,9 +90,10 @@ public class ProfileFragment extends Fragment {
                         "Import from gallery",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-                                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                                startActivityForResult(pickPhoto, 1);//one can be replaced with any action code
+                                Intent intent = new Intent();
+                                intent.setType("image/*");
+                                intent.setAction(Intent.ACTION_GET_CONTENT);//
+                                startActivityForResult(Intent.createChooser(intent, "Select File"),1);
                             }
                         });
 
@@ -129,8 +101,8 @@ public class ProfileFragment extends Fragment {
                         "Take picture",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                startActivityForResult(takePicture, 0);//zero can be replaced with any action code
+                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                startActivityForResult(intent, 0);
                             }
                         });
 
@@ -142,46 +114,82 @@ public class ProfileFragment extends Fragment {
         return rootView;
     }
 
-    String path;
+    Bitmap thumbnail;
+    private File onCaptureImageResult(Intent data) {
+        thumbnail = (Bitmap) data.getExtras().get("data");
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        File destination = new File(Environment.getExternalStorageDirectory(),
+                System.currentTimeMillis() + ".jpg");
+        FileOutputStream fo;
+        try {
+            destination.createNewFile();
+            fo = new FileOutputStream(destination);
+            fo.write(bytes.toByteArray());
+            fo.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return destination;
+    }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @SuppressWarnings("deprecation")
+    private File onSelectFromGalleryResult(Intent data) {
+        thumbnail=null;
+        if (data != null) {
+            try {
+                thumbnail = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), data.getData());
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+                File destination = new File(Environment.getExternalStorageDirectory(),
+                        System.currentTimeMillis() + ".jpg");
+                FileOutputStream fo;
+                try {
+                    destination.createNewFile();
+                    fo = new FileOutputStream(destination);
+                    fo.write(bytes.toByteArray());
+                    fo.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return destination;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
-        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-        switch (requestCode) {
-            case 0:
-                if (resultCode == Activity.RESULT_OK) {
-                    Uri selectedImage = imageReturnedIntent.getData();
-                    CallAsync(selectedImage);
-                }
-
-                break;
-            case 1:
-                if (resultCode == Activity.RESULT_OK) {
-                    Uri selectedImage = imageReturnedIntent.getData();
-                    CallAsync(selectedImage);
-                }
-                break;
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+        Log.e("11111111", "onActivityResult: 0000" + resultCode);
+        Log.e("22222222", "onActivityResult: 1111" + requestCode);
+        if (resultCode == Activity.RESULT_OK) {
+//            Log.e(TAG, "onActivityResult: "+imageReturnedIntent.getData() );
+//            Uri tempUri = getImageUri(getActivity(), bitmap);
+            switch (requestCode) {
+                case 0:
+                    new AsyncInsertUserImage().execute(onCaptureImageResult(data));
+                    break;
+                case 1:
+                    new AsyncInsertUserImage().execute(onSelectFromGalleryResult(data));
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
-
-    public void CallAsync(Uri uri) {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            path = new getPath().getPath(getActivity(), uri);
-        }
-        Qpath = compressImage(uri.toString());
-        new AsyncInsertUserImage().execute(Qpath);
-    }
-
-    private class AsyncInsertUserImage extends AsyncTask<String, Void, Boolean> {
-
+    private class AsyncInsertUserImage extends AsyncTask<File, Void, Boolean> {
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-//            cx.progressBar.setVisibility(View.VISIBLE);
             ((MainActivity) getActivity()).waitingDialog.setVisibility(View.VISIBLE);
             GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(((MainActivity) getActivity()).imageView);
             Glide.with(getActivity()).load(R.drawable.gif_loading).into(imageViewTarget);
@@ -189,7 +197,7 @@ public class ProfileFragment extends Fragment {
         }
 
         @Override
-        protected Boolean doInBackground(String... params) {
+        protected Boolean doInBackground(File... params) {
             DOMParser domParser = new DOMParser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
             try {
                 return domParser.changeUserImage(params[0]);
@@ -201,11 +209,9 @@ public class ProfileFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Boolean result) {
-//            cx.progressBar.setVisibility(View.INVISIBLE);
             if (result != false) {
                 Toast.makeText(getActivity(), "OK !", Toast.LENGTH_SHORT).show();
-                Bitmap bitmap = BitmapFactory.decodeFile(Qpath);
-                userAvatar.setImageBitmap(getRoundedShape(bitmap));
+                userAvatar.setImageBitmap(getRoundedShape(thumbnail));
             } else {
                 Toast.makeText(getActivity(), "Error In Connection", Toast.LENGTH_SHORT).show();
             }
@@ -397,7 +403,6 @@ public class ProfileFragment extends Fragment {
         return inSampleSize;
     }
 
-
     public class getAccount extends AsyncTask<Void, Void, RSSItem> {
 
         @Override
@@ -409,13 +414,10 @@ public class ProfileFragment extends Fragment {
 
         }
 
-
         @Override
         protected RSSItem doInBackground(Void... params) {
-
             DOMParser domParser = new DOMParser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
             return domParser.getAccount();
-
         }
 
         @Override
@@ -423,15 +425,11 @@ public class ProfileFragment extends Fragment {
             Log.e("jsons", String.valueOf(result));
 
             if (result != null) {
-
                 contactName.setText(result.getContactName());
                 amount.setText(String.valueOf(result.getCredit()));
                 phoneNumber.setText(result.getTelNo());
-
-
 //                finish();
             } else {
-                Log.e(TAG, "onPostExecute: 1111111111");
                 Toast.makeText(getActivity(), "Json Is Null!", Toast.LENGTH_SHORT).show();
             }
 

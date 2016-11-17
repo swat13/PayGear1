@@ -1,13 +1,18 @@
 package magia.af.ezpay;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+
+import java.io.File;
 
 import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.fragments.BarCodeGet;
@@ -56,7 +61,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     }
 
-
     @Override
     public void onClick(View v) {
 
@@ -92,13 +96,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 friendsLayout.setAlpha((float) 0.45);
                 barcodeReader.setAlpha((float) 1);
                 profileLayout.setAlpha((float) 0.45);
-//        Log.e("clicked", "onClick: ");
-//        startActivity(new Intent(MainActivity.this, SimpleScannerActivity.class).putExtra("contact",_feed));
 
                 break;
 
             case R.id.profile_layout:
-//        startActivity(new Intent(MainActivity.this , ProfileActivity.class));
                 barCodeGet = BarCodeGet.getInstance();
                 getSupportFragmentManager().beginTransaction().remove(barCodeGet).commit();
                 ProfileFragment profileFragment = new ProfileFragment();
@@ -134,21 +135,36 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == 10) {
-            description = data.getStringExtra("description");
-            amount = data.getIntExtra("amount", 0);
-            position = data.getIntExtra("pos", 0);
-            friendsListFragment = FriendsListFragment.getInstance(_feed);
-            Bundle bundle = new Bundle();
-            bundle.putString("description", description);
-            bundle.putInt("amount", amount);
-            bundle.putInt("pos", position);
-            friendsListFragment.setArguments(bundle);
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.detail_fragment, friendsListFragment)
-                    .addToBackStack(null)
-                    .commit();
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == 10) {
+                description = data.getStringExtra("description");
+                amount = data.getIntExtra("amount", 0);
+                position = data.getIntExtra("pos", 0);
+                friendsListFragment = FriendsListFragment.getInstance(_feed);
+                Bundle bundle = new Bundle();
+                bundle.putString("description", description);
+                bundle.putInt("amount", amount);
+                bundle.putInt("pos", position);
+                friendsListFragment.setArguments(bundle);
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.detail_fragment, friendsListFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+            Log.e("3333333333", "onActivityResult: "+requestCode);
+            switch (requestCode) {
+                case 0:
+                    Log.e("#######", "onActivityResult: 0000"+data.getData() );
+                    File file = new File(Environment.getExternalStorageDirectory().getPath(), "photo.jpg");
+//                    CallAsync(Uri.fromFile(file));
+                    break;
+                case 1:
+//                    CallAsync(tempUri);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 

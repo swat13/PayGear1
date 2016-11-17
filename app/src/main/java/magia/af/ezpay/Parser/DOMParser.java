@@ -1,6 +1,7 @@
 package magia.af.ezpay.Parser;
 
 import android.media.audiofx.BassBoost;
+import android.util.Base64;
 import android.util.Log;
 
 
@@ -11,6 +12,8 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,8 +23,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-
-import magia.af.ezpay.helper.MultipartUtility;
 
 public class DOMParser {
 
@@ -1105,10 +1106,7 @@ public class DOMParser {
 
     }
 
-    public boolean changeUserImage(String sourceFileUri) throws IOException {
-
-        File uploadFile1 = new File(sourceFileUri);
-
+    public boolean changeUserImage(File uploadFile1) throws IOException {
 
         int size = (int) uploadFile1.length();
         byte[] bytes = new byte[size];

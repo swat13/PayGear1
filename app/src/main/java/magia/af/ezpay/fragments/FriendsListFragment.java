@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.bumptech.glide.signature.StringSignature;
 
 import magia.af.ezpay.ChatPageActivity;
 import magia.af.ezpay.MainActivity;
@@ -50,9 +51,6 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
         View v = inflater.inflate(R.layout.activity_friend_list, container, false);
         ((MainActivity) getActivity()).fragment_status = 2;
         recBills = (RecyclerView) v.findViewById(R.id.contact_recycler);
-//    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-//
-//    StrictMode.setThreadPolicy(policy);
         _feed = (RSSFeed) getActivity().getIntent().getSerializableExtra("contact");
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -73,31 +71,6 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
             recBills.setLayoutManager(llm);
             adapter.notifyDataSetChanged();
         }
-
-//        v.findViewById(R.id.barcode_reader).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                startActivity(new Intent(FriendListActivity.this,SimpleScannerActivity.class));
-//
-//            }
-//        });
-//
-//
-//        v.findViewById(R.id.barcode_reader1).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                BarCodeGet barCodeGet = BarCodeGet.getInstance();
-//                getSupportFragmentManager()
-//                        .beginTransaction()
-//                        .add(android.R.id.content, barCodeGet)
-//                        .commit();
-//
-//            }
-//        });
-//
-
 
         return v;
     }
@@ -168,26 +141,10 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
                 FeedViewHolder.contactName.setText(fe.getContactName());
             }
 
-
-//            Glide.with(getActivity()).load("http://new.opaybot.ir" + fe.getContactImg()).placeholder(R.drawable.pic_profile).into(FeedViewHolder.contactImage);
-
-
-//            Glide.with(getActivity()).load("http://new.opaybot.ir" + fe.getContactImg()).asBitmap().centerCrop().into(new BitmapImageViewTarget(FeedViewHolder.contactImage) {
-//                @Override
-//                protected void setResource(Bitmap resource) {
-//                    RoundedBitmapDrawable circularBitmapDrawable =
-//                            RoundedBitmapDrawableFactory.create(getActivity().getResources(), resource);
-//                    circularBitmapDrawable.setCircular(true);
-//                    FeedViewHolder.contactImage.setImageDrawable(circularBitmapDrawable);
-//                }
-//            });
-
-
+            Log.e("#######", "onBindViewHolder: "+ "http://new.opaybot.ir" + fe.getContactImg());
             Glide.with(getActivity())
                     .load("http://new.opaybot.ir" + fe.getContactImg())
                     .asBitmap()
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .skipMemoryCache(true)
                     .centerCrop()
                     .placeholder(R.drawable.pic_profile)
                     .into(new BitmapImageViewTarget(FeedViewHolder.contactImage) {
