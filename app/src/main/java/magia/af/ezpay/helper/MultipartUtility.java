@@ -58,6 +58,7 @@ public class MultipartUtility {
         httpConn.setDoOutput(true); // indicates POST method
         httpConn.setDoInput(false);
         httpConn.setRequestMethod("POST");
+        httpConn.setRequestProperty("Connection", "Keep-Alive");
         httpConn.setRequestProperty("Content-Type",
                 "multipart/form-data; boundary=" + boundary);
 
