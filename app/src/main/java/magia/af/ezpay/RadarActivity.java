@@ -1,9 +1,13 @@
 package magia.af.ezpay;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
@@ -16,16 +20,24 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
+
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import magia.af.ezpay.Parser.DOMParser;
+import magia.af.ezpay.Parser.RSSFeed;
 
 
 public class
 
 RadarActivity extends AppCompatActivity {
   private RelativeLayout relativeLayout;
-  private CircleImageView[] circleImageView;
+  private ImageView[] circleImageView;
   RelativeLayout.LayoutParams[] params;
   public int measuredWidth;
   public int counter;
@@ -33,10 +45,13 @@ RadarActivity extends AppCompatActivity {
   public int halfDisplayHeight;
   public int imageViewWidth;
   public int imageViewHeight;
-  public CircleImageView userAvatar;
+  public ImageView userAvatar;
   final int userAvatarWidth = 0;
   final int userAvatarHeight = 0;
+  private RSSFeed rssFeed;
+  public int i;
 
+  private String imageUrl = "http://new.opaybot.ir";
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -45,48 +60,52 @@ RadarActivity extends AppCompatActivity {
     Animation animation = AnimationUtils.loadAnimation(this, R.anim.rotate);
     imageView.setAnimation(animation);
     animation.start();
-    Random random = new Random();
-    int nextNumber = random.nextInt(15);
+    rssFeed = new RSSFeed();
+    Timer timer = new Timer();
+    timer.scheduleAtFixedRate(new TimerTask() {
+      @Override
+      public void run() {
+        new GetPeopleFromTheirLocation().execute();
+      }
+    }, 0L, 10000);
     relativeLayout = (RelativeLayout) findViewById(R.id.container);
     Display display = getWindowManager().getDefaultDisplay();
     userAvatar = (CircleImageView) findViewById(R.id.user_avatar);
     halfDisplayWidth = display.getWidth() / 2;
     halfDisplayHeight = display.getHeight() / 2;
-//    imageViewWidth = imageView.getWidth();
-//    imageViewHeight = imageView.getHeight();
-    ViewTreeObserver vto = userAvatar.getViewTreeObserver();
-    vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-      public boolean onPreDraw() {
-        // Remove after the first run so it doesn't fire forever
-        setUserAvatarWidth(userAvatar.getMeasuredWidth());
-        setUserAvatarHeight(userAvatar.getMeasuredHeight());
-        Log.e("imageViewHeight", "onCreate: " + userAvatar.getMeasuredHeight());
-        Log.e("imageViewWidth", "onCreate: " + getUserAvatarHeight());
-        userAvatar.getViewTreeObserver().removeOnPreDrawListener(this);
-        return true;
-      }
-    });
-    params = new RelativeLayout.LayoutParams[10];
-    circleImageView = new CircleImageView[10];
-    Handler handler = new Handler();
-    handler.postDelayed(new Runnable() {
-      @Override
-      public void run() {
-        generateImageViews();
-      }
-    }, 1000);
   }
 
+  public class GetPeopleFromTheirLocation extends AsyncTask<RSSFeed, Void, RSSFeed> {
+
+    @Override
+    protected RSSFeed doInBackground(RSSFeed... params) {
+      DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
+      return domParser.getLocation();
+    }
+
+    @Override
+    protected void onPostExecute(RSSFeed result) {
+      if (result != null) {
+        Log.e("Count", "onPostExecute: " + result.getItemCount());
+        Log.e("Image", "onPostExecute: " + result.getItem(0).getContactImg());
+        rssFeed = result;
+        params = new RelativeLayout.LayoutParams[result.getItemCount()];
+        circleImageView = new ImageView[result.getItemCount()];
+        generateImageViews();
+      }
+      super.onPostExecute(rssFeed);
+    }
+  }
 
   public void generateImageViews() {
-    for (int i = 0; i < circleImageView.length; i++) {
+    for (i = 0; i < rssFeed.getItemCount(); i++) {
       Display display = getWindowManager().getDefaultDisplay();
       Log.e("width", "generateImageViews: " + display.getWidth());
       Log.e("height", "generateImageViews: " + display.getHeight());
       params[i] = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-      circleImageView[i] = new CircleImageView(RadarActivity.this);
+      circleImageView[i] = new ImageView(RadarActivity.this);
 
-      int random = ((int) (Math.random()+0.5) * 460) + (int) (Math.random() * 160);
+      int random = ((int) (Math.random() + 0.5) * 460) + (int) (Math.random() * 160);
       int randomH = (int) (Math.random() * display.getHeight());
 //      for (int k = 200; k <= 600; k++) {
 //        if (random == k) {
@@ -112,10 +131,22 @@ RadarActivity extends AppCompatActivity {
       circleImageView[i].setLayoutParams(params[i]);
       circleImageView[i].getLayoutParams().width = 100;
       circleImageView[i].getLayoutParams().height = 100;
-      circleImageView[i].setBorderWidth(3);
-      circleImageView[i].setTag(i);
-      circleImageView[i].setBorderColor(Color.parseColor("#aab77c78"));
-      circleImageView[i].setImageResource(R.drawable.ali);
+      Log.e("image", "generateImageViews: "+imageUrl+ rssFeed.getItem(i).getContactImg());
+//      Glide.with(this).load(imageUrl + rssFeed.getItem(i).getContactImg()).into(circleImageView[i]);
+      Glide.with(this)
+        .load(imageUrl + rssFeed.getItem(i).getContactImg())
+        .asBitmap()
+        .centerCrop()
+        .placeholder(R.drawable.pic_profile)
+        .into(new BitmapImageViewTarget(circleImageView[i]) {
+          @Override
+          protected void setResource(Bitmap resource) {
+            RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
+            circularBitmapDrawable.setCornerRadius(700);
+            circleImageView[i].setImageDrawable(circularBitmapDrawable);
+          }
+        });
+//      circleImageView[i].setImageResource(R.drawable.ali);
       boolean flag = true;
 //          relativeLayout.addView(circleImageView[i]);
       if (calculateDistanceOfTwoPoint(xDot(params[i]), yDot(params[i]), halfDisplayWidth, halfDisplayHeight) <= 200) {
@@ -142,7 +173,7 @@ RadarActivity extends AppCompatActivity {
         circleImageView[i].setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
-            Toast.makeText(RadarActivity.this, "clicked" + v.getTag(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(RadarActivity.this, "clicked" + v.getTag(), Toast.LENGTH_SHORT).show();
           }
         });
 
@@ -167,7 +198,7 @@ RadarActivity extends AppCompatActivity {
     return userAvatarWidth;
   }
 
-  public int calculateDiameter(CircleImageView circleImageView) {
+  public int calculateDiameter(ImageView circleImageView) {
     return circleImageView.getLayoutParams().width;
   }
 
@@ -181,5 +212,11 @@ RadarActivity extends AppCompatActivity {
 
   public int calculateDistanceOfTwoPoint(int x1, int y1, int x2, int y2) {
     return (int) Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
+  }
+
+  @Override
+  public void onBackPressed() {
+    super.onBackPressed();
+    finish();
   }
 }

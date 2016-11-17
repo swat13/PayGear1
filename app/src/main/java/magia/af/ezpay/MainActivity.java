@@ -110,6 +110,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 barcodeReader.setAlpha((float) 0.45);
                 profileLayout.setAlpha((float) 1);
                 break;
+            case R.id.rss_feed:
+                startActivity(new Intent(this , RadarActivity.class));
 
 //      case R.id.barcode_reader1:
 //
