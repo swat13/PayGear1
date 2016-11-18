@@ -9,6 +9,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     
     <application
@@ -54,6 +56,7 @@
         </activity>
         <activity android:name=".RadarActivity">
         </activity>
+        <service android:name=".location.LocationService" android:enabled="true" android:exported="true"/>
     </application>
 
 </manifest>

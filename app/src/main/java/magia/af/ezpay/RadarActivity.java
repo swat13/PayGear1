@@ -52,6 +52,7 @@ RadarActivity extends AppCompatActivity {
   public int i;
 
   private String imageUrl = "http://new.opaybot.ir";
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -85,7 +86,7 @@ RadarActivity extends AppCompatActivity {
 
     @Override
     protected void onPostExecute(RSSFeed result) {
-      if (result != null) {
+      if (result != null && result.getItemCount() != 0) {
         Log.e("Count", "onPostExecute: " + result.getItemCount());
         Log.e("Image", "onPostExecute: " + result.getItem(0).getContactImg());
         rssFeed = result;
@@ -131,21 +132,26 @@ RadarActivity extends AppCompatActivity {
       circleImageView[i].setLayoutParams(params[i]);
       circleImageView[i].getLayoutParams().width = 100;
       circleImageView[i].getLayoutParams().height = 100;
-      Log.e("image", "generateImageViews: "+imageUrl+ rssFeed.getItem(i).getContactImg());
+      Log.e("image", "generateImageViews: " + imageUrl + rssFeed.getItem(i).getContactImg());
 //      Glide.with(this).load(imageUrl + rssFeed.getItem(i).getContactImg()).into(circleImageView[i]);
-      Glide.with(this)
-        .load(imageUrl + rssFeed.getItem(i).getContactImg())
-        .asBitmap()
-        .centerCrop()
-        .placeholder(R.drawable.pic_profile)
-        .into(new BitmapImageViewTarget(circleImageView[i]) {
-          @Override
-          protected void setResource(Bitmap resource) {
-            RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
-            circularBitmapDrawable.setCornerRadius(700);
-            circleImageView[i].setImageDrawable(circularBitmapDrawable);
-          }
-        });
+      if (this != null){
+        Glide.with(this)
+          .load(imageUrl + rssFeed.getItem(i).getContactImg())
+          .asBitmap()
+          .centerCrop()
+          .placeholder(R.drawable.pic_profile)
+          .into(new BitmapImageViewTarget(circleImageView[i]) {
+            @Override
+            protected void setResource(Bitmap resource) {
+              RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
+              circularBitmapDrawable.setCornerRadius(700);
+              circleImageView[i].setImageDrawable(circularBitmapDrawable);
+            }
+          });
+      }
+      else {
+        Glide.clear(circleImageView[i]);
+      }
 //      circleImageView[i].setImageResource(R.drawable.ali);
       boolean flag = true;
 //          relativeLayout.addView(circleImageView[i]);
@@ -214,9 +220,4 @@ RadarActivity extends AppCompatActivity {
     return (int) Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
   }
 
-  @Override
-  public void onBackPressed() {
-    super.onBackPressed();
-    finish();
-  }
 }
