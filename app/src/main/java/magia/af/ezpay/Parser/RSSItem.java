@@ -21,6 +21,250 @@ public class RSSItem implements Serializable {
     private boolean lastChatOrderByFromOrTo;
     private String comment;
     private int position;
+    private String title;
+    private boolean group;
+    private int groupId;
+    private String groupTitle;
+    private String groupPhoto;
+    private int groupLastChatId;
+    private String groupLastChatFrom;
+    private String groupLastChatTo;
+    private int groupLastChatAmount;
+    private String groupLastChatDate;
+    private boolean groupLastChatOrderPay;
+    private boolean groupLastChatStatus;
+    private String groupLastChatComment;
+    private boolean groupLastChatFromGroup;
+    private String groupMemberPhoto;
+    private String groupMemberPhone;
+    private String groupMemberTitle;
+    private int groupMemberLastChatId;
+    private String groupMemberLastChatFrom;
+    private String groupMemberLastChatTo;
+    private int groupMemberLastChatAmount;
+    private String groupMemberLastChatDate;
+    private boolean groupMemberLastChatOrderPay;
+    private boolean groupMemberLastChatStatus;
+    private boolean groupMemberLastChatFromGroup;
+    private String groupMemberLastChatComment;
+    private String groupMemberId;
+
+
+    public int getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getGroupTitle() {
+        return groupTitle;
+    }
+
+    public void setGroupTitle(String groupTitle) {
+        this.groupTitle = groupTitle;
+    }
+
+    public String getGroupPhoto() {
+        return groupPhoto;
+    }
+
+    public void setGroupPhoto(String groupPhoto) {
+        this.groupPhoto = groupPhoto;
+    }
+
+    public int getGroupLastChatId() {
+        return groupLastChatId;
+    }
+
+    public void setGroupLastChatId(int groupLastChatId) {
+        this.groupLastChatId = groupLastChatId;
+    }
+
+    public String getGroupLastChatFrom() {
+        return groupLastChatFrom;
+    }
+
+    public void setGroupLastChatFrom(String groupLastChatFrom) {
+        this.groupLastChatFrom = groupLastChatFrom;
+    }
+
+    public String getGroupLastChatTo() {
+        return groupLastChatTo;
+    }
+
+    public void setGroupLastChatTo(String groupLastChatTo) {
+        this.groupLastChatTo = groupLastChatTo;
+    }
+
+    public int getGroupLastChatAmount() {
+        return groupLastChatAmount;
+    }
+
+    public void setGroupLastChatAmount(int groupLastChatAmount) {
+        this.groupLastChatAmount = groupLastChatAmount;
+    }
+
+    public String getGroupLastChatDate() {
+        return groupLastChatDate;
+    }
+
+    public void setGroupLastChatDate(String groupLastChatDate) {
+        this.groupLastChatDate = groupLastChatDate;
+    }
+
+    public boolean isGroupLastChatStatus() {
+        return groupLastChatStatus;
+    }
+
+    public void setGroupLastChatStatus(boolean groupLastChatStatus) {
+        this.groupLastChatStatus = groupLastChatStatus;
+    }
+
+    public boolean isGroupLastChatOrderPay() {
+        return groupLastChatOrderPay;
+    }
+
+    public void setGroupLastChatOrderPay(boolean groupLastChatOrderPay) {
+        this.groupLastChatOrderPay = groupLastChatOrderPay;
+    }
+
+    public String getGroupLastChatComment() {
+        return groupLastChatComment;
+    }
+
+    public void setGroupLastChatComment(String groupLastChatComment) {
+        this.groupLastChatComment = groupLastChatComment;
+    }
+
+    public boolean isGroupLastChatFromGroup() {
+        return groupLastChatFromGroup;
+    }
+
+    public void setGroupLastChatFromGroup(boolean groupLastChatFromGroup) {
+        this.groupLastChatFromGroup = groupLastChatFromGroup;
+    }
+
+    public String getGroupMemberPhoto() {
+        return groupMemberPhoto;
+    }
+
+    public void setGroupMemberPhoto(String groupMemberPhoto) {
+        this.groupMemberPhoto = groupMemberPhoto;
+    }
+
+    public String getGroupMemberPhone() {
+        return groupMemberPhone;
+    }
+
+    public void setGroupMemberPhone(String groupMemberPhone) {
+        this.groupMemberPhone = groupMemberPhone;
+    }
+
+    public String getGroupMemberTitle() {
+        return groupMemberTitle;
+    }
+
+    public void setGroupMemberTitle(String groupMemberTitle) {
+        this.groupMemberTitle = groupMemberTitle;
+    }
+
+    public int getGroupMemberLastChatId() {
+        return groupMemberLastChatId;
+    }
+
+    public void setGroupMemberLastChatId(int groupMemberLastChatId) {
+        this.groupMemberLastChatId = groupMemberLastChatId;
+    }
+
+    public String getGroupMemberLastChatFrom() {
+        return groupMemberLastChatFrom;
+    }
+
+    public void setGroupMemberLastChatFrom(String groupMemberLastChatFrom) {
+        this.groupMemberLastChatFrom = groupMemberLastChatFrom;
+    }
+
+    public String getGroupMemberLastChatTo() {
+        return groupMemberLastChatTo;
+    }
+
+    public void setGroupMemberLastChatTo(String groupMemberLastChatTo) {
+        this.groupMemberLastChatTo = groupMemberLastChatTo;
+    }
+
+    public int getGroupMemberLastChatAmount() {
+        return groupMemberLastChatAmount;
+    }
+
+    public void setGroupMemberLastChatAmount(int groupMemberLastChatAmount) {
+        this.groupMemberLastChatAmount = groupMemberLastChatAmount;
+    }
+
+    public String getGroupMemberLastChatDate() {
+        return groupMemberLastChatDate;
+    }
+
+    public void setGroupMemberLastChatDate(String groupMemberLastChatDate) {
+        this.groupMemberLastChatDate = groupMemberLastChatDate;
+    }
+
+    public boolean isGroupMemberLastChatOrderPay() {
+        return groupMemberLastChatOrderPay;
+    }
+
+    public void setGroupMemberLastChatOrderPay(boolean groupMemberLastChatOrderPay) {
+        this.groupMemberLastChatOrderPay = groupMemberLastChatOrderPay;
+    }
+
+    public boolean isGroupMemberLastChatStatus() {
+        return groupMemberLastChatStatus;
+    }
+
+    public void setGroupMemberLastChatStatus(boolean groupMemberLastChatStatus) {
+        this.groupMemberLastChatStatus = groupMemberLastChatStatus;
+    }
+
+    public boolean isGroupMemberLastChatFromGroup() {
+        return groupMemberLastChatFromGroup;
+    }
+
+    public void setGroupMemberLastChatFromGroup(boolean groupMemberLastChatFromGroup) {
+        this.groupMemberLastChatFromGroup = groupMemberLastChatFromGroup;
+    }
+
+    public String getGroupMemberLastChatComment() {
+        return groupMemberLastChatComment;
+    }
+
+    public void setGroupMemberLastChatComment(String groupMemberLastChatComment) {
+        this.groupMemberLastChatComment = groupMemberLastChatComment;
+    }
+
+    public String getGroupMemberId() {
+        return groupMemberId;
+    }
+
+    public void setGroupMemberId(String groupMemberId) {
+        this.groupMemberId = groupMemberId;
+    }
+
+    public boolean isGroup() {
+        return group;
+    }
+
+    public void setGroup(boolean group) {
+        this.group = group;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     public int getCredit() {
         return credit;

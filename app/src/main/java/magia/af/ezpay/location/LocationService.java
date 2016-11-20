@@ -109,7 +109,8 @@ public class LocationService extends Service {
           }
         });
       }
-    }, 0L, 600000);
+
+    }, 0L, 1000*600);
 
   }
 

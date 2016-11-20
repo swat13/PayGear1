@@ -97,7 +97,7 @@ public class Splash extends BaseActivity {
         @Override
         protected RSSFeed doInBackground(String... params) {
             DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
-            return domParser.getContact(params[0]);
+            return domParser.checkContactListWithGroup(params[0]);
         }
 
         @Override

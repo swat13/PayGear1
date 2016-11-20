@@ -248,7 +248,7 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
 
                 }
             }*/
-            return domParser.getContact(new GetContact().getContact(getActivity()));
+            return domParser.checkContactListWithGroup(new GetContact().getContact(getActivity()));
 
         }
 

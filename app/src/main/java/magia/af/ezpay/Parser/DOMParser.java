@@ -1,7 +1,9 @@
 package magia.af.ezpay.Parser;
 
+import android.content.Context;
 import android.media.audiofx.BassBoost;
 import android.util.Base64;
+import android.util.JsonReader;
 import android.util.Log;
 
 
@@ -26,10 +28,13 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import magia.af.ezpay.R;
+
 public class DOMParser {
 
   public DOMParser(String token) {
     this.token = token;
+    Log.e("TOKEN", "DOMParser: " + token);
   }
 
   public DOMParser() {
@@ -587,6 +592,146 @@ public class DOMParser {
           e.printStackTrace();
         }
         rssFeed.addItem(rssItem);
+      }
+
+      return rssFeed;
+
+      /**
+       * TODO: check if activated then return the token to Splash class
+       *
+       * */
+
+
+    } catch (ProtocolException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
+    return null;
+
+  }
+
+  public RSSFeed checkContactListWithGroup(String json) {
+
+    try {
+
+      URL url = new URL(mainUrl + "api/Account/CheckContactListWithGroups");
+      Log.e("1111111", "doInBackground: " + url);
+      HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
+      httpConn.setDoOutput(true);
+      httpConn.setDoInput(true);
+      httpConn.setAllowUserInteraction(false);
+      httpConn.setRequestMethod("POST");
+      httpConn.setConnectTimeout(20000);
+      httpConn.setReadTimeout(20000);
+      httpConn.setRequestProperty("Content-Type", "application/json");
+      httpConn.setRequestProperty("Authorization", "bearer " + token);
+
+      OutputStream os = httpConn.getOutputStream();
+      BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+
+      Log.e("999999999", "activateSong: " + json);
+      writer.write(json);
+      writer.flush();
+      writer.close();
+      os.close();
+
+      int resCode = httpConn.getResponseCode();
+      Log.e("0000000", "doInBackground: " + resCode);
+      if (resCode == 400) {
+        return null;
+      }
+
+      InputStream in = httpConn.getInputStream();
+      BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+      StringBuilder sb = new StringBuilder();
+
+      String line = null;
+      try {
+        while ((line = reader.readLine()) != null) {
+          sb.append(line);
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+      } finally {
+        try {
+          in.close();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+      Log.e("@@@@@@", sb.toString());
+      JSONObject jsonObject = new JSONObject(sb.toString());
+      JSONArray contactsArray = jsonObject.getJSONArray("contacts");
+      JSONArray groupsArray = jsonObject.getJSONArray("groups");
+      RSSFeed rssFeed = new RSSFeed();
+      Log.e("Test0000", "checkContactListWithGroup: ");
+      for (int i = 0; i < contactsArray.length(); i++) {
+        JSONObject contactObject = contactsArray.getJSONObject(i);
+        Log.e("Test11111", "checkContactListWithGroup: " + contactObject.toString());
+        RSSItem rssItem = new RSSItem();
+        rssItem.setContactImg(contactObject.getString("photo"));
+        rssItem.setTelNo(contactObject.getString("mobile"));
+        rssItem.setUserId(contactObject.getString("id"));
+        rssItem.setTitle(contactObject.getString("title"));
+        if (!contactObject.isNull("lastchat")) {
+          JSONObject lastChatObject = contactObject.getJSONObject("lastchat");
+          Log.e("Test2222", "checkContactListWithGroup: " + lastChatObject.toString());
+          rssItem.setLastChatId(lastChatObject.getInt("id"));
+          rssItem.setLastChatFrom(lastChatObject.getString("f"));
+          rssItem.setLastChatTo(lastChatObject.getString("t"));
+          rssItem.setLastChatAmount(lastChatObject.getInt("a"));
+          rssItem.setLastChatDate(lastChatObject.getString("d"));
+          rssItem.setLastChatOrderByFromOrTo(lastChatObject.getBoolean("o"));
+          rssItem.setContactStatus(lastChatObject.getBoolean("s"));
+          rssItem.setGroup(lastChatObject.getBoolean("g"));
+          rssItem.setComment(lastChatObject.getString("c"));
+        }
+      }
+
+      for (int i = 0; i < groupsArray.length(); i++) {
+        JSONObject groupsObject = groupsArray.getJSONObject(i);
+        Log.e("Test33333", "checkContactListWithGroup: " + groupsObject.toString());
+        RSSItem rssItem = new RSSItem();
+        rssItem.setGroupId(groupsObject.getInt("id"));
+        rssItem.setGroupPhoto(groupsObject.getString("photo"));
+        rssItem.setGroupTitle(groupsObject.getString("title"));
+        if (!groupsObject.isNull("members")) {
+          JSONObject groupsMemberObject = groupsObject.getJSONObject("members");
+          Log.e("Test444444", "checkContactListWithGroup: " + groupsMemberObject.toString());
+          rssItem.setGroupMemberId(groupsMemberObject.getString("id"));
+          rssItem.setGroupMemberTitle(groupsMemberObject.getString("title"));
+          rssItem.setGroupMemberPhoto(groupsMemberObject.getString("photo"));
+          rssItem.setGroupMemberPhone(groupsMemberObject.getString("mobile"));
+          if (!groupsMemberObject.isNull("lastchat")) {
+            JSONObject groupsMembersLastChat = groupsMemberObject.getJSONObject("lastchat");
+            Log.e("Test55555", "checkContactListWithGroup: " + groupsMembersLastChat.toString());
+            rssItem.setGroupMemberLastChatId(groupsMembersLastChat.getInt("id"));
+            rssItem.setGroupMemberLastChatFrom(groupsMembersLastChat.getString("f"));
+            rssItem.setGroupMemberLastChatTo(groupsMembersLastChat.getString("t"));
+            rssItem.setGroupMemberLastChatAmount(groupsMembersLastChat.getInt("a"));
+            rssItem.setGroupMemberLastChatDate(groupsMembersLastChat.getString("d"));
+            rssItem.setGroupMemberLastChatOrderPay(groupsMembersLastChat.getBoolean("o"));
+            rssItem.setGroupMemberLastChatStatus(groupsMembersLastChat.getBoolean("s"));
+            rssItem.setGroupMemberLastChatFromGroup(groupsMembersLastChat.getBoolean("g"));
+            rssItem.setGroupMemberLastChatComment(groupsMembersLastChat.getString("c"));
+          }
+        }
+        if (!groupsObject.isNull("lastchat")) {
+          JSONObject lastChatObject = groupsObject.getJSONObject("lastchat");
+          Log.e("Test6666666666", "checkContactListWithGroup: " + lastChatObject.toString());
+          rssItem.setGroupLastChatId(lastChatObject.getInt("id"));
+          rssItem.setGroupLastChatFrom(lastChatObject.getString("f"));
+          rssItem.setGroupLastChatTo(lastChatObject.getString("t"));
+          rssItem.setGroupLastChatAmount(lastChatObject.getInt("a"));
+          rssItem.setGroupLastChatDate(lastChatObject.getString("d"));
+          rssItem.setGroupLastChatOrderPay(lastChatObject.getBoolean("o"));
+          rssItem.setGroupLastChatStatus(lastChatObject.getBoolean("s"));
+          rssItem.setGroupLastChatFromGroup(lastChatObject.getBoolean("g"));
+          rssItem.setGroupLastChatComment(lastChatObject.getString("c"));
+        }
       }
 
       return rssFeed;
@@ -1281,9 +1426,9 @@ public class DOMParser {
       JSONArray jsonArray = new JSONArray();
       jsonObject.put("id", id);
       for (int i = 0; i < memberPhone.size(); i++) {
-        jsonArray.put(i , memberPhone.get(i));
+        jsonArray.put(i, memberPhone.get(i));
       }
-      jsonObject.put("membersMobiles" , jsonArray);
+      jsonObject.put("membersMobiles", jsonArray);
 
       Log.e("999999999", "activateSong: " + jsonObject.toString());
       writer.write(jsonObject.toString());
@@ -1306,11 +1451,12 @@ public class DOMParser {
 
   }
 
-  public String group(String title, ArrayList<String> memberPhone) {
+  public boolean group(String title, JSONArray jsonMemberPhone) {
 /*ddd*/
+    boolean state = false;
     try {
 
-      URL url = new URL(mainUrl + "AddMember");
+      URL url = new URL(mainUrl + "api/Group");
       Log.e("1111111", "doInBackground: " + url);
       HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
       httpConn.setDoOutput(true);
@@ -1322,28 +1468,29 @@ public class DOMParser {
       httpConn.setRequestProperty("Content-Type", "application/json");
       httpConn.setRequestProperty("Authorization", "bearer " + token);
 
+      Log.e("TOKEN", "group: " + "bearer " + token);
+
       OutputStream os = httpConn.getOutputStream();
       BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
 
 
       JSONObject jsonObject = new JSONObject();
-      JSONArray jsonArray = new JSONArray();
-      jsonObject.put("id", title);
-      for (int i = 0; i < memberPhone.size(); i++) {
-        jsonArray.put(i , memberPhone.get(i));
-      }
-      jsonObject.put("membersMobiles" , jsonArray);
+      jsonObject.put("title", title);
+      jsonObject.put("membersMobiles", jsonMemberPhone);
 
-      Log.e("999999999", "activateSong: " + jsonObject.toString());
+      Log.e("group999999999", "activateSong: " + jsonObject);
       writer.write(jsonObject.toString());
       writer.flush();
       writer.close();
       os.close();
 
       int resCode = httpConn.getResponseCode();
-      Log.e("0000000", "doInBackground: " + resCode);
+      Log.e("group0000000", "doInBackground: " + resCode);
       if (resCode != 400) {
-        return null;
+        state = true;
+      } else {
+        state = false;
+        Log.e("ERROR", "group: " + "Error Happened");
       }
 
     } catch (IOException e) {
@@ -1351,15 +1498,14 @@ public class DOMParser {
     } catch (JSONException e) {
       e.printStackTrace();
     }
-    return null;
-
+    return state;
   }
 
-  public PayLogItem groupChat(int id,int pageSize,String maxDate, ArrayList<String> memberPhone) {
+  public PayLogItem groupChat(int id, int pageSize, String maxDate, ArrayList<String> memberPhone) {
 /*ddd*/
     try {
 
-      URL url = new URL(mainUrl + "Chat?id="+id+"&pagesize="+pageSize+"&maxDate="+maxDate);
+      URL url = new URL(mainUrl + "Chat?id=" + id + "&pagesize=" + pageSize + "&maxDate=" + maxDate);
       Log.e("1111111", "doInBackground: " + url);
       HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
       httpConn.setDoOutput(true);

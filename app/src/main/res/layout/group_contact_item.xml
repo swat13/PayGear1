@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bill_result"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="1dp"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:onClick="onClick"
+    app:cardBackgroundColor="#e7e8da"
+    app:cardElevation="1dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/contact_image"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true">
+            <!--<ImageView-->
+            <!--android:id="@+id/contact_img"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--/>-->
+            <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/contact_img"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="5dp"
+                android:src="@drawable/pic_profile" />
+
+
+            <ImageView
+                android:id="@+id/status_circle"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:visibility="gone"
+                android:layout_alignParentBottom="true"
+                android:src="@drawable/ic_check_black_24dp"
+                android:background="@drawable/circle_bg_online_stat" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_toLeftOf="@+id/contact_image"
+            android:layout_toStartOf="@+id/contact_image"
+            android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txt_contact_item_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:text="Name"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txt_contact_item_phone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:text="phone"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textColor="@android:color/darker_gray" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </RelativeLayout>
+
+
+    <!--<TextView-->
+    <!--android:id="@+id/name_text"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:ellipsize="end"-->
+    <!--android:layout_centerInParent="true"-->
+    <!--android:maxLines="1"-->
+    <!--android:text="Name"-->
+    <!--android:layout_marginBottom="20dp"-->
+    <!--android:layout_marginTop="20dp"-->
+    <!--android:layout_toLeftOf="@id/contact_image"-->
+    <!--android:layout_toStartOf="@id/contact_image"-->
+    <!--android:textColor="#767767"-->
+    <!--android:textSize="15dp" />-->
+
+
+</android.support.v7.widget.CardView>

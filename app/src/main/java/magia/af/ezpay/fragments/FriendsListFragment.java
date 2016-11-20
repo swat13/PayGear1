@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -21,6 +22,7 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.signature.StringSignature;
 
 import magia.af.ezpay.ChatPageActivity;
+import magia.af.ezpay.ChooseFriendsActivity;
 import magia.af.ezpay.MainActivity;
 import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.Parser.RSSItem;
@@ -52,6 +54,15 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
         ((MainActivity) getActivity()).fragment_status = 2;
         recBills = (RecyclerView) v.findViewById(R.id.contact_recycler);
         _feed = (RSSFeed) getActivity().getIntent().getSerializableExtra("contact");
+        CardView inviteFriends = (CardView)v.findViewById(R.id.invite_friends);
+        inviteFriends.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), ChooseFriendsActivity.class);
+                intent.putExtra("contact" , _feed);
+                getActivity().startActivity(intent);
+            }
+        });
         Bundle bundle = getArguments();
         if (bundle != null) {
             comment = getArguments().getString("description");
