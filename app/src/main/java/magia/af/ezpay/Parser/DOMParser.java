@@ -612,7 +612,7 @@ public class DOMParser {
         return null;
 
     }
-
+/*sss*/
     public RSSFeed checkContactListWithGroup(String json) {
 
         try {
