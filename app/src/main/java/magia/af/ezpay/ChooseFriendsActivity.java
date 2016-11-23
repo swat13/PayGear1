@@ -3,12 +3,13 @@ package magia.af.ezpay;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +29,8 @@ import java.util.ArrayList;
 
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.RSSFeed;
+import magia.af.ezpay.helper.ContactDatabase;
+import magia.af.ezpay.helper.GetContact;
 
 public class ChooseFriendsActivity extends BaseActivity {
     RSSFeed rssFeed;
@@ -36,20 +39,40 @@ public class ChooseFriendsActivity extends BaseActivity {
     ImageView imageView;
     ArrayList<String> phone = new ArrayList<>();
     private String imageUrl = "http://new.opaybot.ir";
+    ContactDatabase database;
+    RecyclerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_friends);
-        rssFeed = (RSSFeed) getIntent().getSerializableExtra("contact");
+        database = new ContactDatabase(this);
+        rssFeed = database.getInNetworkUserName();
         groupTitle = (EditText) findViewById(R.id.edt_group_title);
         recyclerView = (RecyclerView) findViewById(R.id.contact_recycler);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(manager);
         imageView = (ImageView) findViewById(R.id.btn_done);
-        RecyclerAdapter adapter = new RecyclerAdapter();
+        adapter = new RecyclerAdapter();
         recyclerView.setAdapter(adapter);
+        groupTitle.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                rssFeed = database.search(s.toString());
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -151,11 +174,39 @@ public class ChooseFriendsActivity extends BaseActivity {
         @Override
         protected void onPostExecute(Boolean b) {
             if (b) {
-                Intent intent = new Intent(ChooseFriendsActivity.this, GroupChatPageActivity.class);
-                startActivity(intent);
-                finish();
+//                Intent intent = new Intent(ChooseFriendsActivity.this, GroupChatPageActivity.class);
+//                startActivity(intent);
+//                finish();
+                new fillContact().execute();
             }
             super.onPostExecute(b);
         }
+    }
+
+    private class fillContact extends AsyncTask<Void, Void, RSSFeed> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected RSSFeed doInBackground(Void... params) {
+            DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
+            return domParser.checkContactListWithGroup(new GetContact().getContact(ChooseFriendsActivity.this));
+
+        }
+
+        @Override
+        protected void onPostExecute(RSSFeed result) {
+            if (result != null) {
+                ChooseFriendsActivity.this.finish();
+                startActivity(new Intent(ChooseFriendsActivity.this, GroupChatPageActivity.class).putExtra("contact", result));
+                finish();
+            } else
+                Toast.makeText(ChooseFriendsActivity.this, "problem in connection!", Toast.LENGTH_SHORT).show();
+        }
+
+
     }
 }

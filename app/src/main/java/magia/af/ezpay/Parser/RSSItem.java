@@ -48,7 +48,24 @@ public class RSSItem implements Serializable {
     private boolean groupMemberLastChatFromGroup;
     private String groupMemberLastChatComment;
     private String groupMemberId;
+    private int contactCount;
+    private int groupCount;
 
+    public int getContactCount() {
+        return contactCount;
+    }
+
+    public void setContactCount(int contactCount) {
+        this.contactCount = contactCount;
+    }
+
+    public int getGroupCount() {
+        return groupCount;
+    }
+
+    public void setGroupCount(int groupCount) {
+        this.groupCount = groupCount;
+    }
 
     public int getGroupId() {
         return groupId;

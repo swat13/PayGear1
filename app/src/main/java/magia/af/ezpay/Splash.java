@@ -38,10 +38,10 @@ public class Splash extends BaseActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
-
-        new Handler().postDelayed(new Runnable() {
+        Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
+
                 if (!getSharedPreferences("EZpay", 0).getString("token", "").isEmpty()) {
 
                     database = new ContactDatabase(Splash.this);
@@ -52,7 +52,7 @@ public class Splash extends BaseActivity {
                     for (int i = 0; i < phoneContact.getItemCount(); i++) {
                         for (int j = 0; j < databaseContact.getItemCount(); j++) {
                             if (phoneContact.getItem(i).getTelNo().equals(databaseContact.getItem(j).getTelNo())
-                                    && phoneContact.getItem(i).getContactName().equals(databaseContact.getItem(j).getContactName())) {
+                              && phoneContact.getItem(i).getContactName().equals(databaseContact.getItem(j).getContactName())) {
                                 phoneContact.removeItem(i);
                             }
                         }
@@ -77,7 +77,14 @@ public class Splash extends BaseActivity {
                     finish();
                 }
             }
-        }, 1500);
+        });
+        thread.start();
+
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//            }
+//        }, 1500);
 
     }
 

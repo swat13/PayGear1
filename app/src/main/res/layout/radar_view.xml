@@ -4,9 +4,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#c48b84"
-                android:orientation="vertical"
-                android:paddingBottom="120dp"
-                android:paddingTop="120dp">
+                android:orientation="vertical">
 
     <ImageView
         android:id="@+id/radar_line"

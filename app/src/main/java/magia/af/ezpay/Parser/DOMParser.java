@@ -676,6 +676,7 @@ public class DOMParser {
                     rssItem.setTelNo(contactObject.getString("mobile"));
                     rssItem.setUserId(contactObject.getString("id"));
                     rssItem.setTitle(contactObject.getString("title"));
+                    rssItem.setContactCount(i);
                     Log.e("Test123123", "checkContactListWithGroup: " + contactObject.toString());
                     if (!contactObject.isNull("lastchat")){
                         JSONObject lastChatObject = contactObject.getJSONObject("lastchat");
