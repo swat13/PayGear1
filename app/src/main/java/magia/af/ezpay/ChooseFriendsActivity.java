@@ -30,131 +30,132 @@ import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.RSSFeed;
 
 public class ChooseFriendsActivity extends BaseActivity {
-  RSSFeed rssFeed;
-  EditText groupTitle;
-  RecyclerView recyclerView;
-  ImageView imageView;
-  ArrayList<String> phone = new ArrayList<>();
-  private String imageUrl = "http://new.opaybot.ir";
-
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_choose_friends);
-    rssFeed = (RSSFeed) getIntent().getSerializableExtra("contact");
-    groupTitle = (EditText) findViewById(R.id.edt_group_title);
-    recyclerView = (RecyclerView) findViewById(R.id.contact_recycler);
-    LinearLayoutManager manager = new LinearLayoutManager(this);
-    manager.setOrientation(LinearLayoutManager.VERTICAL);
-    recyclerView.setLayoutManager(manager);
-    imageView = (ImageView) findViewById(R.id.btn_done);
-    RecyclerAdapter adapter = new RecyclerAdapter();
-    recyclerView.setAdapter(adapter);
-    imageView.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        Log.e("Phones", phone.toString());
-        JSONArray jsonArray = new JSONArray();
-        for (int i = 0; i < phone.size(); i++) {
-          try {
-            jsonArray.put(i, phone.get(i));
-          } catch (JSONException e) {
-            e.printStackTrace();
-          }
-        }
-        if (groupTitle.getText().toString().length() < 1) {
-          Toast.makeText(ChooseFriendsActivity.this, "لطفا عنوان گروه را وارد کنید", Toast.LENGTH_SHORT).show();
-        } else {
-          Log.e("JSONArray", "onClick: " + jsonArray.toString());
-          new CreateGroup(groupTitle.getText().toString(),jsonArray).execute();
-        }
-      }
-    });
-  }
-
-  public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
+    RSSFeed rssFeed;
+    EditText groupTitle;
+    RecyclerView recyclerView;
+    ImageView imageView;
+    ArrayList<String> phone = new ArrayList<>();
+    private String imageUrl = "http://new.opaybot.ir";
 
     @Override
-    public RecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-      View rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_contact_item, parent, false);
-      return new ViewHolder(rootView);
-    }
-
-    @Override
-    public void onBindViewHolder(final RecyclerAdapter.ViewHolder holder, int position) {
-      holder.txt_contact_item_name.setText(rssFeed.getItem(position).getContactName());
-      holder.txt_contact_item_phone.setText(rssFeed.getItem(position).getTelNo());
-      Glide.with(ChooseFriendsActivity.this)
-        .load(imageUrl + rssFeed.getItem(position).getContactImg())
-        .asBitmap()
-        .centerCrop()
-        .placeholder(R.drawable.pic_profile)
-        .into(new BitmapImageViewTarget(holder.contact_item_image) {
-          @Override
-          protected void setResource(Bitmap resource) {
-            RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
-            circularBitmapDrawable.setCornerRadius(700);
-            holder.contact_item_image.setImageDrawable(circularBitmapDrawable);
-          }
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_choose_friends);
+        rssFeed = (RSSFeed) getIntent().getSerializableExtra("contact");
+        groupTitle = (EditText) findViewById(R.id.edt_group_title);
+        recyclerView = (RecyclerView) findViewById(R.id.contact_recycler);
+        LinearLayoutManager manager = new LinearLayoutManager(this);
+        manager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(manager);
+        imageView = (ImageView) findViewById(R.id.btn_done);
+        RecyclerAdapter adapter = new RecyclerAdapter();
+        recyclerView.setAdapter(adapter);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e("Phones", phone.toString());
+                JSONArray jsonArray = new JSONArray();
+                for (int i = 0; i < phone.size(); i++) {
+                    try {
+                        jsonArray.put(i, phone.get(i));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (groupTitle.getText().toString().length() < 1) {
+                    Toast.makeText(ChooseFriendsActivity.this, "لطفا عنوان گروه را وارد کنید", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.e("JSONArray", "onClick: " + jsonArray.toString());
+                    new CreateGroup(groupTitle.getText().toString(), jsonArray).execute();
+                }
+            }
         });
     }
 
-    @Override
-    public int getItemCount() {
-      return rssFeed.getItemCount();
-    }
+    public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-      TextView txt_contact_item_name;
-      TextView txt_contact_item_phone;
-      ImageView contact_item_image;
-      ImageView status_circle;
-
-      public ViewHolder(View itemView) {
-        super(itemView);
-        txt_contact_item_name = (TextView) itemView.findViewById(R.id.txt_contact_item_name);
-        txt_contact_item_phone = (TextView) itemView.findViewById(R.id.txt_contact_item_phone);
-        contact_item_image = (ImageView) itemView.findViewById(R.id.contact_img);
-        status_circle = (ImageView) itemView.findViewById(R.id.status_circle);
-        itemView.setOnClickListener(this);
-      }
-
-      @Override
-      public void onClick(View v) {
-        if (status_circle.getVisibility() == View.GONE) {
-          status_circle.setVisibility(View.VISIBLE);
-          phone.add(rssFeed.getItem(getAdapterPosition()).getTelNo());
-        } else {
-          status_circle.setVisibility(View.GONE);
-          phone.remove(rssFeed.getItem(getAdapterPosition()).getTelNo());
+        @Override
+        public RecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_contact_item, parent, false);
+            return new ViewHolder(rootView);
         }
-        Log.e("Phones", phone.toString());
-      }
-    }
-  }
 
-  public class CreateGroup extends AsyncTask<String, Void, Boolean> {
-    String title;
-    JSONArray jsonArray;
-    public CreateGroup(String title ,JSONArray jsonArray){
-      this.title = title;
-      this.jsonArray = jsonArray;
+        @Override
+        public void onBindViewHolder(final RecyclerAdapter.ViewHolder holder, int position) {
+            holder.txt_contact_item_name.setText(rssFeed.getItem(position).getContactName());
+            holder.txt_contact_item_phone.setText(rssFeed.getItem(position).getTelNo());
+            Glide.with(ChooseFriendsActivity.this)
+                    .load(imageUrl + rssFeed.getItem(position).getContactImg())
+                    .asBitmap()
+                    .centerCrop()
+                    .placeholder(R.drawable.pic_profile)
+                    .into(new BitmapImageViewTarget(holder.contact_item_image) {
+                        @Override
+                        protected void setResource(Bitmap resource) {
+                            RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
+                            circularBitmapDrawable.setCornerRadius(700);
+                            holder.contact_item_image.setImageDrawable(circularBitmapDrawable);
+                        }
+                    });
+        }
+
+        @Override
+        public int getItemCount() {
+            return rssFeed.getItemCount();
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+            TextView txt_contact_item_name;
+            TextView txt_contact_item_phone;
+            ImageView contact_item_image;
+            ImageView status_circle;
+
+            public ViewHolder(View itemView) {
+                super(itemView);
+                txt_contact_item_name = (TextView) itemView.findViewById(R.id.txt_contact_item_name);
+                txt_contact_item_phone = (TextView) itemView.findViewById(R.id.txt_contact_item_phone);
+                contact_item_image = (ImageView) itemView.findViewById(R.id.contact_img);
+                status_circle = (ImageView) itemView.findViewById(R.id.status_circle);
+                itemView.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View v) {
+                if (status_circle.getVisibility() == View.GONE) {
+                    status_circle.setVisibility(View.VISIBLE);
+                    phone.add(rssFeed.getItem(getAdapterPosition()).getTelNo());
+                } else {
+                    status_circle.setVisibility(View.GONE);
+                    phone.remove(rssFeed.getItem(getAdapterPosition()).getTelNo());
+                }
+                Log.e("Phones", phone.toString());
+            }
+        }
     }
 
-    @Override
-    protected Boolean doInBackground(String... params) {
-      DOMParser parser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
-      return parser.group(title, jsonArray);
-    }
+    public class CreateGroup extends AsyncTask<String, Void, Boolean> {
+        String title;
+        JSONArray jsonArray;
 
-    @Override
-    protected void onPostExecute(Boolean b) {
-      if (b) {
-        Intent intent = new Intent(ChooseFriendsActivity.this, GroupChatPageActivity.class);
-        startActivity(intent);
-        finish();
-      }
-      super.onPostExecute(b);
+        public CreateGroup(String title, JSONArray jsonArray) {
+            this.title = title;
+            this.jsonArray = jsonArray;
+        }
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            DOMParser parser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
+            return parser.group(title, jsonArray);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean b) {
+            if (b) {
+                Intent intent = new Intent(ChooseFriendsActivity.this, GroupChatPageActivity.class);
+                startActivity(intent);
+                finish();
+            }
+            super.onPostExecute(b);
+        }
     }
-  }
 }

@@ -663,75 +663,79 @@ public class DOMParser {
                 }
             }
             Log.e("@@@@@@", sb.toString());
-            JSONObject jsonObject = new JSONObject(sb.toString());
-            JSONArray contactsArray = jsonObject.getJSONArray("contacts");
-            JSONArray groupsArray = jsonObject.getJSONArray("groups");
+            JSONArray jsonArray = new JSONArray(sb.toString());
             RSSFeed rssFeed = new RSSFeed();
             RSSItem rssItem = null;
             Log.e("Test0000", "checkContactListWithGroup: ");
-            for (int i = 0; i < contactsArray.length(); i++) {
-                JSONObject contactObject = contactsArray.getJSONObject(i);
-                Log.e("Test11111", "checkContactListWithGroup: " + contactObject.toString());
+            for (int i = 0; i < jsonArray.length(); i++) {
                 rssItem = new RSSItem();
-                rssItem.setContactImg(contactObject.getString("photo"));
-                rssItem.setTelNo(contactObject.getString("mobile"));
-                rssItem.setUserId(contactObject.getString("id"));
-                rssItem.setTitle(contactObject.getString("title"));
-                if (!contactObject.isNull("lastchat")) {
-                    JSONObject lastChatObject = contactObject.getJSONObject("lastchat");
-                    Log.e("Test2222", "checkContactListWithGroup: " + lastChatObject.toString());
-                    rssItem.setLastChatId(lastChatObject.getInt("id"));
-                    rssItem.setLastChatFrom(lastChatObject.getString("f"));
-                    rssItem.setLastChatTo(lastChatObject.getString("t"));
-                    rssItem.setLastChatAmount(lastChatObject.getInt("a"));
-                    rssItem.setLastChatDate(lastChatObject.getString("d"));
-                    rssItem.setLastChatOrderByFromOrTo(lastChatObject.getBoolean("o"));
-                    rssItem.setContactStatus(lastChatObject.getBoolean("s"));
-                    rssItem.setGroup(lastChatObject.getBoolean("g"));
-                    rssItem.setComment(lastChatObject.getString("c"));
-                    if (rssItem.isGroup()) {
-                        for (int j = 0; j < groupsArray.length(); j++) {
-                            JSONObject groupsObject = groupsArray.getJSONObject(j);
-                            Log.e("Test33333", "checkContactListWithGroup: " + groupsObject.toString());
-                            rssItem.setGroupId(groupsObject.getInt("id"));
-                            rssItem.setGroupPhoto(groupsObject.getString("photo"));
-                            rssItem.setGroupTitle(groupsObject.getString("title"));
-                            if (!groupsObject.isNull("members")) {
-                                JSONObject groupsMemberObject = groupsObject.getJSONObject("members");
-                                Log.e("Test444444", "checkContactListWithGroup: " + groupsMemberObject.toString());
-                                rssItem.setGroupMemberId(groupsMemberObject.getString("id"));
-                                rssItem.setGroupMemberTitle(groupsMemberObject.getString("title"));
-                                rssItem.setGroupMemberPhoto(groupsMemberObject.getString("photo"));
-                                rssItem.setGroupMemberPhone(groupsMemberObject.getString("mobile"));
-                                if (!groupsMemberObject.isNull("lastchat")) {
-                                    JSONObject groupsMembersLastChat = groupsMemberObject.getJSONObject("lastchat");
-                                    Log.e("Test55555", "checkContactListWithGroup: " + groupsMembersLastChat.toString());
-                                    rssItem.setGroupMemberLastChatId(groupsMembersLastChat.getInt("id"));
-                                    rssItem.setGroupMemberLastChatFrom(groupsMembersLastChat.getString("f"));
-                                    rssItem.setGroupMemberLastChatTo(groupsMembersLastChat.getString("t"));
-                                    rssItem.setGroupMemberLastChatAmount(groupsMembersLastChat.getInt("a"));
-                                    rssItem.setGroupMemberLastChatDate(groupsMembersLastChat.getString("d"));
-                                    rssItem.setGroupMemberLastChatOrderPay(groupsMembersLastChat.getBoolean("o"));
-                                    rssItem.setGroupMemberLastChatStatus(groupsMembersLastChat.getBoolean("s"));
-                                    rssItem.setGroupMemberLastChatFromGroup(groupsMembersLastChat.getBoolean("g"));
-                                    rssItem.setGroupMemberLastChatComment(groupsMembersLastChat.getString("c"));
-                                }
-                            }
-                            if (!groupsObject.isNull("lastchat")) {
-                                JSONObject groupLastChatObject = groupsObject.getJSONObject("lastchat");
-                                Log.e("Test6666666666", "checkContactListWithGroup: " + groupLastChatObject.toString());
-                                rssItem.setGroupLastChatId(groupLastChatObject.getInt("id"));
-                                rssItem.setGroupLastChatFrom(groupLastChatObject.getString("f"));
-                                rssItem.setGroupLastChatTo(groupLastChatObject.getString("t"));
-                                rssItem.setGroupLastChatAmount(groupLastChatObject.getInt("a"));
-                                rssItem.setGroupLastChatDate(groupLastChatObject.getString("d"));
-                                rssItem.setGroupLastChatOrderPay(groupLastChatObject.getBoolean("o"));
-                                rssItem.setGroupLastChatStatus(groupLastChatObject.getBoolean("s"));
-                                rssItem.setGroupLastChatFromGroup(groupLastChatObject.getBoolean("g"));
-                                rssItem.setGroupLastChatComment(groupLastChatObject.getString("c"));
+                JSONObject contactObject = jsonArray.getJSONObject(i);
+                if (contactObject.getString("$type").contains("FriendModel")){
+                    Log.e("Test11111", "checkContactListWithGroup: " + contactObject.toString());
+                    rssItem.setContactImg(contactObject.getString("photo"));
+                    rssItem.setTelNo(contactObject.getString("mobile"));
+                    rssItem.setUserId(contactObject.getString("id"));
+                    rssItem.setTitle(contactObject.getString("title"));
+                    Log.e("Test123123", "checkContactListWithGroup: " + contactObject.toString());
+                    if (!contactObject.isNull("lastchat")){
+                        JSONObject lastChatObject = contactObject.getJSONObject("lastchat");
+                        Log.e("Test2222", "checkContactListWithGroup: " + lastChatObject.toString());
+                        rssItem.setLastChatId(lastChatObject.getInt("id"));
+                        rssItem.setLastChatFrom(lastChatObject.getString("f"));
+                        rssItem.setLastChatTo(lastChatObject.getString("t"));
+                        rssItem.setLastChatAmount(lastChatObject.getInt("a"));
+                        rssItem.setLastChatDate(lastChatObject.getString("d"));
+                        rssItem.setLastChatOrderByFromOrTo(lastChatObject.getBoolean("o"));
+                        rssItem.setContactStatus(lastChatObject.getBoolean("s"));
+                        rssItem.setGroup(lastChatObject.getBoolean("g"));
+                        rssItem.setComment(lastChatObject.getString("c"));
+                    }
+                }
+                else {
+                    rssItem.setGroupId(contactObject.getInt("id"));
+                    rssItem.setGroupPhoto(contactObject.getString("photo"));
+                    rssItem.setGroupTitle(contactObject.getString("title"));
+                    rssItem.setGroup(true);
+                    if (!contactObject.isNull("members")) {
+                        JSONArray groupsMemberObject = contactObject.getJSONArray("members");
+                        for (int j = 0; j < groupsMemberObject.length(); j++) {
+                            JSONObject memberGroupObject = groupsMemberObject.getJSONObject(j);
+                            Log.e("Test444444", "checkContactListWithGroup: " + memberGroupObject.toString());
+                            rssItem.setGroupMemberId(memberGroupObject.getString("id"));
+                            rssItem.setGroupMemberTitle(memberGroupObject.getString("title"));
+                            rssItem.setGroupMemberPhoto(memberGroupObject.getString("photo"));
+                            rssItem.setGroupMemberPhone(memberGroupObject.getString("mobile"));
+                            if (!memberGroupObject.isNull("lastchat")) {
+                                JSONObject groupsMembersLastChat = memberGroupObject.getJSONObject("lastchat");
+                                Log.e("Test55555", "checkContactListWithGroup: " + groupsMembersLastChat.toString());
+                                rssItem.setGroupMemberLastChatId(groupsMembersLastChat.getInt("id"));
+                                rssItem.setGroupMemberLastChatFrom(groupsMembersLastChat.getString("f"));
+                                rssItem.setGroupMemberLastChatTo(groupsMembersLastChat.getString("t"));
+                                rssItem.setGroupMemberLastChatAmount(groupsMembersLastChat.getInt("a"));
+                                rssItem.setGroupMemberLastChatDate(groupsMembersLastChat.getString("d"));
+                                rssItem.setGroupMemberLastChatOrderPay(groupsMembersLastChat.getBoolean("o"));
+                                rssItem.setGroupMemberLastChatStatus(groupsMembersLastChat.getBoolean("s"));
+                                rssItem.setGroupMemberLastChatFromGroup(groupsMembersLastChat.getBoolean("g"));
+                                rssItem.setGroupMemberLastChatComment(groupsMembersLastChat.getString("c"));
                             }
                         }
-                    }
+                        if (!contactObject.isNull("lastchat")) {
+                            JSONArray groupLastChatArray = contactObject.getJSONArray("lastchat");
+                            for (int j = 0; j < groupLastChatArray.length(); j++) {
+                                JSONObject lastChatGroupObject = groupLastChatArray.getJSONObject(j);
+                                Log.e("Test6666666666", "checkContactListWithGroup: " + lastChatGroupObject.toString());
+                                rssItem.setGroupLastChatId(lastChatGroupObject.getInt("id"));
+                                rssItem.setGroupLastChatFrom(lastChatGroupObject.getString("f"));
+                                rssItem.setGroupLastChatTo(lastChatGroupObject.getString("t"));
+                                rssItem.setGroupLastChatAmount(lastChatGroupObject.getInt("a"));
+                                rssItem.setGroupLastChatDate(lastChatGroupObject.getString("d"));
+                                rssItem.setGroupLastChatOrderPay(lastChatGroupObject.getBoolean("o"));
+                                rssItem.setGroupLastChatStatus(lastChatGroupObject.getBoolean("s"));
+                                rssItem.setGroupLastChatFromGroup(lastChatGroupObject.getBoolean("g"));
+                                rssItem.setGroupLastChatComment(lastChatGroupObject.getString("c"));
+                            }
+                        }
+                        }
                 }
                 rssFeed.addItem(rssItem);
             }
@@ -1181,7 +1185,7 @@ public class DOMParser {
 
             int resCode = httpConn.getResponseCode();
             Log.e("0000000", "doInBackground: " + resCode);
-            if (resCode == 400) {
+            if (resCode != 400) {
                 return null;
             }
 
@@ -1237,7 +1241,7 @@ public class DOMParser {
 
     }
 
-    public boolean changeUserImage(File uploadFile1) throws IOException {
+    public String changeUserImage(File uploadFile1) throws IOException {
 
         int size = (int) uploadFile1.length();
         byte[] bytes = new byte[size];
@@ -1278,9 +1282,31 @@ public class DOMParser {
         int resCode = httpConn.getResponseCode();
         Log.e("0000000", "doInBackground: " + resCode);
         if (resCode != 200) {
-            return false;
+            return "Error";
         }
-        return true;
+
+
+        InputStream in = httpConn.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        StringBuilder sb = new StringBuilder();
+
+        String line = null;
+        try {
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Log.e("@@@@@@", sb.toString());
+        return sb.toString();
 
 
     }

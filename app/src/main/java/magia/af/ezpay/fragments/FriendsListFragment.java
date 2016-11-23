@@ -145,11 +145,21 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
             fe.setContactName(database.getNameFromNumber(fe.getTelNo()));
             Log.e("sssssssss", "onBindViewHolder: " + fe.getTelNo());
             Log.e("(((((((((((", "onBindViewHolder: " + fe.getTelNo());
-            if (fe.getContactName().length() > 15) {
-                contactName = fe.getContactName();
-                FeedViewHolder.contactName.setText(contactName.substring(0, 15) + "...");
-            } else {
-                FeedViewHolder.contactName.setText(fe.getContactName());
+            if (fe.isGroup()){
+                if (fe.getContactName().length() > 15) {
+                    contactName = fe.getGroupTitle();
+                    FeedViewHolder.contactName.setText(contactName.substring(0, 15) + "...");
+                } else {
+                    FeedViewHolder.contactName.setText(fe.getGroupTitle());
+                }
+            }
+            else {
+                if (fe.getContactName().length() > 15) {
+                    contactName = fe.getContactName();
+                    FeedViewHolder.contactName.setText(contactName.substring(0, 15) + "...");
+                } else {
+                    FeedViewHolder.contactName.setText(fe.getContactName());
+                }
             }
 
             Log.e("#######", "onBindViewHolder: "+ "http://new.opaybot.ir" + fe.getContactImg());

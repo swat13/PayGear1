@@ -55,7 +55,7 @@
 
         <activity
             android:name=".ProfileActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <service android:name=".Firebase.MyFirebaseMessagingService">
             <intent-filter>
@@ -69,15 +69,13 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".RadarActivity"/>
-
         <service
             android:name=".location.LocationService"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".ChooseFriendsActivity"/>
-        <activity android:name=".GroupChatPageActivity"/>
+        <activity android:name=".ChooseFriendsActivity" />
+        <activity android:name=".GroupChatPageActivity" />
     </application>
 
 </manifest>

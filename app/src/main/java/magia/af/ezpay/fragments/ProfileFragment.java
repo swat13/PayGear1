@@ -1,5 +1,6 @@
 package magia.af.ezpay.fragments;
 
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -30,6 +31,8 @@ import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -44,6 +47,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
 import java.io.ByteArrayOutputStream;
@@ -52,6 +56,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import magia.af.ezpay.LoginActivity;
 import magia.af.ezpay.MainActivity;
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.RSSItem;
@@ -63,8 +68,19 @@ import magia.af.ezpay.R;
  */
 
 public class ProfileFragment extends Fragment {
-    private ImageView userAvatar;
+    Toolbar toolbar;
+    AppBarLayout appBarLayout;
+    private ImageView userAvatar, imageBtn, imageSignOut;
     private TextView contactName, amount, phoneNumber;
+
+    private static final int PICK_IMAGE = 1;
+    private Button upload;
+    private EditText caption;
+    private Bitmap bitmap;
+    private ProgressDialog dialog;
+    String Qpath;
+    String Ipath;
+
 
     @Nullable
     @Override
@@ -72,13 +88,44 @@ public class ProfileFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.activity_profile_backup, container, false);
 
         userAvatar = (ImageView) rootView.findViewById(R.id.user_avatar);
+        imageBtn = (ImageView) rootView.findViewById(R.id.imageButton);
+        imageSignOut = (ImageView) rootView.findViewById(R.id.log_out);
+
         contactName = (TextView) rootView.findViewById(R.id.txt_user_name);
         amount = (TextView) rootView.findViewById(R.id.txt_account_availability);
         phoneNumber = (TextView) rootView.findViewById(R.id.txt_phone_number);
 
+        if (getActivity().getSharedPreferences("EZpay", 0).getString("contactName", "").isEmpty()) {
+            Log.e("2222222", "Executed");
+            new getAccount().execute();
+        } else {
+            contactName.setText(getActivity().getSharedPreferences("EZpay", 0).getString("contactName", ""));
+            amount.setText(String.valueOf(getActivity().getSharedPreferences("EZpay", 0).getInt("amount", 0)));
+            phoneNumber.setText(getActivity().getSharedPreferences("EZpay", 0).getString("phoneNumber", ""));
+            Ipath = getActivity().getSharedPreferences("EZpay", 0).getString("Ipath", "");
 
-        new getAccount().execute();
-        userAvatar.setOnClickListener(new View.OnClickListener() {
+            Log.e("ImageString","http://new.opaybot.ir" + Ipath.replace("\"","") );
+
+            Glide.with(getActivity())
+                    .load("http://new.opaybot.ir" + Ipath.replace("\"",""))
+                    .asBitmap()
+                    .centerCrop()
+                    .placeholder(R.drawable.pic_profile)
+                    .into(new BitmapImageViewTarget(userAvatar) {
+                        @Override
+                        protected void setResource(Bitmap resource) {
+                            RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
+                            circularBitmapDrawable.setCornerRadius(700);
+                            userAvatar.setImageDrawable(circularBitmapDrawable);
+                        }
+                    });
+
+
+
+        }
+
+
+        imageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -93,7 +140,7 @@ public class ProfileFragment extends Fragment {
                                 Intent intent = new Intent();
                                 intent.setType("image/*");
                                 intent.setAction(Intent.ACTION_GET_CONTENT);//
-                                startActivityForResult(Intent.createChooser(intent, "Select File"),1);
+                                startActivityForResult(Intent.createChooser(intent, "Select File"), 1);
                             }
                         });
 
@@ -111,10 +158,24 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+
+        imageSignOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                getActivity().getSharedPreferences("EZpay", 0).edit().remove("token").apply();
+                Log.e("Token :", getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
+                startActivity(new Intent(getActivity(), LoginActivity.class));
+                getActivity().finish();
+
+            }
+        });
+
         return rootView;
     }
 
     Bitmap thumbnail;
+
     private File onCaptureImageResult(Intent data) {
         thumbnail = (Bitmap) data.getExtras().get("data");
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -137,7 +198,7 @@ public class ProfileFragment extends Fragment {
 
     @SuppressWarnings("deprecation")
     private File onSelectFromGalleryResult(Intent data) {
-        thumbnail=null;
+        thumbnail = null;
         if (data != null) {
             try {
                 thumbnail = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), data.getData());
@@ -185,7 +246,7 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    private class AsyncInsertUserImage extends AsyncTask<File, Void, Boolean> {
+    private class AsyncInsertUserImage extends AsyncTask<File, Void, String> {
 
         @Override
         protected void onPreExecute() {
@@ -197,21 +258,34 @@ public class ProfileFragment extends Fragment {
         }
 
         @Override
-        protected Boolean doInBackground(File... params) {
+        protected String doInBackground(File... params) {
             DOMParser domParser = new DOMParser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
             try {
                 return domParser.changeUserImage(params[0]);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return false;
+            return "Error";
         }
 
         @Override
-        protected void onPostExecute(Boolean result) {
-            if (result != false) {
-                Toast.makeText(getActivity(), "OK !", Toast.LENGTH_SHORT).show();
-                userAvatar.setImageBitmap(getRoundedShape(thumbnail));
+        protected void onPostExecute(String result) {
+            if (!result.equals("Error")) {
+                Glide.with(getActivity())
+                        .load("http://new.opaybot.ir" + result.replace("\"",""))
+                        .asBitmap()
+                        .centerCrop()
+                        .placeholder(R.drawable.pic_profile)
+                        .into(new BitmapImageViewTarget(userAvatar) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
+                                circularBitmapDrawable.setCornerRadius(700);
+                                userAvatar.setImageDrawable(circularBitmapDrawable);
+                            }
+                        });
+
+                getActivity().getSharedPreferences("EZpay", 0).edit().putString("Ipath", result).apply();
             } else {
                 Toast.makeText(getActivity(), "Error In Connection", Toast.LENGTH_SHORT).show();
             }
@@ -424,17 +498,46 @@ public class ProfileFragment extends Fragment {
         protected void onPostExecute(RSSItem result) {
             Log.e("jsons", String.valueOf(result));
 
+
             if (result != null) {
+                Ipath = result.getContactImg();
+                Glide.with(getActivity())
+                        .load("http://new.opaybot.ir" + Ipath.replace("\"",""))
+                        .asBitmap()
+                        .centerCrop()
+                        .placeholder(R.drawable.pic_profile)
+                        .into(new BitmapImageViewTarget(userAvatar) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
+                                circularBitmapDrawable.setCornerRadius(700);
+                                userAvatar.setImageDrawable(circularBitmapDrawable);
+                            }
+                        });
                 contactName.setText(result.getContactName());
                 amount.setText(String.valueOf(result.getCredit()));
                 phoneNumber.setText(result.getTelNo());
+                getActivity().getSharedPreferences("EZpay", 0).edit().putString("contactName", result.getContactName()).apply();
+                getActivity().getSharedPreferences("EZpay", 0).edit().putInt("amount", result.getCredit()).apply();
+                getActivity().getSharedPreferences("EZpay", 0).edit().putString("phoneNumber", result.getTelNo()).apply();
+                getActivity().getSharedPreferences("EZpay", 0).edit().putString("Ipath", result.getContactImg()).apply();
+
+
 //                finish();
             } else {
+
                 Toast.makeText(getActivity(), "Json Is Null!", Toast.LENGTH_SHORT).show();
+
             }
 
 
         }
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
 
