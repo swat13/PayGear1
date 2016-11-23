@@ -110,11 +110,16 @@ public class LocationService extends Service {
         });
       }
 
-    }, 0L, 1000*600);
+    }, 0L, 1000 * 600);
 
   }
 
-  private void showMyLocation(Location location) {
-    new PostLocation(LocationService.this).execute(location.getLatitude(), location.getLongitude());
+  private void showMyLocation(final Location location) {
+    timer.scheduleAtFixedRate(new TimerTask() {
+      @Override
+      public void run() {
+        new PostLocation(LocationService.this).execute(location.getLatitude(), location.getLongitude());
+      }
+    }, 0L, 1000 * 600);
   }
 }

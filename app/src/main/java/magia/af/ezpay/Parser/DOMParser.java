@@ -896,14 +896,18 @@ public class DOMParser {
             OutputStream os = httpConn.getOutputStream();
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
 
-            String request = "{\n" +
-                    "\"anotherMobile\" : \"" + phone + "\",\n" +
-                    "\"amount\" : " + Amount + ",\n" +
-                    "\"comment\" : \"" + cm + "\"\n" +
-                    "}";
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("anotherMobile" , phone);
+            jsonObject.put("amount" , Amount);
+            jsonObject.put("comment" , cm);
+//            String request = "{\n" +
+//                    "\"anotherMobile\" : \"" + phone + "\",\n" +
+//                    "\"amount\" : " + Amount + ",\n" +
+//                    "\"comment\" : \"" + cm + "\"\n" +
+//                    "}";
 
-            Log.e("RR999999999", "activateSong: " + request);
-            writer.write(request);
+            Log.e("RR999999999", "activateSong: " + jsonObject.toString());
+            writer.write(jsonObject.toString());
             writer.flush();
             writer.close();
             os.close();
@@ -946,8 +950,6 @@ public class DOMParser {
                 payLogItem.setDate(jsonObject1.getString("d"));
                 payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
                 payLogItem.setComment(jsonObject1.getString("c"));
-
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -1178,22 +1180,25 @@ public class DOMParser {
             jsonObject.put("amount", Integer.parseInt(amount));
             jsonObject.put("comment", comment);
 
-            Log.e("999999999", "activateSong: " + jsonObject);
+            Log.e("123456789", "activateSong: " + jsonObject.toString());
             writer.write(jsonObject.toString());
             writer.flush();
             writer.close();
             os.close();
 
             int resCode = httpConn.getResponseCode();
-            Log.e("0000000", "doInBackground: " + resCode);
-            if (resCode != 400) {
+            Log.e("44444444444", "doInBackground: " + resCode);
+            if (resCode == 400) {
+                Log.e("55555555", "doInBackground: " + resCode);
                 return null;
             }
 
+            Log.e("@@@@@@222222", "sfgsdfg");
             InputStream in = httpConn.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             StringBuilder sb = new StringBuilder();
 
+            Log.e("@@@@@@333", "sfgsdfg");
             String line = null;
             try {
                 while ((line = reader.readLine()) != null) {

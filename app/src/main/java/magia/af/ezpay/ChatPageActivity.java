@@ -70,7 +70,7 @@ public class ChatPageActivity extends BaseActivity {
         if (bundle != null) {
             phone = bundle.getString("phone");
             date = bundle.getString("date");
-            Log.i("date", date);
+//            Log.i("date", date);
             position = bundle.getInt("pos");
             Log.i("#%^&@%^&@", phone);
             contactName = bundle.getString("contactName");
@@ -122,13 +122,13 @@ public class ChatPageActivity extends BaseActivity {
 //    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 //    String maxDate = df.format(Calendar.getInstance().getTime());
 //    Log.e("MAX_DATE", "onCreate: " + maxDate);
-        new getChatLog().execute(phone, date, String.valueOf(position));
+        new getChatLog().execute(phone, date, "10");
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 Log.e("dy", "" + dy);
-                if (dy == -10) //check for scroll down
+                if (dy == 10) //check for scroll down
                 {
 //          visibleItemCount = manager.getChildCount();
 //          Log.e("ddddd", "" + visibleItemCount);
@@ -136,7 +136,7 @@ public class ChatPageActivity extends BaseActivity {
 //          Log.e("ggggg", "" + totalItemCount);
 //          pastVisiblesItems = manager.findFirstVisibleItemPosition();
 //          Log.e("hhhhh", "" + pastVisiblesItems);
-                    load += 10;
+//                    load += 10;
 //          DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 //          String maxDate = df.format(Calendar.getInstance().getTime());
                     new getChatLog().execute(phone, date, String.valueOf(load));
@@ -226,6 +226,9 @@ public class ChatPageActivity extends BaseActivity {
         @Override
         protected PayLogItem doInBackground(String... params) {
             DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
+            Log.e("PARAMS1", "doInBackground: "+params[0]);
+            Log.e("PARAMS2", "doInBackground: "+params[1]);
+            Log.e("PARAMS3", "doInBackground: "+params[2]);
             return domParser.RequestFromAnother(params[0], params[1], params[2]);
         }
 
