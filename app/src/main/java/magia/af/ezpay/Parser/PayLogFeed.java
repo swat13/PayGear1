@@ -20,6 +20,10 @@ public class PayLogFeed implements Serializable {
 		_itemlist.add(item);
 		_itemcount++;
 	}
+	public void addItem(PayLogItem item , int pos) {
+		_itemlist.add(pos,item);
+		_itemcount++;
+	}
 	public void addItemRange(PayLogFeed item) {
 
 		_itemlist.addAll(0,item._itemlist);

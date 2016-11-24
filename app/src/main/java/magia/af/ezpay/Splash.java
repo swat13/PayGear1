@@ -114,7 +114,7 @@ public class Splash extends BaseActivity {
                 finish();
             } else
                 Toast.makeText(Splash.this, "problem in connection!", Toast.LENGTH_SHORT).show();
-
+            super.onPostExecute(result);
         }
 
     }

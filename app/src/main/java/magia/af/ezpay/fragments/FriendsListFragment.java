@@ -53,9 +53,8 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
         View v = inflater.inflate(R.layout.activity_friend_list, container, false);
         ((MainActivity) getActivity()).fragment_status = 2;
         recBills = (RecyclerView) v.findViewById(R.id.contact_recycler);
-        _feed = (RSSFeed) getActivity().getIntent().getSerializableExtra("contact");
-        CardView inviteFriends = (CardView)v.findViewById(R.id.invite_friends);
-        inviteFriends.setOnClickListener(new View.OnClickListener() {
+        CardView createGroup = (CardView)v.findViewById(R.id.invite_friends);
+        createGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), ChooseFriendsActivity.class);
