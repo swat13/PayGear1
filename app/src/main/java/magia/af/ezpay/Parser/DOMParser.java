@@ -1052,7 +1052,7 @@ public class DOMParser {
         return null;
 
     }
-
+/*sendDevice*/
     public String sendDeviceId(String pushToken) {
 
         try {
