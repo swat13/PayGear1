@@ -53,8 +53,9 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
         View v = inflater.inflate(R.layout.activity_friend_list, container, false);
         ((MainActivity) getActivity()).fragment_status = 2;
         recBills = (RecyclerView) v.findViewById(R.id.contact_recycler);
-        CardView createGroup = (CardView)v.findViewById(R.id.invite_friends);
-        createGroup.setOnClickListener(new View.OnClickListener() {
+        _feed = (RSSFeed) getActivity().getIntent().getSerializableExtra("contact");
+        CardView inviteFriends = (CardView)v.findViewById(R.id.invite_friends);
+        inviteFriends.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), ChooseFriendsActivity.class);
@@ -144,23 +145,22 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
             fe.setContactName(database.getNameFromNumber(fe.getTelNo()));
             Log.e("sssssssss", "onBindViewHolder: " + fe.getTelNo());
             Log.e("(((((((((((", "onBindViewHolder: " + fe.getTelNo());
-            if (fe.isGroup()){
-                if (fe.getContactName().length() > 15) {
+            Log.e("Test", "onBindViewHolder: " + fe.getGroupTitle());
+            Log.e("Boolean", "onBindViewHolder: " + fe.isGroup());
+            if (fe.getContactName().length() > 15) {
+                contactName = fe.getContactName();
+                FeedViewHolder.contactName.setText(contactName.substring(0, 15) + "...");
+            } else {
+                FeedViewHolder.contactName.setText(fe.getContactName());
+            }
+            if (fe.isGroupStatus()){
+                if (fe.getGroupTitle().length() > 15) {
                     contactName = fe.getGroupTitle();
                     FeedViewHolder.contactName.setText(contactName.substring(0, 15) + "...");
                 } else {
                     FeedViewHolder.contactName.setText(fe.getGroupTitle());
                 }
             }
-            else {
-                if (fe.getContactName().length() > 15) {
-                    contactName = fe.getContactName();
-                    FeedViewHolder.contactName.setText(contactName.substring(0, 15) + "...");
-                } else {
-                    FeedViewHolder.contactName.setText(fe.getContactName());
-                }
-            }
-
             Log.e("#######", "onBindViewHolder: "+ "http://new.opaybot.ir" + fe.getContactImg());
             Glide.with(getActivity())
                     .load("http://new.opaybot.ir" + fe.getContactImg())

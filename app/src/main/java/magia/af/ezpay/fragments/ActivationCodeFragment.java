@@ -255,8 +255,8 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
         @Override
         protected void onPostExecute(RSSFeed result) {
             if (result != null) {
-                getActivity().finish();
                 startActivity(new Intent(getActivity(), MainActivity.class).putExtra("contact", result));
+                getActivity().finish();
             } else
                 Toast.makeText(getActivity(), "problem in connection!", Toast.LENGTH_SHORT).show();
 

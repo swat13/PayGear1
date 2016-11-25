@@ -50,7 +50,15 @@ public class RSSItem implements Serializable {
     private String groupMemberId;
     private int contactCount;
     private int groupCount;
+    private boolean groupStatus;
 
+    public boolean isGroupStatus() {
+        return groupStatus;
+    }
+
+    public void setGroupStatus(boolean groupStatus) {
+        this.groupStatus = groupStatus;
+    }
     public int getContactCount() {
         return contactCount;
     }

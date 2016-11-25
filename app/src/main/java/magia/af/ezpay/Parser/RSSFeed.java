@@ -19,9 +19,13 @@ public class RSSFeed implements Serializable {
 		_itemcount++;
 	}
 
+	public void addAll(RSSFeed item) {
+
+		_itemlist.addAll(item._itemlist);
+	}
 	public void removeItem(int position) {
 		_itemlist.remove(position);
-		_itemcount--;
+//		_itemcount--;
 	}
 
 	public RSSItem getItem(int location) {
@@ -29,7 +33,7 @@ public class RSSFeed implements Serializable {
 	}
 
 	public int getItemCount() {
-		return _itemcount;
+		return _itemlist.size();
 	}
 
 }

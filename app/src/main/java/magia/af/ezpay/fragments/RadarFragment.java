@@ -17,15 +17,20 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import magia.af.ezpay.MainActivity;
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.R;
@@ -46,6 +51,7 @@ public class RadarFragment extends Fragment {
   private String imageUrl = "http://new.opaybot.ir";
   Handler handler;
   Timer timer;
+  String Ipath;
 
 
   public static RadarFragment getInstance() {
@@ -57,6 +63,7 @@ public class RadarFragment extends Fragment {
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View v = inflater.inflate(R.layout.radar_view, container, false);
     final ImageView imageView = (ImageView) v.findViewById(R.id.radar_line);
+    Ipath = getActivity().getSharedPreferences("EZpay", 0).getString("Ipath", "");
     Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.rotate);
     imageView.setAnimation(animation);
     animation.start();
@@ -67,21 +74,34 @@ public class RadarFragment extends Fragment {
       @Override
       public void run() {
         if (rssFeed != null && rssFeed.getItemCount() != 0 && circleImageView.length != 0) {
-            getActivity().runOnUiThread(new Runnable() {
-              @Override
-              public void run() {
-                for (int j = 0; j < circleImageView.length; j++) {
-                  relativeLayout.removeView(circleImageView[j]);
-                }
+          getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+              for (int j = 0; j < circleImageView.length; j++) {
+                relativeLayout.removeView(circleImageView[j]);
               }
-            });
-          }
+            }
+          });
+        }
         new GetPeopleFromTheirLocation().execute();
       }
     }, 0L, 10000);
     relativeLayout = (RelativeLayout) v.findViewById(R.id.container);
     Display display = getActivity().getWindowManager().getDefaultDisplay();
-    userAvatar = (CircleImageView) v.findViewById(R.id.user_avatar);
+    userAvatar = (ImageView) v.findViewById(R.id.user_avatar);
+    Glide.with(getActivity())
+      .load(imageUrl + Ipath.replace("\"", ""))
+      .asBitmap()
+      .centerCrop()
+      .placeholder(R.drawable.pic_profile)
+      .into(new BitmapImageViewTarget(userAvatar) {
+        @Override
+        protected void setResource(Bitmap resource) {
+          RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
+          circularBitmapDrawable.setCornerRadius(700);
+          userAvatar.setImageDrawable(circularBitmapDrawable);
+        }
+      });
     halfDisplayWidth = display.getWidth() / 2;
     halfDisplayHeight = display.getHeight() / 2;
     return v;
@@ -98,8 +118,6 @@ public class RadarFragment extends Fragment {
     @Override
     protected void onPostExecute(RSSFeed result) {
       if (result != null) {
-        Log.e("Count", "onPostExecute: " + result.getItemCount());
-        Log.e("Image", "onPostExecute: " + result.getItem(0).getContactImg());
         rssFeed = result;
         params = new RelativeLayout.LayoutParams[result.getItemCount()];
         circleImageView = new ImageView[result.getItemCount()];
@@ -117,10 +135,10 @@ public class RadarFragment extends Fragment {
       params[i] = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
       circleImageView[i] = new ImageView(getActivity());
 
-      int random = ((int) (Math.random() + 0.5) * ((display.getWidth()/2)+100)) + (int) (Math.random() * ((display.getWidth()/2)-200));
-      int randomH = ((int) (Math.random() + 0.5) * ((display.getHeight()/2)+100)) + (int) (Math.random() * ((display.getHeight()/2)-200));
-      double randomHH = Math.random()*360;
-      Log.e("Random" , randInt(200,540)+"");
+      int random = ((int) (Math.random() + 0.5) * ((display.getWidth() / 2) + 100)) + (int) (Math.random() * ((display.getWidth() / 2) - 200));
+      int randomH = ((int) (Math.random() + 0.5) * ((display.getHeight() / 2) + 100)) + (int) (Math.random() * ((display.getHeight() / 2) - 200));
+      double randomHH = Math.random() * 360;
+      Log.e("Random", randInt(200, 540) + "");
       params[i].leftMargin = random;
       Log.e("leftMargin", "generateImageViews: " + params[i].leftMargin);
       for (int l = 540; l <= 740; l++) {
@@ -128,7 +146,7 @@ public class RadarFragment extends Fragment {
           Log.e("HAAAAS", "TRUE");
           break;
         } else {
-          params[i].topMargin = randInt(300,540);
+          params[i].topMargin = randInt(300, 540);
         }
       }
 //      params[i].bottomMargin = random.nextInt(display.getHeight()/4);
@@ -229,6 +247,7 @@ public class RadarFragment extends Fragment {
 
     return rand.nextInt((max - min) + 1) + min;
   }
+
 
   @Override
   public void onDestroy() {
