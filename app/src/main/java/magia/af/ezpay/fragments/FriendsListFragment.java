@@ -1,5 +1,6 @@
 package magia.af.ezpay.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -46,6 +47,11 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
     public static FriendsListFragment getInstance(RSSFeed rssFeed) {
         _feed = rssFeed;
         return new FriendsListFragment();
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
     }
 
     @Override
@@ -160,6 +166,19 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
                 } else {
                     FeedViewHolder.contactName.setText(fe.getGroupTitle());
                 }
+                Glide.with(getActivity())
+                  .load("http://new.opaybot.ir" + fe.getGroupPhoto())
+                  .asBitmap()
+                  .centerCrop()
+                  .placeholder(R.drawable.pic_profile)
+                  .into(new BitmapImageViewTarget(FeedViewHolder.contactImage) {
+                      @Override
+                      protected void setResource(Bitmap resource) {
+                          RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
+                          circularBitmapDrawable.setCornerRadius(700);
+                          FeedViewHolder.contactImage.setImageDrawable(circularBitmapDrawable);
+                      }
+                  });
             }
             Log.e("#######", "onBindViewHolder: "+ "http://new.opaybot.ir" + fe.getContactImg());
             Glide.with(getActivity())
@@ -220,5 +239,9 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
 
         }
         return stringBuilder.toString();
+    }
+
+    public static void UpdateUi(){
+
     }
 }

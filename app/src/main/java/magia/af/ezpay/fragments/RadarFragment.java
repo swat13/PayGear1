@@ -25,6 +25,8 @@ import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -33,13 +35,14 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import magia.af.ezpay.MainActivity;
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.RSSFeed;
+import magia.af.ezpay.Parser.RSSItem;
 import magia.af.ezpay.R;
 
 
 public class RadarFragment extends Fragment {
   private RelativeLayout relativeLayout;
-  private ImageView[] circleImageView;
-  RelativeLayout.LayoutParams[] params;
+  private ArrayList<ImageView> circleImageView = new ArrayList<ImageView>();
+  ArrayList<RelativeLayout.LayoutParams> params = new ArrayList<RelativeLayout.LayoutParams>();
   public int halfDisplayWidth;
   public int halfDisplayHeight;
   public ImageView userAvatar;
@@ -73,16 +76,7 @@ public class RadarFragment extends Fragment {
     timer.scheduleAtFixedRate(new TimerTask() {
       @Override
       public void run() {
-        if (rssFeed != null && rssFeed.getItemCount() != 0 && circleImageView.length != 0) {
-          getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-              for (int j = 0; j < circleImageView.length; j++) {
-                relativeLayout.removeView(circleImageView[j]);
-              }
-            }
-          });
-        }
+
         new GetPeopleFromTheirLocation().execute();
       }
     }, 0L, 10000);
@@ -119,8 +113,6 @@ public class RadarFragment extends Fragment {
     protected void onPostExecute(RSSFeed result) {
       if (result != null) {
         rssFeed = result;
-        params = new RelativeLayout.LayoutParams[result.getItemCount()];
-        circleImageView = new ImageView[result.getItemCount()];
         generateImageViews();
       }
       super.onPostExecute(rssFeed);
@@ -128,62 +120,95 @@ public class RadarFragment extends Fragment {
   }
 
   public void generateImageViews() {
+   // params = new RelativeLayout.LayoutParams[rssFeed.getItemCount()];
+    if(circleImageView==null)
+    circleImageView = new ArrayList<ImageView>();
+
+    for (int j = 0; j < circleImageView.size(); j++) {
+      boolean isDuplicate = false;
+      for (i = 0; i < rssFeed.getItemCount(); i++) {
+        if (((RSSItem) circleImageView.get(j).getTag(R.string.Amir)).getUserId().equals( rssFeed.getItem(i).getUserId()) ){
+          isDuplicate = true;
+          break;
+        }
+      }
+        if (!isDuplicate) {
+          relativeLayout.removeView(circleImageView.get(i));
+          circleImageView.remove(i);
+        }
+
+    }
+
     for (i = 0; i < rssFeed.getItemCount(); i++) {
+
+      boolean isDuplicate = false;
+      for (int j = 0; j < circleImageView.size(); j++) {
+        if (((RSSItem) circleImageView.get(j).getTag(R.string.Amir)).getUserId().equals( rssFeed.getItem(i).getUserId())) {
+          isDuplicate = true;
+          break;
+        }
+      }
+      if (isDuplicate)
+        continue;
+
       Display display = getActivity().getWindowManager().getDefaultDisplay();
       Log.e("width", "generateImageViews: " + display.getWidth());
       Log.e("height", "generateImageViews: " + display.getHeight());
-      params[i] = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-      circleImageView[i] = new ImageView(getActivity());
 
+      ImageView newView = new ImageView(getActivity());
+      RelativeLayout.LayoutParams newParam=new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+Log.e("Amir",rssFeed.getItem(i).getContactImg());
+      newView.setTag(R.string.Amir,rssFeed.getItem(i));
       int random = ((int) (Math.random() + 0.5) * ((display.getWidth() / 2) + 100)) + (int) (Math.random() * ((display.getWidth() / 2) - 200));
       int randomH = ((int) (Math.random() + 0.5) * ((display.getHeight() / 2) + 100)) + (int) (Math.random() * ((display.getHeight() / 2) - 200));
       double randomHH = Math.random() * 360;
       Log.e("Random", randInt(200, 540) + "");
-      params[i].leftMargin = random;
-      Log.e("leftMargin", "generateImageViews: " + params[i].leftMargin);
+      newParam.leftMargin = random;
+      Log.e("leftMargin", "generateImageViews: " + newParam.leftMargin);
       for (int l = 540; l <= 740; l++) {
         if (randomH == l) {
           Log.e("HAAAAS", "TRUE");
           break;
         } else {
-          params[i].topMargin = randInt(300, 540);
+          newParam.topMargin = randInt(300, 540);
         }
       }
 //      params[i].bottomMargin = random.nextInt(display.getHeight()/4);
-      Log.e("topMargin", "generateImageViews: " + params[i].topMargin);
-      circleImageView[i].setLayoutParams(params[i]);
-      circleImageView[i].getLayoutParams().width = 100;
-      circleImageView[i].getLayoutParams().height = 100;
+      Log.e("topMargin", "generateImageViews: " + newParam.topMargin);
+      newView.setLayoutParams(newParam);
+      newView.getLayoutParams().width = 250;
+      newView.getLayoutParams().height = 250;
       Log.e("image", "generateImageViews: " + imageUrl + rssFeed.getItem(i).getContactImg());
-//      Glide.with(this).load(imageUrl + rssFeed.getItem(i).getContactImg()).into(circleImageView[i]);
-      if (this != null) {
-        Glide.with(this)
-          .load(imageUrl + rssFeed.getItem(i).getContactImg())
-          .asBitmap()
-          .centerCrop()
-          .placeholder(R.drawable.pic_profile)
-          .into(new BitmapImageViewTarget(circleImageView[i]) {
-            @Override
-            protected void setResource(Bitmap resource) {
-              RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
-              circularBitmapDrawable.setCornerRadius(700);
-              circleImageView[i].setImageDrawable(circularBitmapDrawable);
-            }
-          });
-      } else {
-        Glide.clear(circleImageView[i]);
-      }
-//      circleImageView[i].setImageResource(R.drawable.ali);
+
+      Glide.with(this).load(imageUrl + rssFeed.getItem(i).getContactImg()).into(newView);
+      Log.e("SSS", "generateImageViews: " + " " + i);
+      Glide.with(this)
+        .load(imageUrl + rssFeed.getItem(i).getContactImg())
+        .asBitmap()
+        .centerCrop()
+        .placeholder(R.drawable.pic_profile)
+        .into(new BitmapImageViewTarget(newView) {
+          @Override
+          protected void setResource(Bitmap resource) {
+            RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
+            circularBitmapDrawable.setCornerRadius(700);
+            Log.e("SSS2", "generateImageViews: " + " " + i);
+            ((ImageView) this.view).setImageDrawable(circularBitmapDrawable);
+            //newView.setImageDrawable(circularBitmapDrawable);
+          }
+        });
+      Log.e("SSS3", "generateImageViews: " + " " + i);
+//      newView.setImageResource(R.drawable.ali);
       boolean flag = true;
-//          relativeLayout.addView(circleImageView[i]);
-      if (calculateDistanceOfTwoPoint(xDot(params[i]), yDot(params[i]), halfDisplayWidth, halfDisplayHeight) <= 200) {
+//          relativeLayout.addView(newView);
+      if (calculateDistanceOfTwoPoint(xDot(newParam), yDot(newParam), halfDisplayWidth, halfDisplayHeight) <= 200) {
         break;
       }
-      for (int j = 0; j <= i; j++) {
-        Log.e("Distance" + i + "  " + j, "generateImageViews: " + calculateDistanceOfTwoPoint(xDot(params[i]), yDot(params[i]), xDot(params[j]), yDot(params[j])));
-//        Log.e("diameter", "generateImageViews: " + calculateDiameter(circleImageView[i]));
+      for (int j = 0; j <params.size(); j++) {
+        Log.e("Distance" + i + "  " + j, "generateImageViews: " + calculateDistanceOfTwoPoint(xDot(newParam), yDot(newParam), xDot(params.get(j)), yDot(params.get(j))));
+//        Log.e("diameter", "generateImageViews: " + calculateDiameter(newView));
         if (i != j) {
-          if (calculateDistanceOfTwoPoint(xDot(params[i]), yDot(params[i]), xDot(params[j]), yDot(params[j])) <= calculateDiameter(circleImageView[i])) {
+          if (calculateDistanceOfTwoPoint(xDot(newParam), yDot(newParam), xDot(params.get(j)), yDot(params.get(j))) <= calculateDiameter(newView)) {
             Log.e("FOOOR", "generateImageViews: ");
             if (i != 0) {
               i--;
@@ -197,13 +222,15 @@ public class RadarFragment extends Fragment {
       if (flag) {
         Log.e("TTTTTTTT", "AAAAADDDDD:(((((((( " + i);
 
-        relativeLayout.addView(circleImageView[i]);
-        circleImageView[i].setOnClickListener(new View.OnClickListener() {
+        relativeLayout.addView(newView);
+        newView.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
 //            Toast.makeText(RadarFragment.this, "clicked" + v.getTag(), Toast.LENGTH_SHORT).show();
           }
         });
+        params.add(newParam);
+        circleImageView.add(newView);
       }
 
     }

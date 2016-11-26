@@ -1,14 +1,19 @@
 package magia.af.ezpay.fragments;
 
+import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,12 +28,19 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import magia.af.ezpay.LoginActivity;
 import magia.af.ezpay.MainActivity;
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.RSSFeed;
+import magia.af.ezpay.Parser.RSSItem;
 import magia.af.ezpay.R;
 import magia.af.ezpay.Splash;
+import magia.af.ezpay.Utilities.LocalPersistence;
+import magia.af.ezpay.helper.ContactDatabase;
 import magia.af.ezpay.helper.GetContact;
 import magia.af.ezpay.interfaces.EventCallbackHandler;
 
@@ -46,8 +58,13 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
     private String phone;
     private String activationCode;
     private String newName;
+    private RSSFeed feed;
+    private JSONArray jsonArray;
+    private RSSItem rssItem;
     public volatile boolean running = true;
     public fillContact ffillContact;
+    String contact;
+    private ArrayMap<String, Boolean> stringArrayMap = new ArrayMap<>();
 
 
     public static ActivationCodeFragment getInstance() {
@@ -59,6 +76,7 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_activation_code, null);
+        new PutContactInJsonArray(getActivity()).execute();
         ffillContact = new fillContact();
         ((LoginActivity) getActivity()).fragment_status = 2;
         btn_send_activation_code_again = (Button) rootView.findViewById(R.id.btn_send_activation_code_again);
@@ -226,6 +244,110 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
         }
     }
 
+    public class PutContactInJsonArray extends AsyncTask<Void,Void,String>{
+        Context context;
+        ProgressDialog progressDialog;
+        public PutContactInJsonArray(Context context){
+            this.context = context;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage("Wait");
+            progressDialog.show();
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            feed = new RSSFeed();
+            ContentResolver cr = context.getContentResolver();
+            Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
+              null, null, null, null);
+
+            if (cur.getCount() > 0) {
+                jsonArray = new JSONArray();
+                int count = 0;
+                while (cur.moveToNext()) {
+                    String id = cur.getString(
+                      cur.getColumnIndex(ContactsContract.Contacts._ID));
+                    String name = cur.getString(cur.getColumnIndex(
+                      ContactsContract.Contacts.DISPLAY_NAME));
+
+                    if (cur.getInt(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)) > 0) {
+                        Cursor pCur = cr.query(
+                          ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                          null,
+                          ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                          new String[]{id}, null);
+                        while (pCur.moveToNext()) {
+                            String phoneNo = pCur.getString(pCur.getColumnIndex(
+                              ContactsContract.CommonDataKinds.Phone.NUMBER));
+                            if (phoneNo.contains(" ")) {
+                                phoneNo = phoneNo.replace(" ", "");
+                            }
+                            if (phoneNo.contains("+989")) {
+                                phoneNo = phoneNo.replace("+98", "0");
+                            }
+                            rssItem = new RSSItem();
+                            rssItem.setTelNo(phoneNo);
+                            rssItem.setContactName(name);
+                            feed.addItem(rssItem);
+                            if (phoneNo.startsWith("09")) {
+
+                                try {
+                                    if (!stringArrayMap.containsKey(phoneNo)) {
+                                        JSONObject jsonObject = new JSONObject();
+                                        jsonObject.put("t", name);
+                                        jsonObject.put("m", phoneNo);
+                                        jsonArray.put(count, jsonObject);
+                                        stringArrayMap.put(phoneNo, true);
+                                        count++;
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+
+                            }
+
+
+                        }
+                        pCur.close();
+                    }
+                }
+            }
+            ContactDatabase database = new ContactDatabase(context);
+            for (int i = 0; i < feed.getItemCount(); i++) {
+                database.createData(feed.getItem(i).getTelNo(), feed.getItem(i).getContactName());
+            }
+            Log.i("JSON CONTACT", jsonArray.toString());
+            writeToFile(jsonArray);
+            return jsonArray.toString();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            if (progressDialog != null){
+                progressDialog.dismiss();
+            }
+            if (s != null){
+                contacts(s);
+            }
+            super.onPostExecute(s);
+        }
+    }
+
+    public String contacts(String s){
+        this.contact = s;
+        return contact;
+    }
+
+    public String getContacts(){
+        return contact;
+    }
+
     private class fillContact extends AsyncTask<Void, Void, RSSFeed> {
 
         @Override
@@ -237,18 +359,8 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
 
         @Override
         protected RSSFeed doInBackground(Void... params) {
-
-
-
             DOMParser domParser = new DOMParser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
-
-            /*while (running) {
-                if (isCancelled()) {
-                    return null;
-
-                }
-            }*/
-            return domParser.checkContactListWithGroup(new GetContact().getContact(getActivity()));
+            return domParser.checkContactListWithGroup(getContacts());
 
         }
 
@@ -266,6 +378,22 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
         }
 
 
+    }
+
+    public void writeToFile(JSONArray json) {
+        RSSFeed rssFeed = new RSSFeed();
+        for (int i = 0; i < json.length(); i++) {
+            try {
+                JSONObject jsonObject = json.getJSONObject(i);
+                RSSItem rssItem = new RSSItem();
+                rssItem.setTelNo(jsonObject.getString("m"));
+                rssFeed.addItem(rssItem);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+        new LocalPersistence().writeObjectToFile(getActivity(), rssFeed, "All_Contact_List");
     }
 
 

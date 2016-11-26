@@ -2,7 +2,6 @@ package magia.af.ezpay;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -19,7 +18,6 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
@@ -28,13 +26,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.Parser.RSSItem;
 import magia.af.ezpay.helper.ContactDatabase;
-import magia.af.ezpay.helper.GetContact;
 
 public class ChooseFriendsActivity extends BaseActivity {
   RSSFeed rssFeed;
@@ -42,7 +37,6 @@ public class ChooseFriendsActivity extends BaseActivity {
   RecyclerView recyclerView;
   ImageView imageView;
   ArrayList<String> phone = new ArrayList<>();
-  private String imageUrl = "http://new.opaybot.ir";
   ContactDatabase database;
   RecyclerAdapter adapter;
 
@@ -100,12 +94,10 @@ public class ChooseFriendsActivity extends BaseActivity {
             e.printStackTrace();
           }
         }
-        if (groupTitle.getText().toString().length() < 1) {
-          Toast.makeText(ChooseFriendsActivity.this, "لطفا عنوان گروه را وارد کنید", Toast.LENGTH_SHORT).show();
-        } else {
-          Log.e("JSONArray", "onClick: " + jsonArray.toString());
-          new CreateGroup(groupTitle.getText().toString(), jsonArray).execute();
-        }
+        Intent intent = new Intent(ChooseFriendsActivity.this , CreateGroupActivity.class);
+        intent.putExtra("contact", rssFeed);
+        intent.putExtra("json", jsonArray.toString());
+        startActivity(intent);
       }
     });
   }
@@ -122,6 +114,7 @@ public class ChooseFriendsActivity extends BaseActivity {
     public void onBindViewHolder(final RecyclerAdapter.ViewHolder holder, int position) {
       holder.txt_contact_item_name.setText(rssFeed.getItem(position).getContactName());
       holder.txt_contact_item_phone.setText(rssFeed.getItem(position).getTelNo());
+      String imageUrl = "http://new.opaybot.ir";
       Glide.with(ChooseFriendsActivity.this)
         .load(imageUrl + rssFeed.getItem(position).getContactImg())
         .asBitmap()
@@ -144,7 +137,8 @@ public class ChooseFriendsActivity extends BaseActivity {
 
     @Override
     public Filter getFilter() {
-      Filter filter = new Filter() {
+
+      return new Filter() {
 
         @SuppressWarnings("unchecked")
         @Override
@@ -165,7 +159,7 @@ public class ChooseFriendsActivity extends BaseActivity {
 //            String dataNames = rssFeed.getItem(i).getContactName();
             RSSItem rssItem = new RSSItem();
             rssItem.setContactName(rssFeed.getItem(i).getContactName());
-            if (rssFeed.getItem(i).getContactName().toLowerCase().startsWith(constraint.toString()))  {
+            if (rssFeed.getItem(i).getContactName().toLowerCase().startsWith(constraint.toString())) {
               FilteredArrayNames.addItem(rssItem);
             }
           }
@@ -177,17 +171,15 @@ public class ChooseFriendsActivity extends BaseActivity {
           return results;
         }
       };
-
-      return filter;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
       TextView txt_contact_item_name;
       TextView txt_contact_item_phone;
       ImageView contact_item_image;
       ImageView status_circle;
 
-      public ViewHolder(View itemView) {
+      ViewHolder(View itemView) {
         super(itemView);
         txt_contact_item_name = (TextView) itemView.findViewById(R.id.txt_contact_item_name);
         txt_contact_item_phone = (TextView) itemView.findViewById(R.id.txt_contact_item_phone);
@@ -210,57 +202,57 @@ public class ChooseFriendsActivity extends BaseActivity {
     }
   }
 
-  public class CreateGroup extends AsyncTask<String, Void, Boolean> {
-    String title;
-    JSONArray jsonArray;
+//  public class CreateGroup extends AsyncTask<String, Void, Boolean> {
+//    String title;
+//    JSONArray jsonArray;
+//
+//    public CreateGroup(String title, JSONArray jsonArray) {
+//      this.title = title;
+//      this.jsonArray = jsonArray;
+//    }
+//
+//    @Override
+//    protected Boolean doInBackground(String... params) {
+//      DOMParser parser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
+//      return parser.group(title, jsonArray);
+//    }
+//
+//    @Override
+//    protected void onPostExecute(Boolean b) {
+//      if (b) {
+////        Intent intent = new Intent(ChooseFriendsActivity.this, CreateGroupActivity.class);
+////        intent.putExtra("contacts" , rssFeed);
+////        startActivity(intent);
+//        new fillContact().execute();
+//      }
+//      super.onPostExecute(b);
+//    }
+//  }
 
-    public CreateGroup(String title, JSONArray jsonArray) {
-      this.title = title;
-      this.jsonArray = jsonArray;
-    }
-
-    @Override
-    protected Boolean doInBackground(String... params) {
-      DOMParser parser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
-      return parser.group(title, jsonArray);
-    }
-
-    @Override
-    protected void onPostExecute(Boolean b) {
-      if (b) {
-//                Intent intent = new Intent(ChooseFriendsActivity.this, GroupChatPageActivity.class);
-//                startActivity(intent);
-//                finish();
-        new fillContact().execute();
-      }
-      super.onPostExecute(b);
-    }
-  }
-
-  private class fillContact extends AsyncTask<Void, Void, RSSFeed> {
-
-    @Override
-    protected void onPreExecute() {
-      super.onPreExecute();
-    }
-
-    @Override
-    protected RSSFeed doInBackground(Void... params) {
-      DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
-      return domParser.checkContactListWithGroup(new GetContact().getContact(ChooseFriendsActivity.this));
-
-    }
-
-    @Override
-    protected void onPostExecute(RSSFeed result) {
-      if (result != null) {
-        ChooseFriendsActivity.this.finish();
-        startActivity(new Intent(ChooseFriendsActivity.this, GroupChatPageActivity.class).putExtra("contact", result));
-        finish();
-      } else
-        Toast.makeText(ChooseFriendsActivity.this, "problem in connection!", Toast.LENGTH_SHORT).show();
-    }
-
-
-  }
+//  private class fillContact extends AsyncTask<Void, Void, RSSFeed> {
+//
+//    @Override
+//    protected void onPreExecute() {
+//      super.onPreExecute();
+//    }
+//
+//    @Override
+//    protected RSSFeed doInBackground(Void... params) {
+//      DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
+//      return domParser.checkContactListWithGroup(new GetContact().getContact(ChooseFriendsActivity.this));
+//
+//    }
+//
+//    @Override
+//    protected void onPostExecute(RSSFeed result) {
+//      if (result != null) {
+//        ChooseFriendsActivity.this.finish();
+//        startActivity(new Intent(ChooseFriendsActivity.this, CreateGroupActivity.class).putExtra("contact", result));
+//        finish();
+//      } else
+//        Toast.makeText(ChooseFriendsActivity.this, "problem in connection!", Toast.LENGTH_SHORT).show();
+//    }
+//
+//
+//  }
 }

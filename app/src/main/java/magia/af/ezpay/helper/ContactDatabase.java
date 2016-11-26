@@ -22,9 +22,10 @@ public class ContactDatabase extends SQLiteOpenHelper {
   private static final String CONTACT_NAME = "contact_name";
   private static final String CONTACT_NUMBER = "contact_number";
   private static final String CONTACT_IN_NETWORK = "contact_in_network";
+  private static final String CONTACT_IMAGE = "contact_image";
   private static final String SQL_QUERY =
 
-    "CREATE TABLE " + TABLE_NAME + " (id INTEGER PRIMARY KEY AUTOINCREMENT," + CONTACT_NAME + " TEXT," + CONTACT_NUMBER + " TEXT," + CONTACT_IN_NETWORK + " boolean);";
+    "CREATE TABLE " + TABLE_NAME + " (id INTEGER PRIMARY KEY AUTOINCREMENT," + CONTACT_NAME + " TEXT," + CONTACT_IMAGE + " TEXT," + CONTACT_NUMBER + " TEXT," + CONTACT_IN_NETWORK + " boolean);";
 
   public ContactDatabase(Context context) {
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -87,6 +88,12 @@ public class ContactDatabase extends SQLiteOpenHelper {
     database.close();
   }
 
+  public void setContactImageInNetwork(String image,String phone) {
+    SQLiteDatabase database = this.getReadableDatabase();
+    database.execSQL("UPDATE " + TABLE_NAME + " SET " + CONTACT_IMAGE + " = '"+image+"'" + " WHERE " + CONTACT_NUMBER + " = " + "'" + phone + "'");
+    database.close();
+  }
+
   public RSSFeed getInNetworkUserName() {
     RSSFeed rssFeed = new RSSFeed();
     SQLiteDatabase database = this.getReadableDatabase();
@@ -94,6 +101,7 @@ public class ContactDatabase extends SQLiteOpenHelper {
     while (cursor.moveToNext()) {
       RSSItem rssItem = new RSSItem();
       rssItem.setContactName(cursor.getString(cursor.getColumnIndex(CONTACT_NAME)));
+      rssItem.setContactImg(cursor.getString(cursor.getColumnIndex(CONTACT_IMAGE)));
       rssItem.setTelNo(cursor.getString(cursor.getColumnIndex(CONTACT_NUMBER)));
       rssFeed.addItem(rssItem);
     }

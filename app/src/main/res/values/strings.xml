@@ -1,4 +1,5 @@
 <resources>
+    <string name="Amir">Salam</string>
     <string name="app_name">EZpay</string>
     <string name="aaa">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuqi5itZP46xPVlEWn6ClcXZU9xHGXTbpkOXvwwIndqCgrkPSKi+JJvaLMFWv7MR9IwCO3RuTvHE44cwJD2O/reNYWAzRXywkGjK+ksNv8CCnk2JwkgrZrwhD9w8MWueXmzgolFJQanR79qMNeqeAvP90nVdPsq+t9jRCgQ/qIk0uDYq0ZB7qV7eVIg3a5CBOXUBmD7NvHik+vJXNZ/2dafjf+1v8wuvhOV4ndcKh9C1JSGCbEzbivHZrmx0Qy1GeC7HI6tzXnNaugiVY3E6OKOnsX55eI6aF03g6bEE7uYW/iUt5VTxReeZLgXd/mkYSDN1fMcS/wmDF+Fqj70rAJQIDAQAB</string>
     <string name="title_activity_example">ExampleActivity</string>

@@ -3,24 +3,45 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
-    android:gravity="center"
     android:orientation="vertical">
 
-    <ImageView
-        android:layout_width="@dimen/height2"
-        android:layout_height="@dimen/height"
-        android:layout_marginTop="0dp"
-        android:layout_gravity="center_horizontal"
-        android:background="@drawable/mainlogo" />
-
-    <TextView
-        android:id="@+id/payfriends_en"
+    <RelativeLayout
+        android:layout_weight="0.1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:gravity="center"
-        android:text="PayFriends"
-        android:textColor="#335a00" />
+        android:layout_height="match_parent">
+        <ImageView
+            android:layout_centerInParent="true"
+            android:layout_width="@dimen/height2"
+            android:layout_height="@dimen/height"
+            android:layout_marginTop="0dp"
+            android:id="@+id/imageView"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/mainlogo" />
+
+        <TextView
+            android:id="@+id/payfriends_en"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="PayFriends"
+            android:layout_below="@+id/imageView"
+            android:textColor="#335a00" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_weight="0.9"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ProgressBar
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="20dp"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/waiting_progress"/>
+    </RelativeLayout>
 
 
 </LinearLayout>

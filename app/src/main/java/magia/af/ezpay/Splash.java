@@ -12,6 +12,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -29,94 +30,103 @@ public class Splash extends BaseActivity {
 
   /*ddfdf*/
 
-    ContactDatabase database;
+  ContactDatabase database;
+  JSONArray jsonArray;
 
-    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+  private static final int REQUEST_EXTERNAL_STORAGE = 1;
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.splash);
+    if (!getSharedPreferences("EZpay", 0).getString("token", "").isEmpty()) {
+      new ComparingContactWithDatabase().execute();
+    } else {
+      Handler handler = new Handler();
+      handler.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+          startActivity(new Intent(Splash.this, LoginActivity.class));
+          finish();
+        }
+      }, 2500);
+    }
+
+  }
+
+
+  public String newContact(JSONArray jsonArray) {
+    return jsonArray.toString();
+  }
+
+  public class ComparingContactWithDatabase extends AsyncTask<Void, Void, JSONArray> {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected JSONArray doInBackground(Void... params) {
+      database = new ContactDatabase(Splash.this);
+      GetContact getContact = new GetContact();
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.splash);
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                if (!getSharedPreferences("EZpay", 0).getString("token", "").isEmpty()) {
-
-                    database = new ContactDatabase(Splash.this);
-                    GetContact getContact = new GetContact();
-
-                    RSSFeed databaseContact = database.getAllData();
-                    RSSFeed phoneContact = getContact.getNewContact(Splash.this);
-                    for (int i = 0; i < phoneContact.getItemCount(); i++) {
-                        for (int j = 0; j < databaseContact.getItemCount(); j++) {
-                            if (phoneContact.getItem(i).getTelNo().equals(databaseContact.getItem(j).getTelNo())
-                              && phoneContact.getItem(i).getContactName().equals(databaseContact.getItem(j).getContactName())) {
-                                phoneContact.removeItem(i);
-                            }
-                        }
-                    }
-                    JSONArray jsonArray = new JSONArray();
-                    for (int i = 0; i < phoneContact.getItemCount(); i++) {
-                        JSONObject jsonObject = new JSONObject();
-                        try {
-                            jsonObject.put("m", phoneContact.getItem(i).getTelNo());
-                            jsonObject.put("t", phoneContact.getItem(i).getContactName());
-                            jsonArray.put(i, jsonObject);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        database.createData(phoneContact.getItem(i).getTelNo(), phoneContact.getItem(i).getContactName());
-                    }
-
-                    new fillContact().execute(newContact(jsonArray));
-
-                } else {
-                    startActivity(new Intent(Splash.this, LoginActivity.class));
-                    finish();
-                }
-            }
-        });
-        thread.start();
-
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//            }
-//        }, 1500);
-
+      RSSFeed databaseContact = database.getAllData();
+      RSSFeed phoneContact = getContact.getNewContact(Splash.this);
+      for (int i = 0; i < phoneContact.getItemCount(); i++) {
+        Log.e("(((", "doInBackground i: " + i);
+        for (int j = 0; j < databaseContact.getItemCount(); j++) {
+          Log.e("(((", "doInBackground j: " + j);
+          if (phoneContact.getItem(i).getTelNo().equals(databaseContact.getItem(j).getTelNo())
+            && phoneContact.getItem(i).getContactName().equals(databaseContact.getItem(j).getContactName())) {
+            phoneContact.removeItem(i);
+          }
+        }
+      }
+      jsonArray = new JSONArray();
+      for (int i = 0; i < phoneContact.getItemCount(); i++) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+          jsonObject.put("m", phoneContact.getItem(i).getTelNo());
+          jsonObject.put("t", phoneContact.getItem(i).getContactName());
+          jsonArray.put(i, jsonObject);
+        } catch (JSONException e) {
+          e.printStackTrace();
+        }
+        database.createData(phoneContact.getItem(i).getTelNo(), phoneContact.getItem(i).getContactName());
+      }
+      return jsonArray;
     }
 
+    @Override
+    protected void onPostExecute(JSONArray jsonArray) {
+      if (jsonArray != null) {
+        new fillContact().execute(newContact(jsonArray));
+      }
+      super.onPostExecute(jsonArray);
+    }
+  }
 
-    public String newContact(JSONArray jsonArray) {
-        return jsonArray.toString();
+  private class fillContact extends AsyncTask<String, Void, RSSFeed> {
+
+    @Override
+    protected void onPreExecute() {
+      super.onPreExecute();
     }
 
-
-    private class fillContact extends AsyncTask<String, Void, RSSFeed> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected RSSFeed doInBackground(String... params) {
-            DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
-            return domParser.checkContactListWithGroup(params[0]);
-        }
-
-        @Override
-        protected void onPostExecute(RSSFeed result) {
-            if (result != null) {
-                startActivity(new Intent(Splash.this, MainActivity.class).putExtra("contact", result));
-                finish();
-            } else
-                Toast.makeText(Splash.this, "problem in connection!", Toast.LENGTH_SHORT).show();
-            super.onPostExecute(result);
-        }
-
+    @Override
+    protected RSSFeed doInBackground(String... params) {
+      DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
+      return domParser.checkContactListWithGroup(params[0]);
     }
+
+    @Override
+    protected void onPostExecute(RSSFeed result) {
+      if (result != null) {
+        startActivity(new Intent(Splash.this, MainActivity.class).putExtra("contact", result));
+        finish();
+      } else {
+        Toast.makeText(Splash.this, "problem in connection!", Toast.LENGTH_SHORT).show();
+      }
+      super.onPostExecute(result);
+    }
+
+  }
 
 }

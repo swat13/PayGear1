@@ -1,16 +1,9 @@
 package magia.af.ezpay;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.View;
@@ -18,21 +11,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.fragments.BarCodeGet;
 import magia.af.ezpay.fragments.FriendsListFragment;
 import magia.af.ezpay.fragments.ProfileFragment;
 import magia.af.ezpay.fragments.RadarFragment;
+import magia.af.ezpay.helper.ContactDatabase;
 import magia.af.ezpay.location.LocationService;
-import magia.af.ezpay.location.PostLocation;
 
 /**
  * Created by erfan on 11/3/2016.
@@ -44,15 +31,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
   public RelativeLayout darkDialog, waitingDialog;
   public FriendsListFragment friendsListFragment;
   public BarCodeGet barCodeGet;
-  public LinearLayout friendsLayout, barcodeReader, profileLayout,radarLayout;
+  public LinearLayout friendsLayout, barcodeReader, profileLayout, radarLayout;
   public int fragment_status = 0;
   RSSFeed _feed;
   public String description;
   public RadarFragment radarFragment;
   public int amount;
-  private int position;
   public ImageView imageView;
-  LocationManager manager;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -67,12 +52,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     imageView = (ImageView) findViewById(R.id.image_view);
 
 
+    ContactDatabase database = new ContactDatabase(this);
     _feed = (RSSFeed) getIntent().getSerializableExtra("contact");
     for (int i = 0; i < _feed.getItemCount(); i++) {
+      database.setContactInNetwork(_feed.getItem(i).getTelNo());
+      database.setContactImageInNetwork(_feed.getItem(i).getContactImg(), _feed.getItem(i).getTelNo());
       Log.e("MAin", "onCreate: " + _feed.getItem(i).getGroupTitle());
     }
-    startService(new Intent(this,LocationService.class));
-
+    Log.e("Main","Before calling locationservice");
+    startService(new Intent(this, LocationService.class));
 
 
 //    manager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -194,7 +182,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         radarLayout.setAlpha((float) 0.45);
         break;
       case R.id.radar_layout:
-        radarFragment= RadarFragment.getInstance();
+        radarFragment = RadarFragment.getInstance();
         getSupportFragmentManager()
           .beginTransaction()
           .replace(R.id.detail_fragment, radarFragment)
@@ -226,7 +214,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
       if (requestCode == 10) {
         description = data.getStringExtra("description");
         amount = data.getIntExtra("amount", 0);
-        position = data.getIntExtra("pos", 0);
+        int position = data.getIntExtra("pos", 0);
         friendsListFragment = FriendsListFragment.getInstance(_feed);
         Bundle bundle = new Bundle();
         bundle.putString("description", description);

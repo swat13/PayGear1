@@ -27,11 +27,13 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.PayLogFeed;
 import magia.af.ezpay.Parser.PayLogItem;
+import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.Utilities.LocalPersistence;
 import magia.af.ezpay.fragments.GetCardFragment;
 import magia.af.ezpay.fragments.PaymentFragment;
 import magia.af.ezpay.fragments.RequestPaymentFragment;
 import magia.af.ezpay.helper.CalendarConversion;
+import magia.af.ezpay.helper.GetContact;
 
 /*dd*/
 public class ChatPageActivity extends BaseActivity {
@@ -40,6 +42,7 @@ public class ChatPageActivity extends BaseActivity {
   private String imageUrl = "http://new.opaybot.ir";
   RecyclerView recyclerView;
   PayLogFeed feed;
+  RSSFeed rssFeed;
   ChatPageAdapter adapter;
   static boolean isOpen = false;
   public RelativeLayout darkDialog;
@@ -214,8 +217,8 @@ public class ChatPageActivity extends BaseActivity {
     protected void onPostExecute(PayLogItem result) {
       if (result != null) {
 //        feed.removeItem(pos);
-        Log.e("POS" , pos + "");
-        feed.addItem(result,0);
+        Log.e("POS", pos + "");
+        feed.addItem(result, 0);
 //        adapter.notifyItemRangeChanged(pos,feed.getItemCount());
         new LocalPersistence().writeObjectToFile(ChatPageActivity.this, feed, "Payment_Chat_List");
         adapter.notifyDataSetChanged();
@@ -245,8 +248,8 @@ public class ChatPageActivity extends BaseActivity {
     protected void onPostExecute(PayLogItem result) {
       if (result != null) {
 //        feed.removeItem(pos);
-        Log.e("POS" , pos + "");
-        feed.addItem(result,0);
+        Log.e("POS", pos + "");
+        feed.addItem(result, 0);
 //        adapter.notifyItemRangeChanged(pos,feed.getItemCount());
         new LocalPersistence().writeObjectToFile(ChatPageActivity.this, feed, "Payment_Chat_List");
         adapter.notifyDataSetChanged();
@@ -277,8 +280,8 @@ public class ChatPageActivity extends BaseActivity {
     protected void onPostExecute(PayLogItem result) {
       if (result != null) {
 //        feed.removeItem(pos);
-        Log.e("POS" , pos + "");
-        feed.addItem(result,0);
+        Log.e("POS", pos + "");
+        feed.addItem(result, 0);
 //        adapter.notifyItemRangeChanged(pos,feed.getItemCount());
         description = result.getComment();
         amount = result.getAmount();
@@ -362,7 +365,7 @@ public class ChatPageActivity extends BaseActivity {
           Log.e("1111111111", "onPostExecute: ");
           feed = result;
           Log.i("PAY", result.toString());
-          reversePosition = feed.getItemCount()-1;
+          reversePosition = feed.getItemCount() - 1;
           adapter = new ChatPageAdapter();
           recyclerView.setAdapter(adapter);
           adapter.notifyDataSetChanged();
@@ -690,8 +693,8 @@ public class ChatPageActivity extends BaseActivity {
       finish();
     } else
       finish();
-
   }
+
 
   private String getDividedToman(Long price) {
     if (price == 0) {
@@ -715,4 +718,5 @@ public class ChatPageActivity extends BaseActivity {
     }
     return stringBuilder.toString();
   }
+
 }
