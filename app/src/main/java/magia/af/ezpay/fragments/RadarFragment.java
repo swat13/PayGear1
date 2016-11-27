@@ -176,8 +176,8 @@ Log.e("Amir",rssFeed.getItem(i).getContactImg());
 //      params[i].bottomMargin = random.nextInt(display.getHeight()/4);
       Log.e("topMargin", "generateImageViews: " + newParam.topMargin);
       newView.setLayoutParams(newParam);
-      newView.getLayoutParams().width = 250;
-      newView.getLayoutParams().height = 250;
+      newView.getLayoutParams().width = 100;
+      newView.getLayoutParams().height = 100;
       Log.e("image", "generateImageViews: " + imageUrl + rssFeed.getItem(i).getContactImg());
 
       Glide.with(this).load(imageUrl + rssFeed.getItem(i).getContactImg()).into(newView);

@@ -18,6 +18,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
@@ -94,10 +95,16 @@ public class ChooseFriendsActivity extends BaseActivity {
             e.printStackTrace();
           }
         }
-        Intent intent = new Intent(ChooseFriendsActivity.this , CreateGroupActivity.class);
-        intent.putExtra("contact", rssFeed);
-        intent.putExtra("json", jsonArray.toString());
-        startActivity(intent);
+        if (jsonArray.length() > 0) {
+          Intent intent = new Intent(ChooseFriendsActivity.this, CreateGroupActivity.class);
+          intent.putExtra("contact", rssFeed);
+          intent.putExtra("json", jsonArray.toString());
+          startActivity(intent);
+          finish();
+        }
+        else {
+          Toast.makeText(ChooseFriendsActivity.this, "حداقل یک نفر را انتخاب کنید", Toast.LENGTH_SHORT).show();
+        }
       }
     });
   }

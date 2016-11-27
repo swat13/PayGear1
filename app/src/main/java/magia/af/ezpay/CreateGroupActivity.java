@@ -16,7 +16,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -40,7 +39,6 @@ import org.json.JSONException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -71,6 +69,7 @@ public class CreateGroupActivity extends BaseActivity {
   Bitmap thumbnail;
   int flag;
   Intent mData;
+  RSSFeed feed;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -262,6 +261,14 @@ public class CreateGroupActivity extends BaseActivity {
     }
   }
 
+  @Override
+  public void onBackPressed() {
+    super.onBackPressed();
+    Intent intent = new Intent(this , ChooseFriendsActivity.class);
+    startActivity(intent);
+    finish();
+  }
+
   public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
     @Override
@@ -329,8 +336,11 @@ public class CreateGroupActivity extends BaseActivity {
     @Override
     protected void onPostExecute(RSSFeed result) {
       if (result != null) {
-        Log.e(TAG, "onPostExecute: " + result.getItemCount());
-        Log.e(TAG, "onPostExecute: " + result.getItem(0).getGroupId());
+        CreateGroupActivity.this.feed = result;
+        Log.e(TAG, "onPostExecute: " + feed.getItemCount());
+        Log.e(TAG, "onPostExecute: " + feed.getItem(0).getGroupId());
+        Log.e(TAG, "onPostExecute: " + feed.getItem(0).getGroupTitle());
+        Log.e(TAG, "onPostExecute: " + feed.getItem(0).getGroupPhoto());
         if (flag == 0) {
           new AsyncInsertUserImage(onCaptureImageResult(mData), result.getItem(0).getGroupId()).execute();
         } else if (flag == 1) {
@@ -416,8 +426,11 @@ public class CreateGroupActivity extends BaseActivity {
           });
 
         getSharedPreferences("EZpay", 0).edit().putString("Ipath", result).apply();
-//
-        startActivity(new Intent(CreateGroupActivity.this, GroupChatPageActivity.class));
+        Intent intent = new Intent(CreateGroupActivity.this , GroupChatPageActivity.class);
+        intent.putExtra("title", feed.getItem(0).getGroupTitle());
+        intent.putExtra("photo", "http://new.opaybot.ir" + feed.getItem(0).getGroupPhoto());
+        intent.putExtra("id", feed.getItem(0).getGroupId());
+        startActivity(intent);
         finish();
       } else {
         Toast.makeText(CreateGroupActivity.this, "Error In Connection", Toast.LENGTH_SHORT).show();
