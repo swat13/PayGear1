@@ -1,9 +1,12 @@
 package magia.af.ezpay.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -16,20 +19,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.signature.StringSignature;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import magia.af.ezpay.ChatPageActivity;
 import magia.af.ezpay.ChooseFriendsActivity;
 import magia.af.ezpay.GroupChatPageActivity;
 import magia.af.ezpay.MainActivity;
+import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.Parser.RSSItem;
 import magia.af.ezpay.R;
+import magia.af.ezpay.Splash;
 import magia.af.ezpay.helper.ContactDatabase;
+import magia.af.ezpay.helper.GetContact;
 import magia.af.ezpay.interfaces.OnClickHandler;
 
 /**
@@ -44,6 +55,8 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
   public String comment;
   public int amount;
   public int position;
+  ContactDatabase database;
+  JSONArray jsonArray;
 
   public static FriendsListFragment getInstance(RSSFeed rssFeed) {
     _feed = rssFeed;
@@ -252,7 +265,120 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
     return stringBuilder.toString();
   }
 
-  public static void UpdateUi() {
+  @Override
+  public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    new ComparingContactWithDatabase().execute();
+    if (adapter != null) {
+      adapter.notifyDataSetChanged();
+    }
+    super.onViewCreated(view, savedInstanceState);
+  }
+
+  @Override
+  public void onAttach(Context context) {
+    new ComparingContactWithDatabase().execute();
+    if (adapter != null) {
+      adapter.notifyDataSetChanged();
+    }
+    super.onAttach(context);
+  }
+
+  @Override
+  public void onCreate(@Nullable Bundle savedInstanceState) {
+    new ComparingContactWithDatabase().execute();
+    if (adapter != null) {
+      adapter.notifyDataSetChanged();
+    }
+    super.onCreate(savedInstanceState);
+  }
+
+  @Override
+  public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    new ComparingContactWithDatabase().execute();
+    if (adapter != null) {
+      adapter.notifyDataSetChanged();
+    }
+    super.onActivityCreated(savedInstanceState);
+  }
+
+  @Override
+  public void onResume() {
+    new ComparingContactWithDatabase().execute();
+    adapter.notifyDataSetChanged();
+    super.onResume();
+  }
+
+
+  public String newContact(JSONArray jsonArray) {
+    return jsonArray.toString();
+  }
+
+  public class ComparingContactWithDatabase extends AsyncTask<Void, Void, JSONArray> {
+
+    @Override
+    protected JSONArray doInBackground(Void... params) {
+      database = new ContactDatabase(getActivity());
+      GetContact getContact = new GetContact();
+
+      RSSFeed databaseContact = database.getAllData();
+      RSSFeed phoneContact = getContact.getNewContact(getActivity());
+      for (int i = 0; i < phoneContact.getItemCount(); i++) {
+        Log.e("(((", "doInBackground i: " + i);
+        for (int j = 0; j < databaseContact.getItemCount(); j++) {
+          Log.e("(((", "doInBackground j: " + j);
+          if (phoneContact.getItem(i).getTelNo().equals(databaseContact.getItem(j).getTelNo())
+            && phoneContact.getItem(i).getContactName().equals(databaseContact.getItem(j).getContactName())) {
+            phoneContact.removeItem(i);
+          }
+        }
+      }
+      jsonArray = new JSONArray();
+      for (int i = 0; i < phoneContact.getItemCount(); i++) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+          jsonObject.put("m", phoneContact.getItem(i).getTelNo());
+          jsonObject.put("t", phoneContact.getItem(i).getContactName());
+          jsonArray.put(i, jsonObject);
+        } catch (JSONException e) {
+          e.printStackTrace();
+        }
+        database.createData(phoneContact.getItem(i).getTelNo(), phoneContact.getItem(i).getContactName());
+      }
+      return jsonArray;
+    }
+
+    @Override
+    protected void onPostExecute(JSONArray jsonArray) {
+      if (jsonArray != null) {
+        new fillContact().execute(newContact(jsonArray));
+      }
+      super.onPostExecute(jsonArray);
+    }
+  }
+
+  private class fillContact extends AsyncTask<String, Void, RSSFeed> {
+
+    @Override
+    protected void onPreExecute() {
+      super.onPreExecute();
+    }
+
+    @Override
+    protected RSSFeed doInBackground(String... params) {
+      DOMParser domParser = new DOMParser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
+      return domParser.checkContactListWithGroup(params[0]);
+    }
+
+    @Override
+    protected void onPostExecute(RSSFeed result) {
+      if (result != null) {
+        _feed = result;
+        adapter.notifyDataSetChanged();
+      } else {
+        Toast.makeText(getActivity(), "problem in connection!", Toast.LENGTH_SHORT).show();
+      }
+      super.onPostExecute(result);
+    }
 
   }
 }

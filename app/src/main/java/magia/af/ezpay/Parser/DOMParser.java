@@ -1609,9 +1609,9 @@ public class DOMParser {
       RSSItem rssItem = new RSSItem();
       rssItem.setGroupId(object.getInt("id"));
 //      Log.e("Id", "group: " + rssItem.getGroupId());
-//      rssItem.setGroupTitle(object.getString("title"));
+      rssItem.setGroupTitle(object.getString("title"));
 //      Log.e("title", "group: " + rssItem.getGroupTitle());
-//      rssItem.setGroupPhoto(object.getString("photo"));
+      rssItem.setGroupPhoto(object.getString("photo"));
 //      Log.e("Photo", "group: " + rssItem.getGroupPhoto());
 //      if (!object.isNull("members")) {
 //        JSONArray jsonArray = jsonObject.getJSONArray("members");

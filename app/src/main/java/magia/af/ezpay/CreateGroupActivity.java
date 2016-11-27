@@ -80,7 +80,7 @@ public class CreateGroupActivity extends BaseActivity {
     if (bundle != null) {
       json = bundle.getString("json");
     }
-    Log.e(TAG, "onCreate: "+json);
+    Log.e(TAG, "onCreate: " + json);
     database = new ContactDatabase(this);
     databaseRssFeed = database.getInNetworkUserName();
     groupMember = new RSSFeed();
@@ -264,7 +264,7 @@ public class CreateGroupActivity extends BaseActivity {
   @Override
   public void onBackPressed() {
     super.onBackPressed();
-    Intent intent = new Intent(this , ChooseFriendsActivity.class);
+    Intent intent = new Intent(this, ChooseFriendsActivity.class);
     startActivity(intent);
     finish();
   }
@@ -342,9 +342,29 @@ public class CreateGroupActivity extends BaseActivity {
         Log.e(TAG, "onPostExecute: " + feed.getItem(0).getGroupTitle());
         Log.e(TAG, "onPostExecute: " + feed.getItem(0).getGroupPhoto());
         if (flag == 0) {
-          new AsyncInsertUserImage(onCaptureImageResult(mData), result.getItem(0).getGroupId()).execute();
+          if (mData != null) {
+            new AsyncInsertUserImage(onCaptureImageResult(mData), result.getItem(0).getGroupId()).execute();
+          }
+          else {
+            Intent intent = new Intent(CreateGroupActivity.this, GroupChatPageActivity.class);
+            intent.putExtra("title", feed.getItem(0).getGroupTitle());
+            intent.putExtra("photo", "http://new.opaybot.ir" + feed.getItem(0).getGroupPhoto().replace("\"", ""));
+            intent.putExtra("id", feed.getItem(0).getGroupId());
+            startActivity(intent);
+            finish();
+          }
         } else if (flag == 1) {
-          new AsyncInsertUserImage(onSelectFromGalleryResult(mData), result.getItem(0).getGroupId()).execute();
+          if (mData != null) {
+            new AsyncInsertUserImage(onSelectFromGalleryResult(mData), result.getItem(0).getGroupId()).execute();
+          }
+          else {
+            Intent intent = new Intent(CreateGroupActivity.this, GroupChatPageActivity.class);
+            intent.putExtra("title", feed.getItem(0).getGroupTitle());
+            intent.putExtra("photo", "http://new.opaybot.ir" + feed.getItem(0).getGroupPhoto().replace("\"", ""));
+            intent.putExtra("id", feed.getItem(0).getGroupId());
+            startActivity(intent);
+            finish();
+          }
         }
       } else
         Toast.makeText(CreateGroupActivity.this, "problem in connection!", Toast.LENGTH_SHORT).show();
@@ -426,9 +446,9 @@ public class CreateGroupActivity extends BaseActivity {
           });
 
         getSharedPreferences("EZpay", 0).edit().putString("Ipath", result).apply();
-        Intent intent = new Intent(CreateGroupActivity.this , GroupChatPageActivity.class);
+        Intent intent = new Intent(CreateGroupActivity.this, GroupChatPageActivity.class);
         intent.putExtra("title", feed.getItem(0).getGroupTitle());
-        intent.putExtra("photo", "http://new.opaybot.ir" + feed.getItem(0).getGroupPhoto());
+        intent.putExtra("photo", "http://new.opaybot.ir" + result.replace("\"", ""));
         intent.putExtra("id", feed.getItem(0).getGroupId());
         startActivity(intent);
         finish();
