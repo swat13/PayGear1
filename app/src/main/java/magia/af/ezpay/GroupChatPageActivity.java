@@ -15,6 +15,10 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
+import java.util.ArrayList;
+
+import magia.af.ezpay.Parser.RSSItem;
+
 public class GroupChatPageActivity extends BaseActivity {
 
   private int groupId;
@@ -24,22 +28,27 @@ public class GroupChatPageActivity extends BaseActivity {
   private ImageView groupImage;
   private TextView txtGroupTitle;
 
+  private ArrayList<RSSItem> members;
+
   private static final String TAG = GroupChatPageActivity.class.getSimpleName();
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_group_chat_page);
 
     Bundle bundle = getIntent().getExtras();
-    if (bundle != null){
+    if (bundle != null) {
       groupId = bundle.getInt("id");
       groupPhoto = bundle.getString("photo");
       groupTitle = bundle.getString("title");
     }
 
-    groupImage = (ImageView)findViewById(R.id.groupImage);
+    members = (ArrayList<RSSItem>) getIntent().getSerializableExtra("members");
+
+    groupImage = (ImageView) findViewById(R.id.groupImage);
     setGroupPhoto();
-    txtGroupTitle = (TextView)findViewById(R.id.groupTitle);
+    txtGroupTitle = (TextView) findViewById(R.id.groupTitle);
     txtGroupTitle.setText(groupTitle);
 
     ImageButton btnBack = (ImageButton) findViewById(R.id.btn_back);
@@ -51,7 +60,7 @@ public class GroupChatPageActivity extends BaseActivity {
     });
   }
 
-  public void setGroupPhoto(){
+  public void setGroupPhoto() {
     Glide.with(this)
       .load(groupPhoto)
       .asBitmap()

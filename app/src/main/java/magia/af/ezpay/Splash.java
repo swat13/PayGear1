@@ -70,9 +70,9 @@ public class Splash extends BaseActivity {
       RSSFeed databaseContact = database.getAllData();
       RSSFeed phoneContact = getContact.getNewContact(Splash.this);
       for (int i = 0; i < phoneContact.getItemCount(); i++) {
-        Log.e("(((", "doInBackground i: " + i);
+//        Log.e("(((", "doInBackground i: " + i);
         for (int j = 0; j < databaseContact.getItemCount(); j++) {
-          Log.e("(((", "doInBackground j: " + j);
+//          Log.e("(((", "doInBackground j: " + j);
           if (phoneContact.getItem(i).getTelNo().equals(databaseContact.getItem(j).getTelNo())
             && phoneContact.getItem(i).getContactName().equals(databaseContact.getItem(j).getContactName())) {
             phoneContact.removeItem(i);
@@ -80,7 +80,8 @@ public class Splash extends BaseActivity {
         }
       }
       jsonArray = new JSONArray();
-      for (int i = 0; i < phoneContact.getItemCount(); i++) {
+      for (int i = 0; i < phoneContact.getItemCount()
+        ; i++) {
         JSONObject jsonObject = new JSONObject();
         try {
           jsonObject.put("m", phoneContact.getItem(i).getTelNo());

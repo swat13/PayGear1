@@ -1,6 +1,7 @@
 package magia.af.ezpay.Parser;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -8,10 +9,10 @@ public class RSSFeed implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private int _itemcount = 0;
-	private List<RSSItem> _itemlist;
+	private ArrayList<RSSItem> _itemlist;
 
 	public RSSFeed() {
-		_itemlist = new Vector<RSSItem>(0);
+		_itemlist = new ArrayList<>(0);
 	}
 
 	public void addItem(RSSItem item) {
@@ -22,6 +23,10 @@ public class RSSFeed implements Serializable {
 	public void addAll(RSSFeed item) {
 
 		_itemlist.addAll(item._itemlist);
+	}
+
+	public void addAll(int index, RSSFeed feed){
+		_itemlist.addAll(index , feed._itemlist);
 	}
 	public void removeItem(int position) {
 		_itemlist.remove(position);

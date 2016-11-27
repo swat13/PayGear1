@@ -4,6 +4,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class RSSItem implements Serializable {
 
@@ -51,6 +52,33 @@ public class RSSItem implements Serializable {
     private int contactCount;
     private int groupCount;
     private boolean groupStatus;
+    private ArrayList<RSSItem> groupMembers;
+    private ArrayList<RSSItem> contactMembers;
+    private ArrayList<RSSItem> groupArray;
+
+    public ArrayList<RSSItem> getGroupArray() {
+        return groupArray;
+    }
+
+    public void setGroupArray(ArrayList<RSSItem> groupArray) {
+        this.groupArray = groupArray;
+    }
+
+    public ArrayList<RSSItem> getContactMembers() {
+        return contactMembers;
+    }
+
+    public void setContactMembers(ArrayList<RSSItem> contactMembers) {
+        this.contactMembers = contactMembers;
+    }
+
+    public ArrayList<RSSItem> getGroupMembers() {
+        return groupMembers;
+    }
+
+    public void setGroupMembers(ArrayList<RSSItem> groupMembers) {
+        this.groupMembers = groupMembers;
+    }
 
     public boolean isGroupStatus() {
         return groupStatus;

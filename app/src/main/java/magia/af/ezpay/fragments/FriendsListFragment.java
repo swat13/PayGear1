@@ -30,6 +30,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 import magia.af.ezpay.ChatPageActivity;
 import magia.af.ezpay.ChooseFriendsActivity;
 import magia.af.ezpay.GroupChatPageActivity;
@@ -50,6 +52,8 @@ import magia.af.ezpay.interfaces.OnClickHandler;
 public class FriendsListFragment extends Fragment implements OnClickHandler {
 
   static RSSFeed _feed;
+  ArrayList<RSSItem> contacts;
+  ArrayList<RSSItem> groups;
   RecyclerView recBills;
   FriendsListFragment.ListAdapter adapter;
   public String comment;
@@ -74,6 +78,24 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
     ((MainActivity) getActivity()).fragment_status = 2;
     recBills = (RecyclerView) v.findViewById(R.id.contact_recycler);
     _feed = (RSSFeed) getActivity().getIntent().getSerializableExtra("contact");
+    Log.e("Size", "onCreateView: " + _feed.getItemCount());
+    for (int i = 0; i < _feed.getItemCount(); i++) {
+      contacts = _feed.getItem(i).getContactMembers();
+      groups = _feed.getItem(i).getGroupArray();
+    }
+
+
+//    for (int i = 0; i < _feed.getItemCount(); i++) {
+//      Log.e("Size", "onCreateView: " + _feed.getItem(i).getContactMembers().toString());
+//    }
+//    contacts = _feed.getItem(_feed.getItemCount()-1).getContactMembers();
+//    groups = _feed.getItem(37).getGroupArray();
+    for (int i = 0; i < contacts.size(); i++) {
+      Log.e("Size", "onCreateView: " + contacts.get(i).getTitle());
+    }
+//    for (int i = 0; i < groups.size(); i++) {
+//      Log.e("Size2", "onCreateView: " + groups.get(i).getGroupTitle());
+//    }
     CardView inviteFriends = (CardView) v.findViewById(R.id.invite_friends);
     inviteFriends.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -114,6 +136,7 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
       goToChatPageActivity.putExtra("title", rssFeed.getGroupTitle());
       goToChatPageActivity.putExtra("photo", "http://new.opaybot.ir" + rssFeed.getGroupPhoto());
       goToChatPageActivity.putExtra("id", rssFeed.getGroupId());
+      goToChatPageActivity.putExtra("members", rssFeed.getGroupMembers());
       startActivityForResult(goToChatPageActivity, 10);
     } else {
       Intent goToChatPageActivity = new Intent(getActivity(), ChatPageActivity.class);
@@ -323,9 +346,9 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
       RSSFeed databaseContact = database.getAllData();
       RSSFeed phoneContact = getContact.getNewContact(getActivity());
       for (int i = 0; i < phoneContact.getItemCount(); i++) {
-        Log.e("(((", "doInBackground i: " + i);
+//        Log.e("(((", "doInBackground i: " + i);
         for (int j = 0; j < databaseContact.getItemCount(); j++) {
-          Log.e("(((", "doInBackground j: " + j);
+//          Log.e("(((", "doInBackground j: " + j);
           if (phoneContact.getItem(i).getTelNo().equals(databaseContact.getItem(j).getTelNo())
             && phoneContact.getItem(i).getContactName().equals(databaseContact.getItem(j).getContactName())) {
             phoneContact.removeItem(i);

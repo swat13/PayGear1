@@ -20,30 +20,74 @@
 
     </RelativeLayout>
 
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/edge"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:gravity="center"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/wait_layout"
         android:layout_toEndOf="@+id/wait_layout">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_gravity="center"
-            android:layout_marginBottom="35dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@drawable/activation_bg_light_yellow"
-            android:clickable="true"
-            android:gravity="center">
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <RelativeLayout
-                android:id="@+id/actionBar"
+                android:background="#ffffff"
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:background="#c08b85">
+                android:layout_height="250dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="35dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:clickable="true"
+                android:gravity="center">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/edit_text_placeholder"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="30dp">
+
+
+                    <EditText
+                        android:id="@+id/edt_username"
+                        android:layout_margin="5dp"
+                        android:hint="نام"
+                        android:gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp"
+                    android:layout_below="@+id/edit_text_placeholder">
+
+                    <Button
+                        android:textColor="#FFFFFF"
+                        android:text="دریافت و پرداخت"
+                        android:background="@drawable/btn_request_pay_background"
+                        android:layout_weight="0.5"
+                        android:id="@+id/btn_pay"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
+
+                </LinearLayout>
 
             </RelativeLayout>
 
@@ -51,55 +95,11 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:id="@+id/user_avatar"
+                android:layout_gravity="top|center"
+                android:foregroundGravity="top|center"
                 android:src="@drawable/pic_profile"
-                android:layout_below="@+id/actionBar"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="-40dp"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/edit_text_placeholder"
-                android:orientation="horizontal"
-                android:layout_marginTop="30dp"
-                android:layout_below="@+id/user_avatar">
-
-
-                <EditText
-                    android:id="@+id/edt_username"
-                    android:layout_margin="5dp"
-                    android:hint="نام"
-                    android:gravity="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="10dp"
-                android:layout_below="@+id/edit_text_placeholder">
-
-                <Button
-                    android:textColor="#FFFFFF"
-                    android:text="دریافت و پرداخت"
-                    android:background="@drawable/btn_request_pay_background"
-                    android:layout_weight="0.5"
-                    android:id="@+id/btn_pay"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
-
-
-            </LinearLayout>
-
-        </RelativeLayout>
-
-    </LinearLayout>
+                android:layout_marginTop="-320dp"/>
+        </LinearLayout>
+    </FrameLayout>
 
 </RelativeLayout>

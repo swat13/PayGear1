@@ -350,6 +350,7 @@ public class CreateGroupActivity extends BaseActivity {
             intent.putExtra("title", feed.getItem(0).getGroupTitle());
             intent.putExtra("photo", "http://new.opaybot.ir" + feed.getItem(0).getGroupPhoto().replace("\"", ""));
             intent.putExtra("id", feed.getItem(0).getGroupId());
+            intent.putExtra("members", feed.getItem(0).getGroupMembers());
             startActivity(intent);
             finish();
           }
@@ -362,6 +363,7 @@ public class CreateGroupActivity extends BaseActivity {
             intent.putExtra("title", feed.getItem(0).getGroupTitle());
             intent.putExtra("photo", "http://new.opaybot.ir" + feed.getItem(0).getGroupPhoto().replace("\"", ""));
             intent.putExtra("id", feed.getItem(0).getGroupId());
+            intent.putExtra("members", feed.getItem(0).getGroupMembers());
             startActivity(intent);
             finish();
           }
@@ -450,6 +452,7 @@ public class CreateGroupActivity extends BaseActivity {
         intent.putExtra("title", feed.getItem(0).getGroupTitle());
         intent.putExtra("photo", "http://new.opaybot.ir" + result.replace("\"", ""));
         intent.putExtra("id", feed.getItem(0).getGroupId());
+        intent.putExtra("members", feed.getItem(0).getGroupMembers());
         startActivity(intent);
         finish();
       } else {

@@ -176,7 +176,7 @@ public class GetContact {
         ContentResolver cr = context.getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
                 null, null, null, null);
-        Log.e("GettingContacts","Count: "+cur.getCount());
+//        Log.e("GettingContacts","Count: "+cur.getCount());
 
         if (cur.getCount() > 0) {
             int count = 0;
@@ -194,7 +194,7 @@ public class GetContact {
                             null,
                             ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
                             new String[]{id}, null);
-                    Log.e("GettingContacts", "CCC:" +pCur.getCount());
+//                    Log.e("GettingContacts", "CCC:" +pCur.getCount());
                     while (pCur.moveToNext()) {
                         String phoneNo = pCur.getString(pCur.getColumnIndex(
                                 ContactsContract.CommonDataKinds.Phone.NUMBER));
@@ -204,7 +204,7 @@ public class GetContact {
                         if (phoneNo.contains("+989")) {
                             phoneNo = phoneNo.replace("+98", "0");
                         }
-                        Log.e("GettingContacts",phoneNo);
+//                        Log.e("GettingContacts",phoneNo);
                         RSSItem rssItem = new RSSItem();
                         rssItem.setTelNo(phoneNo);
                         rssItem.setContactName(name);

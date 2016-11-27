@@ -1,7 +1,6 @@
 package magia.af.ezpay;
 
 import android.app.FragmentTransaction;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -33,7 +32,6 @@ import magia.af.ezpay.fragments.GetCardFragment;
 import magia.af.ezpay.fragments.PaymentFragment;
 import magia.af.ezpay.fragments.RequestPaymentFragment;
 import magia.af.ezpay.helper.CalendarConversion;
-import magia.af.ezpay.helper.GetContact;
 
 /*dd*/
 public class ChatPageActivity extends BaseActivity {
@@ -241,7 +239,7 @@ public class ChatPageActivity extends BaseActivity {
       Log.e("PARAMS1", "doInBackground: " + params[0]);
       Log.e("PARAMS2", "doInBackground: " + params[1]);
       Log.e("PARAMS3", "doInBackground: " + params[2]);
-      return domParser.RequestFromAnother(params[0], params[1], params[2]);
+      return domParser.RequestFromAnother(params[0], params[1], params[2],-1);
     }
 
     @Override
