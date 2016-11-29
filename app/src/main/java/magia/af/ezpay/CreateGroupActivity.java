@@ -52,7 +52,7 @@ import magia.af.ezpay.helper.GetContact;
 
 public class CreateGroupActivity extends BaseActivity {
 
-  RSSFeed rssFeed;
+  ArrayList<RSSItem> rssFeed;
   RSSFeed databaseRssFeed;
   EditText groupTitle;
   RecyclerView recyclerView;
@@ -75,14 +75,14 @@ public class CreateGroupActivity extends BaseActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_create_group);
-    rssFeed = (RSSFeed) getIntent().getSerializableExtra("contact");
+    rssFeed = (ArrayList<RSSItem>) getIntent().getSerializableExtra("contact");
     Bundle bundle = getIntent().getExtras();
     if (bundle != null) {
       json = bundle.getString("json");
     }
     Log.e(TAG, "onCreate: " + json);
-    database = new ContactDatabase(this);
-    databaseRssFeed = database.getInNetworkUserName();
+//    database = new ContactDatabase(this);
+//    databaseRssFeed = database.getInNetworkUserName();
     groupMember = new RSSFeed();
 
     try {
@@ -90,12 +90,12 @@ public class CreateGroupActivity extends BaseActivity {
       Log.e(TAG, "onCreate: " + jsonArray.toString());
       for (int i = 0; i < jsonArray.length(); i++) {
         RSSItem rssItem = new RSSItem();
-        for (int j = 0; j < databaseRssFeed.getItemCount(); j++) {
-          if (jsonArray.getString(i).equals(databaseRssFeed.getItem(j).getTelNo())) {
-            Log.e(TAG, "onCreate: " + imageUrl + databaseRssFeed.getItem(j).getContactImg());
-            rssItem.setContactName(databaseRssFeed.getItem(j).getContactName());
-            rssItem.setTelNo(databaseRssFeed.getItem(j).getTelNo());
-            rssItem.setContactImg(databaseRssFeed.getItem(j).getContactImg());
+        for (int j = 0; j < rssFeed.size(); j++) {
+          if (jsonArray.getString(i).equals(rssFeed.get(j).getTelNo())) {
+            Log.e(TAG, "onCreate: " + imageUrl + rssFeed.get(j).getContactImg());
+            rssItem.setContactName(rssFeed.get(j).getContactName());
+            rssItem.setTelNo(rssFeed.get(j).getTelNo());
+            rssItem.setContactImg(rssFeed.get(j).getContactImg());
           }
         }
         groupMember.addItem(rssItem);

@@ -76,7 +76,7 @@ public class ChatPageActivity extends BaseActivity {
 //      date = bundle.getString("date");
 //      Log.e("bundle date", date);
       position = bundle.getInt("pos");
-      Log.i("#%^&@%^&@", phone);
+      Log.i("Current Phone", phone);
       contactName = bundle.getString("contactName");
       Log.e("ContactName", "contactName" + contactName);
       imageUrl = imageUrl + bundle.getString("image");
@@ -118,6 +118,7 @@ public class ChatPageActivity extends BaseActivity {
     manager.setReverseLayout(true);
     manager.setStackFromEnd(false);
     recyclerView.setLayoutManager(manager);
+
 
         /*if (new LocalPersistence().readObjectFromFile(ChatPageActivity.this, "Payment_Chat_List") != null) {
             feed = (PayLogFeed) new LocalPersistence().readObjectFromFile(ChatPageActivity.this, "Payment_Chat_List");
@@ -239,7 +240,7 @@ public class ChatPageActivity extends BaseActivity {
       Log.e("PARAMS1", "doInBackground: " + params[0]);
       Log.e("PARAMS2", "doInBackground: " + params[1]);
       Log.e("PARAMS3", "doInBackground: " + params[2]);
-      return domParser.RequestFromAnother(params[0], params[1], params[2],-1);
+      return domParser.RequestFromAnother(params[0], params[1], params[2]);
     }
 
     @Override

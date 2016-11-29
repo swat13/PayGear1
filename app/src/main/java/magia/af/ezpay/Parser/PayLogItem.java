@@ -10,13 +10,132 @@ public class PayLogItem implements Serializable {
     private int id;
     private String From;
     private String To;
+    private String photo;
+    private String mobile;
+    private String memberId;
+    private String memberTitle;
     private int Amount;
     private String Date;
     private String comment;
     private boolean paideBool;
+    private boolean group;
     private boolean deleted;
     private boolean accepted;
     private boolean status;
+    private String fPhoto;
+    private String fTitle;
+    private String fMobile;
+    private String fId;
+    private String tPhoto;
+    private String tTitle;
+    private String tMobile;
+    private String tId;
+
+
+    public String getfId() {
+        return fId;
+    }
+
+    public void setfId(String fId) {
+        this.fId = fId;
+    }
+
+    public String gettId() {
+        return tId;
+    }
+
+    public void settId(String tId) {
+        this.tId = tId;
+    }
+
+    public String getfPhoto() {
+        return fPhoto;
+    }
+
+    public void setfPhoto(String fPhoto) {
+        this.fPhoto = fPhoto;
+    }
+
+    public String getfTitle() {
+        return fTitle;
+    }
+
+    public void setfTitle(String fTitle) {
+        this.fTitle = fTitle;
+    }
+
+    public String getfMobile() {
+        return fMobile;
+    }
+
+    public void setfMobile(String fMobile) {
+        this.fMobile = fMobile;
+    }
+
+    public String gettPhoto() {
+        return tPhoto;
+    }
+
+    public void settPhoto(String tPhoto) {
+        this.tPhoto = tPhoto;
+    }
+
+    public String gettTitle() {
+        return tTitle;
+    }
+
+    public void settTitle(String tTitle) {
+        this.tTitle = tTitle;
+    }
+
+    public String gettMobile() {
+        return tMobile;
+    }
+
+    public void settMobile(String tMobile) {
+        this.tMobile = tMobile;
+    }
+
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    public String getMemberId() {
+        return memberId;
+    }
+
+    public void setMemberId(String memberId) {
+        this.memberId = memberId;
+    }
+
+    public String getMemberTitle() {
+        return memberTitle;
+    }
+
+    public void setMemberTitle(String memberTitle) {
+        this.memberTitle = memberTitle;
+    }
+
+    public boolean isGroup() {
+        return group;
+    }
+
+    public void setGroup(boolean group) {
+        this.group = group;
+    }
 
     public boolean isStatus() {
         return status;

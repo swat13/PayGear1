@@ -101,7 +101,7 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
       @Override
       public void onClick(View v) {
         Intent intent = new Intent(getActivity(), ChooseFriendsActivity.class);
-        intent.putExtra("contact", _feed);
+        intent.putExtra("contact", contacts);
         getActivity().startActivity(intent);
       }
     });
@@ -288,48 +288,48 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
     return stringBuilder.toString();
   }
 
-  @Override
-  public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-    new ComparingContactWithDatabase().execute();
-    if (adapter != null) {
-      adapter.notifyDataSetChanged();
-    }
-    super.onViewCreated(view, savedInstanceState);
-  }
+//  @Override
+//  public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+//    new ComparingContactWithDatabase().execute();
+//    if (adapter != null) {
+//      adapter.notifyDataSetChanged();
+//    }
+//    super.onViewCreated(view, savedInstanceState);
+//  }
 
-  @Override
-  public void onAttach(Context context) {
-    new ComparingContactWithDatabase().execute();
-    if (adapter != null) {
-      adapter.notifyDataSetChanged();
-    }
-    super.onAttach(context);
-  }
+//  @Override
+//  public void onAttach(Context context) {
+//    new ComparingContactWithDatabase().execute();
+//    if (adapter != null) {
+//      adapter.notifyDataSetChanged();
+//    }
+//    super.onAttach(context);
+//  }
 
-  @Override
-  public void onCreate(@Nullable Bundle savedInstanceState) {
-    new ComparingContactWithDatabase().execute();
-    if (adapter != null) {
-      adapter.notifyDataSetChanged();
-    }
-    super.onCreate(savedInstanceState);
-  }
+//  @Override
+//  public void onCreate(@Nullable Bundle savedInstanceState) {
+//    new ComparingContactWithDatabase().execute();
+//    if (adapter != null) {
+//      adapter.notifyDataSetChanged();
+//    }
+//    super.onCreate(savedInstanceState);
+//  }
 
-  @Override
-  public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-    new ComparingContactWithDatabase().execute();
-    if (adapter != null) {
-      adapter.notifyDataSetChanged();
-    }
-    super.onActivityCreated(savedInstanceState);
-  }
+//  @Override
+//  public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+//    new ComparingContactWithDatabase().execute();
+//    if (adapter != null) {
+//      adapter.notifyDataSetChanged();
+//    }
+//    super.onActivityCreated(savedInstanceState);
+//  }
 
-  @Override
-  public void onResume() {
-    new ComparingContactWithDatabase().execute();
-    adapter.notifyDataSetChanged();
-    super.onResume();
-  }
+//  @Override
+//  public void onResume() {
+//    new ComparingContactWithDatabase().execute();
+//    adapter.notifyDataSetChanged();
+//    super.onResume();
+//  }
 
 
   public String newContact(JSONArray jsonArray) {

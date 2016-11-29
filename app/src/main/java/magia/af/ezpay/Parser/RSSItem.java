@@ -55,6 +55,33 @@ public class RSSItem implements Serializable {
     private ArrayList<RSSItem> groupMembers;
     private ArrayList<RSSItem> contactMembers;
     private ArrayList<RSSItem> groupArray;
+    private boolean singleSelect;
+    private boolean visible;
+    private int visiblePosition;
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+
+    public int getVisiblePosition() {
+        return visiblePosition;
+    }
+
+    public void setVisiblePosition(int visiblePosition) {
+        this.visiblePosition = visiblePosition;
+    }
+
+    public boolean isSingleSelect() {
+        return singleSelect;
+    }
+
+    public void setSingleSelect(boolean singleSelect) {
+        this.singleSelect = singleSelect;
+    }
 
     public ArrayList<RSSItem> getGroupArray() {
         return groupArray;

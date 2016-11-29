@@ -33,7 +33,8 @@ import magia.af.ezpay.Parser.RSSItem;
 import magia.af.ezpay.helper.ContactDatabase;
 
 public class ChooseFriendsActivity extends BaseActivity {
-  RSSFeed rssFeed;
+  ArrayList<RSSItem> rssFeed2 = new ArrayList<>();
+  ArrayList<RSSItem> rssFeed = new ArrayList<>();
   EditText groupTitle;
   RecyclerView recyclerView;
   ImageView imageView;
@@ -45,8 +46,13 @@ public class ChooseFriendsActivity extends BaseActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_choose_friends);
-    database = new ContactDatabase(this);
-    rssFeed = database.getInNetworkUserName();
+//    database = new ContactDatabase(this);
+    rssFeed2 = (ArrayList<RSSItem>) getIntent().getSerializableExtra("contact");
+    for (int i = 0; i < rssFeed.size(); i++) {
+      Log.e("Size cccc", "onCreateView: " + rssFeed.get(i).getTitle());
+    }
+    ;
+    rssFeed = rssFeed2;
     groupTitle = (EditText) findViewById(R.id.edt_group_title);
     recyclerView = (RecyclerView) findViewById(R.id.contact_recycler);
     LinearLayoutManager manager = new LinearLayoutManager(this);
@@ -65,10 +71,11 @@ public class ChooseFriendsActivity extends BaseActivity {
       public void onTextChanged(CharSequence s, int start, int before, int count) {
         Log.e("RRRRR", "afterTextChanged: " + s.toString());
         if (groupTitle.getText().toString().length() == 0 || groupTitle.getText().toString().isEmpty()) {
-          rssFeed = database.getInNetworkUserName();
+          rssFeed = rssFeed2;
           adapter.notifyDataSetChanged();
         } else {
 //          rssFeed = database.search(s.toString());
+//          rssFeed = (ArrayList<RSSItem>) getIntent().getSerializableExtra("contact");
           adapter.getFilter().filter(s);
           adapter.notifyDataSetChanged();
 
@@ -101,8 +108,7 @@ public class ChooseFriendsActivity extends BaseActivity {
           intent.putExtra("json", jsonArray.toString());
           startActivity(intent);
           finish();
-        }
-        else {
+        } else {
           Toast.makeText(ChooseFriendsActivity.this, "حداقل یک نفر را انتخاب کنید", Toast.LENGTH_SHORT).show();
         }
       }
@@ -119,11 +125,13 @@ public class ChooseFriendsActivity extends BaseActivity {
 
     @Override
     public void onBindViewHolder(final RecyclerAdapter.ViewHolder holder, int position) {
-      holder.txt_contact_item_name.setText(rssFeed.getItem(position).getContactName());
-      holder.txt_contact_item_phone.setText(rssFeed.getItem(position).getTelNo());
+      Log.e("POOOOS", "onBindViewHolder: " + position);
+      Log.e("Saeid TEST", "onBindViewHolder: " + rssFeed.get(position).getTitle());
+      holder.txt_contact_item_name.setText(rssFeed.get(position).getTitle());
+      holder.txt_contact_item_phone.setText(rssFeed.get(position).getTelNo());
       String imageUrl = "http://new.opaybot.ir";
       Glide.with(ChooseFriendsActivity.this)
-        .load(imageUrl + rssFeed.getItem(position).getContactImg())
+        .load(imageUrl + rssFeed.get(position).getContactImg())
         .asBitmap()
         .centerCrop()
         .placeholder(R.drawable.pic_profile)
@@ -139,7 +147,7 @@ public class ChooseFriendsActivity extends BaseActivity {
 
     @Override
     public int getItemCount() {
-      return rssFeed.getItemCount();
+      return rssFeed.size();
     }
 
     @Override
@@ -150,28 +158,30 @@ public class ChooseFriendsActivity extends BaseActivity {
         @SuppressWarnings("unchecked")
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-          rssFeed = (RSSFeed) results.values;
+          rssFeed = (ArrayList<RSSItem>) results.values;
           notifyDataSetChanged();
         }
 
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-          rssFeed = database.getInNetworkUserName();
+          rssFeed = rssFeed2;
 
           FilterResults results = new FilterResults();
-          RSSFeed FilteredArrayNames = new RSSFeed();
+          ArrayList<RSSItem> FilteredArrayNames = new ArrayList<>();
 
           constraint = constraint.toString().toLowerCase();
-          for (int i = 0; i < rssFeed.getItemCount(); i++) {
+          for (int i = 0; i < rssFeed.size(); i++) {
 //            String dataNames = rssFeed.getItem(i).getContactName();
             RSSItem rssItem = new RSSItem();
-            rssItem.setContactName(rssFeed.getItem(i).getContactName());
-            if (rssFeed.getItem(i).getContactName().toLowerCase().startsWith(constraint.toString())) {
-              FilteredArrayNames.addItem(rssItem);
+            if (rssFeed.get(i).getTitle().toLowerCase().startsWith(constraint.toString())) {
+              rssItem.setTitle(rssFeed.get(i).getTitle());
+              rssItem.setTelNo(rssFeed.get(i).getTelNo());
+              rssItem.setContactImg(rssFeed.get(i).getContactImg());
+              FilteredArrayNames.add(rssItem);
             }
           }
 
-          results.count = FilteredArrayNames.getItemCount();
+          results.count = FilteredArrayNames.size();
           results.values = FilteredArrayNames;
           Log.e("VALUES", results.values.toString());
 
@@ -199,10 +209,10 @@ public class ChooseFriendsActivity extends BaseActivity {
       public void onClick(View v) {
         if (status_circle.getVisibility() == View.GONE) {
           status_circle.setVisibility(View.VISIBLE);
-          phone.add(rssFeed.getItem(getAdapterPosition()).getTelNo());
+          phone.add(rssFeed.get(getAdapterPosition()).getTelNo());
         } else {
           status_circle.setVisibility(View.GONE);
-          phone.remove(rssFeed.getItem(getAdapterPosition()).getTelNo());
+          phone.remove(rssFeed.get(getAdapterPosition()).getTelNo());
         }
         Log.e("Phones", phone.toString());
       }
