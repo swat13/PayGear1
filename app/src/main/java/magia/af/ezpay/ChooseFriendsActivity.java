@@ -127,7 +127,11 @@ public class ChooseFriendsActivity extends BaseActivity {
     public void onBindViewHolder(final RecyclerAdapter.ViewHolder holder, int position) {
       Log.e("POOOOS", "onBindViewHolder: " + position);
       Log.e("Saeid TEST", "onBindViewHolder: " + rssFeed.get(position).getTitle());
-      holder.txt_contact_item_name.setText(rssFeed.get(position).getTitle());
+      if (rssFeed.get(position).getTitle().length() > 15) {
+        holder.txt_contact_item_name.setText(rssFeed.get(position).getTitle().substring(0, 15) + "...");
+      } else {
+        holder.txt_contact_item_name.setText(rssFeed.get(position).getTitle());
+      }
       holder.txt_contact_item_phone.setText(rssFeed.get(position).getTelNo());
       String imageUrl = "http://new.opaybot.ir";
       Glide.with(ChooseFriendsActivity.this)
