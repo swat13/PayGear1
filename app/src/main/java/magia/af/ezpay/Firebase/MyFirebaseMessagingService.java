@@ -55,8 +55,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.e(TAG, "From: " + remoteMessage.getFrom());
         Log.e(TAG, "Notification Message Body: " + remoteMessage.getNotification().getBody());
 
+        PayLogItem payLogItem = getChatItem(remoteMessage.getNotification().getBody());
 
-        informNotif(getChatItem(remoteMessage.getNotification().getBody()));
+        Log.e(TAG, "onMessageReceived: "+ payLogItem);
+
+        informNotif(payLogItem);
 
         //Calling method to generate notification
 //        sendNotification(getChatItem(remoteMessage.getNotification().getBody()));
@@ -162,8 +165,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             if (!jsonObject.isNull("chatItem")) {
                 JSONObject lastChatObject = jsonObject.getJSONObject("chatItem");
                 rssItem.setId(lastChatObject.getInt("id"));
-                rssItem.setfMobile(lastChatObject.getString("f"));
-                rssItem.settMobile(lastChatObject.getString("t"));
+                rssItem.setFrom(lastChatObject.getString("f"));
+                rssItem.setTo(lastChatObject.getString("t"));
                 rssItem.setAmount(lastChatObject.getInt("a"));
                 rssItem.setDate(lastChatObject.getString("d"));
                 rssItem.setPaideBool(lastChatObject.getBoolean("o"));

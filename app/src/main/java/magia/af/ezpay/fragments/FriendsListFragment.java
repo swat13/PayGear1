@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -56,6 +57,7 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
   public int position;
   ContactDatabase database;
   JSONArray jsonArray;
+  static Handler handler = new Handler();
 
   public static FriendsListFragment getInstance(RSSFeed rssFeed) {
     _feed = rssFeed;

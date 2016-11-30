@@ -1187,7 +1187,7 @@ public class DOMParser {
     try {
 
       URL url = new URL(mainUrl + "api/Device");
-      Log.e("1111111", "doInBackground: " + url);
+      Log.e("1111111", "Send push RegID: " + url);
       HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
       httpConn.setDoOutput(true);
       httpConn.setDoInput(true);

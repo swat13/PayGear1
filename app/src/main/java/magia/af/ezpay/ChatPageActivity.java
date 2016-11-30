@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.LinearLayoutManager;
@@ -64,6 +66,15 @@ public class ChatPageActivity extends BaseActivity {
     String date;
 
     int reversePosition;
+    static Handler handler;
+
+    static  {
+        handler = new Handler(Looper.getMainLooper());
+    }
+
+    public static void runOnUI(Runnable runnable){
+        handler.post(runnable);
+    }
 
 
     @Override
@@ -637,9 +648,14 @@ public class ChatPageActivity extends BaseActivity {
 
     }
 
-    public static void informNotif(PayLogItem messageBody) {
-        feed.addItem(messageBody);
-        adapter.notifyDataSetChanged();
+    public static void informNotif(final PayLogItem messageBody) {
+        runOnUI(new Runnable() {
+            @Override
+            public void run() {
+                feed.addItem(messageBody,0);
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @Override

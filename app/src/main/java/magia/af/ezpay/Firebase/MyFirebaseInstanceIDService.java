@@ -38,31 +38,7 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
 
         Log.e(TAG, "Refreshed token: " + refreshedToken);
-        new AsyncPushToken().execute(refreshedToken);
+        getSharedPreferences("EZpay", 0).edit().putString("push", refreshedToken).apply();
 
     }
-
-
-    private class AsyncPushToken extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
-            return domParser.sendDeviceId(params[0]);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            /*if (result != false) {
-            } else {
-            }*/
-        }
-    }
-
 }
