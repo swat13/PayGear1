@@ -1182,7 +1182,6 @@ public class DOMParser {
 
   }
 
-  /*sendDevice*/
   public String sendDeviceId(String pushToken) {
 
     try {
@@ -1205,7 +1204,7 @@ public class DOMParser {
       JSONObject jsonObject = new JSONObject();
       jsonObject.put("IMEI", "5555");
       jsonObject.put("DeviceID", "5555");
-      jsonObject.put("Platform", "5555");
+      jsonObject.put("Platform", "1");
       jsonObject.put("OsVersion", "5555");
       jsonObject.put("AppVersion", "5555");
       jsonObject.put("PushToken", pushToken);

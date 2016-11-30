@@ -50,8 +50,14 @@ public class RSSItem implements Serializable {
     private String groupMemberLastChatComment;
     private String groupMemberId;
     private int contactCount;
+
     private int groupCount;
     private boolean groupStatus;
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
     private ArrayList<RSSItem> groupMembers;
     private ArrayList<RSSItem> contactMembers;
     private ArrayList<RSSItem> groupArray;
@@ -114,6 +120,7 @@ public class RSSItem implements Serializable {
     public void setGroupStatus(boolean groupStatus) {
         this.groupStatus = groupStatus;
     }
+
     public int getContactCount() {
         return contactCount;
     }

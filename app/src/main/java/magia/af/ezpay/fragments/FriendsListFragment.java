@@ -192,17 +192,17 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
     public void onBindViewHolder(final FriendsListFragment.FeedViewHolder FeedViewHolder, final int position) {
       String contactName = "";
       RSSItem fe = _feed.getItem(position);
-      ContactDatabase database = new ContactDatabase(getActivity());
-      fe.setContactName(database.getNameFromNumber(fe.getTelNo()));
+//      ContactDatabase database = new ContactDatabase(getActivity());
+//      fe.setContactName(database.getNameFromNumber(fe.getTelNo()));
       Log.e("sssssssss", "onBindViewHolder: " + fe.getTelNo());
       Log.e("(((((((((((", "onBindViewHolder: " + fe.getTelNo());
       Log.e("Test", "onBindViewHolder: " + fe.getGroupTitle());
       Log.e("Boolean", "onBindViewHolder: " + fe.isGroup());
-      if (fe.getContactName().length() > 15) {
-        contactName = fe.getContactName();
+      if (contacts.get(position).getTitle().length() > 15) {
+        contactName = contacts.get(position).getTitle();
         FeedViewHolder.contactName.setText(contactName.substring(0, 15) + "...");
       } else {
-        FeedViewHolder.contactName.setText(fe.getContactName());
+        FeedViewHolder.contactName.setText(contacts.get(position).getTitle());
       }
       if (fe.isGroupStatus()) {
         if (fe.getGroupTitle().length() > 15) {

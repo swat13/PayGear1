@@ -76,6 +76,7 @@ public class Splash extends BaseActivity {
           if (phoneContact.getItem(i).getTelNo().equals(databaseContact.getItem(j).getTelNo())
             && phoneContact.getItem(i).getContactName().equals(databaseContact.getItem(j).getContactName())) {
             phoneContact.removeItem(i);
+            break;
           }
         }
       }

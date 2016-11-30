@@ -29,40 +29,40 @@ import magia.af.ezpay.R;
 //Class extending FirebaseInstanceIdService
 public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
 
-  private static final String TAG = "MyFirebaseIIDService";
-
-  @Override
-  public void onTokenRefresh() {
-
-    //Getting registration token
-    String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-
-    //Displaying token on logcat
-    Log.e(TAG, "Refreshed token: " + refreshedToken);
-    new AsyncPushToken().execute(refreshedToken);
-  }
-
-
-  private class AsyncPushToken extends AsyncTask<String, Void, String> {
+    private static final String TAG = "MyFirebaseIIDService";
 
     @Override
-    protected void onPreExecute() {
-      super.onPreExecute();
+    public void onTokenRefresh() {
+
+        //Getting registration token
+        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+
+        Log.e(TAG, "Refreshed token: " + refreshedToken);
+        new AsyncPushToken().execute(refreshedToken);
 
     }
 
-    @Override
-    protected String doInBackground(String... params) {
-      DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
-      return domParser.sendDeviceId(params[0]);
-    }
 
-    @Override
-    protected void onPostExecute(String result) {
+    private class AsyncPushToken extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
+            return domParser.sendDeviceId(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
             /*if (result != false) {
             } else {
             }*/
+        }
     }
-  }
 
 }

@@ -31,6 +31,42 @@ public class PayLogItem implements Serializable {
     private String tMobile;
     private String tId;
 
+    public String get_telNo() {
+        return _telNo;
+    }
+
+    public void set_telNo(String _telNo) {
+        this._telNo = _telNo;
+    }
+
+    public int getNotifType() {
+        return notifType;
+    }
+
+    public void setNotifType(int notifType) {
+        this.notifType = notifType;
+    }
+
+    public String getNotifBody() {
+        return notifBody;
+    }
+
+    public void setNotifBody(String notifBody) {
+        this.notifBody = notifBody;
+    }
+
+    public String getNotifParam1() {
+        return notifParam1;
+    }
+
+    public void setNotifParam1(String notifParam1) {
+        this.notifParam1 = notifParam1;
+    }
+
+    private int notifType;
+    private String notifBody;
+    private String notifParam1;
+
 
     public String getfId() {
         return fId;

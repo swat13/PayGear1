@@ -55,11 +55,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
 //    ContactDatabase database = new ContactDatabase(this);
     _feed = (RSSFeed) getIntent().getSerializableExtra("contact");
-//    for (int i = 0; i < _feed.getItemCount(); i++) {
-//      database.setContactInNetwork(_feed.getItem(i).getTelNo());
-//      database.setContactImageInNetwork(_feed.getItem(i).getContactImg(), _feed.getItem(i).getTelNo());
-//      Log.e("MAin", "onCreate: " + _feed.getItem(i).getGroupTitle());
-//    }
+    for (int i = 0; i < _feed.getItemCount(); i++) {
+      Log.e("MAin", "onCreate: " + _feed.getItem(i).getTitle());
+    }
     Log.e("Main","Before calling locationservice");
     startService(new Intent(this, LocationService.class));
 
