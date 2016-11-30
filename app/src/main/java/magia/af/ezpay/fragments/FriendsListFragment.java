@@ -1,12 +1,10 @@
 package magia.af.ezpay.fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -22,9 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.bumptech.glide.signature.StringSignature;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,7 +36,6 @@ import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.Parser.RSSItem;
 import magia.af.ezpay.R;
-import magia.af.ezpay.Splash;
 import magia.af.ezpay.helper.ContactDatabase;
 import magia.af.ezpay.helper.GetContact;
 import magia.af.ezpay.interfaces.OnClickHandler;
@@ -80,9 +75,12 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
     _feed = (RSSFeed) getActivity().getIntent().getSerializableExtra("contact");
     Log.e("Size", "onCreateView: " + _feed.getItemCount());
     for (int i = 0; i < _feed.getItemCount(); i++) {
+      Log.e("SS", "onCreateView: " + _feed.getItem(i).getTitle());
       contacts = _feed.getItem(i).getContactMembers();
       groups = _feed.getItem(i).getGroupArray();
     }
+
+    new getAccount().execute();
 
 
 //    for (int i = 0; i < _feed.getItemCount(); i++) {
@@ -198,11 +196,13 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
       Log.e("(((((((((((", "onBindViewHolder: " + fe.getTelNo());
       Log.e("Test", "onBindViewHolder: " + fe.getGroupTitle());
       Log.e("Boolean", "onBindViewHolder: " + fe.isGroup());
-      if (contacts.get(position).getTitle().length() > 15) {
-        contactName = contacts.get(position).getTitle();
-        FeedViewHolder.contactName.setText(contactName.substring(0, 15) + "...");
-      } else {
-        FeedViewHolder.contactName.setText(contacts.get(position).getTitle());
+      if (!fe.isGroupStatus()) {
+        if (fe.getTitle().length() > 15) {
+          contactName = fe.getTitle();
+          FeedViewHolder.contactName.setText(contactName.substring(0, 15) + "...");
+        } else {
+          FeedViewHolder.contactName.setText(fe.getTitle());
+        }
       }
       if (fe.isGroupStatus()) {
         if (fe.getGroupTitle().length() > 15) {
@@ -403,5 +403,33 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
       super.onPostExecute(result);
     }
 
+  }
+
+  public class getAccount extends AsyncTask<Void, Void, RSSItem> {
+
+    @Override
+    protected void onPreExecute() {
+      super.onPreExecute();
+    }
+
+    @Override
+    protected RSSItem doInBackground(Void... params) {
+      DOMParser domParser = new DOMParser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
+      return domParser.getAccount();
+    }
+
+    @Override
+    protected void onPostExecute(RSSItem result) {
+      Log.e("jsons", String.valueOf(result));
+
+
+      if (result != null) {
+        getActivity().getSharedPreferences("EZpay", 0).edit().putString("phoneNumber", result.getTelNo()).apply();
+      } else {
+        Toast.makeText(getActivity(), "Json Is Null!", Toast.LENGTH_SHORT).show();
+      }
+
+
+    }
   }
 }

@@ -99,6 +99,7 @@ public class GroupChatPageActivity extends BaseActivity {
 
     members = (ArrayList<RSSItem>) getIntent().getSerializableExtra("members");
     for (int i = 0; i < members.size(); i++) {
+      Log.e(TAG, "onCreate: " + members.get(i).getGroupMemberPhone());
       if (members.get(i).getGroupMemberPhone().equals(phone)) {
         members.remove(i);
       }

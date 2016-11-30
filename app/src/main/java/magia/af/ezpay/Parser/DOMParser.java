@@ -2097,14 +2097,22 @@ public class DOMParser {
       PayLogItem payLogItem = new PayLogItem();
       JSONObject jsonObject1 = new JSONObject(sb.toString());
       try {
+        JSONObject jsonObjectf = jsonObject1.getJSONObject("f");
+        JSONObject jsonObjectt = jsonObject1.getJSONObject("f");
+        payLogItem.setfPhoto("http://new.opaybot.ir" + jsonObjectf.getString("photo"));
+        payLogItem.setfMobile(jsonObjectf.getString("mobile"));
+        payLogItem.setfId(jsonObjectf.getString("id"));
+        payLogItem.setfTitle(jsonObjectf.getString("title"));
+        payLogItem.settPhoto("http://new.opaybot.ir" + jsonObjectt.getString("photo"));
+        payLogItem.settMobile(jsonObjectt.getString("mobile"));
+        payLogItem.settId(jsonObjectt.getString("id"));
+        payLogItem.settTitle(jsonObjectt.getString("title"));
         payLogItem.setId(jsonObject1.getInt("id"));
-        payLogItem.setFrom(jsonObject1.getString("f"));
-        payLogItem.setTo(jsonObject1.getString("t"));
         payLogItem.setAmount(jsonObject1.getInt("a"));
         payLogItem.setDate(jsonObject1.getString("d"));
         payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
         payLogItem.setStatus(jsonObject1.getBoolean("s"));
-
+        payLogItem.setGroup(jsonObject1.getBoolean("g"));
         payLogItem.setComment(jsonObject1.getString("c"));
 
 
