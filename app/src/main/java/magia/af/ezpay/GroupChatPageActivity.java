@@ -490,23 +490,10 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         day = Integer.parseInt(feed.getItem(pos).getDate().substring(8, 10));
         conversion = new CalendarConversion(year, month, day);
         holder.txt_price.setText(feed.getItem(pos).getAmount() + "");
-        holder.txt_status.setText("درخواست شده توسط " + feed.getItem(pos).getfTitle());
+//        holder.txt_status.setText("درخواست شده توسط " + feed.getItem(pos).getfTitle());
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
         holder.txt_description.setText(feed.getItem(pos).getComment());
-        Glide.with(GroupChatPageActivity.this)
-          .load(feed.getItem(position).getfPhoto())
-          .asBitmap()
-          .centerCrop()
-          .placeholder(R.drawable.pic_profile)
-          .into(new BitmapImageViewTarget(holder.requestUserAvatar) {
-            @Override
-            protected void setResource(Bitmap resource) {
-              RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
-              circularBitmapDrawable.setCornerRadius(700);
-              holder.requestUserAvatar.setImageDrawable(circularBitmapDrawable);
-            }
-          });
         holder.btn_cancel.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
@@ -637,7 +624,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         btn_replay = (ImageButton) itemView.findViewById(R.id.btn_replay_pay_from);
         btn_cancel = (Button) itemView.findViewById(R.id.btn_cancel_pay);
         btn_accept = (Button) itemView.findViewById(R.id.btn_accept_pay);
-        requestUserAvatar = (ImageView) itemView.findViewById(R.id.requestUserAvatar);
+//        requestUserAvatar = (ImageView) itemView.findViewById(R.id.requestUserAvatar);
         payerImage = (ImageView) itemView.findViewById(R.id.payerProfileImage);
         payToUserImage = (ImageView) itemView.findViewById(R.id.payToUserProfile);
         payerName = (TextView) itemView.findViewById(R.id.payerName);
