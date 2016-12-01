@@ -477,13 +477,7 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
         //holder.txt_status.setText(feed.getItem(pos).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
-        holder.txt_description.setText(feed.getItem(pos).getComment());
-        holder.btn_replay.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            Toast.makeText(ChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
-          }
-        });
+        holder.txt_description.setText("توضیحات: " + feed.getItem(pos).getComment());
       } else if (holder.getItemViewType() == 2) {
         pos = holder.getAdapterPosition();
         year = Integer.parseInt(feed.getItem(pos).getDate().substring(0, 4));
@@ -494,21 +488,15 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
 
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
-        holder.txt_description.setText(feed.getItem(pos).getComment());
-        holder.btn_cancel.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            pos = holder.getAdapterPosition();
-            Log.e("eeeeeeeee", "onClick: " + pos);
-            new DeletePaymentRequest().execute(feed.getItem(pos).getId());
-          }
-        });
-        holder.btn_replay.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            Toast.makeText(ChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
-          }
-        });
+        holder.txt_description.setText("توضیحات: " + feed.getItem(pos).getComment());
+//        holder.btn_cancel.setOnClickListener(new View.OnClickListener() {
+//          @Override
+//          public void onClick(View v) {
+//            pos = holder.getAdapterPosition();
+//            Log.e("eeeeeeeee", "onClick: " + pos);
+//            new DeletePaymentRequest().execute(feed.getItem(pos).getId());
+//          }
+//        });
       } else if (holder.getItemViewType() == 3) {
         Log.e("id", "0000000000: " + pos);
         pos = holder.getAdapterPosition();
@@ -521,7 +509,7 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
 //        holder.txt_status.setText(feed.getItem(pos).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
-        holder.txt_description.setText(feed.getItem(pos).getComment());
+        holder.txt_description.setText("توضیحات: " + feed.getItem(pos).getComment());
         holder.btn_accept.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
@@ -551,12 +539,7 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
 //            new DeletePaymentRequest().execute(feed.getItem(pos).getId());
 //          }
 //        });
-        holder.btn_replay.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            Toast.makeText(ChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
-          }
-        });
+
       }
       if (holder.getItemViewType() == 4) {
         pos = holder.getAdapterPosition();
@@ -568,13 +551,7 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
         // holder.txt_status.setText("پرداخت شد");
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
-        holder.txt_description.setText(feed.getItem(pos).getComment());
-        holder.btn_replay.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            Toast.makeText(ChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
-          }
-        });
+        holder.txt_description.setText("توضیحات: " + feed.getItem(pos).getComment());
       }
       if (holder.getItemViewType() == 5) {
         pos = holder.getAdapterPosition();
@@ -586,13 +563,7 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
         // holder.txt_status.setText("لغو شد");
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
-        holder.txt_description.setText(feed.getItem(pos).getComment());
-        holder.btn_replay.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            Toast.makeText(ChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
-          }
-        });
+        holder.txt_description.setText("توضیحات: " + feed.getItem(pos).getComment());
       } else {
         pos = holder.getAdapterPosition();
         year = Integer.parseInt(feed.getItem(pos).getDate().substring(0, 4));
@@ -602,13 +573,7 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
         holder.txt_price.setText(feed.getItem(pos).getAmount() + "");
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
-        holder.txt_description.setText(feed.getItem(pos).getComment());
-        holder.btn_replay.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            Toast.makeText(ChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
-          }
-        });
+        holder.txt_description.setText("توضیحات: " + feed.getItem(pos).getComment());
       }
     }
 

@@ -482,7 +482,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         //holder.txt_status.setText(feed.getItem(pos).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
-        holder.txt_description.setText(feed.getItem(pos).getComment());
+        holder.txt_description.setText("توضیحات: " + feed.getItem(pos).getComment());
       } else if (holder.getItemViewType() == 2) {
         pos = holder.getAdapterPosition();
         year = Integer.parseInt(feed.getItem(pos).getDate().substring(0, 4));
@@ -493,7 +493,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
 //        holder.txt_status.setText("درخواست شده توسط " + feed.getItem(pos).getfTitle());
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
-        holder.txt_description.setText(feed.getItem(pos).getComment());
+        holder.txt_description.setText("توضیحات: " + feed.getItem(pos).getComment());
         holder.btn_cancel.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
@@ -514,7 +514,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
 //        holder.txt_status.setText(feed.getItem(pos).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
-        holder.txt_description.setText(feed.getItem(pos).getComment());
+        holder.txt_description.setText("توضیحات: " + feed.getItem(pos).getComment());
         holder.nameOfApplicant.setText(feed.getItem(pos).gettTitle());
         Log.e(TAG, "onBindViewHolder: " + feed.getItem(pos).gettPhoto());
         Glide.with(GroupChatPageActivity.this)
@@ -562,7 +562,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         // holder.txt_status.setText("پرداخت شد");
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
-        holder.txt_description.setText(feed.getItem(pos).getComment());
+        holder.txt_description.setText("توضیحات: " + feed.getItem(pos).getComment());
         holder.payerName.setText(feed.getItem(pos).gettTitle());
         Glide.with(GroupChatPageActivity.this)
           .load(feed.getItem(pos).gettPhoto())
@@ -588,7 +588,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         // holder.txt_status.setText("لغو شد");
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
-        holder.txt_description.setText(feed.getItem(pos).getComment());
+        holder.txt_description.setText("توضیحات: " + feed.getItem(pos).getComment());
       } else {
         pos = holder.getAdapterPosition();
         year = Integer.parseInt(feed.getItem(pos).getDate().substring(0, 4));
@@ -598,7 +598,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         holder.txt_price.setText(feed.getItem(pos).getAmount() + "");
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
-        holder.txt_description.setText(feed.getItem(pos).getComment());
+        holder.txt_description.setText("توضیحات: " + feed.getItem(pos).getComment());
       }
     }
 
