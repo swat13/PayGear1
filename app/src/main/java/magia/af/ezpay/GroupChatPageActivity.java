@@ -30,6 +30,7 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
 import java.util.ArrayList;
 
+import magia.af.ezpay.Firebase.MyFirebaseMessagingService;
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.PayLogFeed;
 import magia.af.ezpay.Parser.PayLogItem;
@@ -39,8 +40,9 @@ import magia.af.ezpay.Utilities.LocalPersistence;
 import magia.af.ezpay.fragments.GetCardFragment;
 import magia.af.ezpay.helper.CalendarConversion;
 import magia.af.ezpay.helper.NumberTextWatcher;
+import magia.af.ezpay.interfaces.MessageHandler;
 
-public class GroupChatPageActivity extends BaseActivity {
+public class GroupChatPageActivity extends BaseActivity implements MessageHandler {
 
   private int groupId;
   private String groupTitle;
@@ -77,6 +79,7 @@ public class GroupChatPageActivity extends BaseActivity {
   String mComment;
   String mCardNumber;
   String mCardPassword;
+  static MessageHandler mHandler;
 
   private static final String TAG = GroupChatPageActivity.class.getSimpleName();
   private String date;
@@ -86,6 +89,7 @@ public class GroupChatPageActivity extends BaseActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_group_chat_page);
     feed = new PayLogFeed();
+    mHandler = this;
     Bundle bundle = getIntent().getExtras();
     if (bundle != null) {
       groupId = bundle.getInt("id");
@@ -453,7 +457,7 @@ public class GroupChatPageActivity extends BaseActivity {
       } else if (viewType == 3) {
         rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_pay_to, parent, false);
       } else if (viewType == 4) {
-        rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_from, parent, false);
+        rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_chat_item_from, parent, false);
       } else {
         rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_to, parent, false);
       }
@@ -479,12 +483,6 @@ public class GroupChatPageActivity extends BaseActivity {
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
         holder.txt_description.setText(feed.getItem(pos).getComment());
-        holder.btn_replay.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            Toast.makeText(GroupChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
-          }
-        });
       } else if (holder.getItemViewType() == 2) {
         pos = holder.getAdapterPosition();
         year = Integer.parseInt(feed.getItem(pos).getDate().substring(0, 4));
@@ -515,12 +513,6 @@ public class GroupChatPageActivity extends BaseActivity {
             pos = holder.getAdapterPosition();
             Log.e("eeeeeeeee", "onClick: " + pos);
 //            new ChatPageActivity.DeletePaymentRequest().execute(feed.getItem(pos).getId());
-          }
-        });
-        holder.btn_replay.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            Toast.makeText(GroupChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
           }
         });
       } else if (holder.getItemViewType() == 3) {
@@ -565,12 +557,6 @@ public class GroupChatPageActivity extends BaseActivity {
 //            new ChatPageActivity.DeletePaymentRequest().execute(feed.getItem(pos).getId());
           }
         });
-        holder.btn_replay.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            Toast.makeText(GroupChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
-          }
-        });
       }
       if (holder.getItemViewType() == 4) {
         pos = holder.getAdapterPosition();
@@ -583,12 +569,20 @@ public class GroupChatPageActivity extends BaseActivity {
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
         holder.txt_description.setText(feed.getItem(pos).getComment());
-        holder.btn_replay.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            Toast.makeText(GroupChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
-          }
-        });
+        holder.payerName.setText(feed.getItem(pos).gettTitle());
+        Glide.with(GroupChatPageActivity.this)
+          .load(feed.getItem(pos).gettPhoto())
+          .asBitmap()
+          .centerCrop()
+          .placeholder(R.drawable.pic_profile)
+          .into(new BitmapImageViewTarget(holder.payToUserImage) {
+            @Override
+            protected void setResource(Bitmap resource) {
+              RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
+              circularBitmapDrawable.setCornerRadius(700);
+              holder.payToUserImage.setImageDrawable(circularBitmapDrawable);
+            }
+          });
       }
       if (holder.getItemViewType() == 5) {
         pos = holder.getAdapterPosition();
@@ -601,12 +595,6 @@ public class GroupChatPageActivity extends BaseActivity {
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
         holder.txt_description.setText(feed.getItem(pos).getComment());
-        holder.btn_replay.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            Toast.makeText(GroupChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
-          }
-        });
       } else {
         pos = holder.getAdapterPosition();
         year = Integer.parseInt(feed.getItem(pos).getDate().substring(0, 4));
@@ -617,12 +605,6 @@ public class GroupChatPageActivity extends BaseActivity {
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
         holder.txt_description.setText(feed.getItem(pos).getComment());
-        holder.btn_replay.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            Toast.makeText(GroupChatPageActivity.this, "" + holder.getItemViewType(), Toast.LENGTH_SHORT).show();
-          }
-        });
       }
     }
 
@@ -638,9 +620,12 @@ public class GroupChatPageActivity extends BaseActivity {
       TextView txt_price;
       TextView txt_clock;
       TextView txt_date;
+      TextView payerName;
       Button btn_cancel;
       Button btn_accept;
       ImageView requestUserAvatar;
+      ImageView payerImage;
+      ImageView payToUserImage;
 
       ViewHolder(View itemView) {
         super(itemView);
@@ -653,6 +638,9 @@ public class GroupChatPageActivity extends BaseActivity {
         btn_cancel = (Button) itemView.findViewById(R.id.btn_cancel_pay);
         btn_accept = (Button) itemView.findViewById(R.id.btn_accept_pay);
         requestUserAvatar = (ImageView) itemView.findViewById(R.id.requestUserAvatar);
+        payerImage = (ImageView) itemView.findViewById(R.id.payerProfileImage);
+        payToUserImage = (ImageView) itemView.findViewById(R.id.payToUserProfile);
+        payerName = (TextView) itemView.findViewById(R.id.payerName);
 //        btn_cancel.setOnClickListener(this);
       }
 
@@ -745,5 +733,27 @@ public class GroupChatPageActivity extends BaseActivity {
       } else
         Toast.makeText(GroupChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
     }
+  }
+
+  public static MessageHandler informNotif() {
+    return mHandler;
+  }
+
+  public static String tag(){
+    return GroupChatPageActivity.class.getSimpleName();
+  }
+
+
+  @Override
+  public void handleMessage(final PayLogItem logItem) {
+    Log.e(TAG, "handleMessage: " + logItem.getComment());
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        Log.e("TTTT", "handleMessage: ");
+        feed.addItem(logItem, 0);
+        adapter.notifyDataSetChanged();
+      }
+    });
   }
 }

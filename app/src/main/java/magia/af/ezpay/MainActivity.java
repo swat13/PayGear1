@@ -61,7 +61,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             Log.e("MAin", "onCreate: " + _feed.getItem(i).getTitle());
         }
         Log.e("Main", "Before calling locationservice");
-        startService(new Intent(this, LocationService.class));
+//        startService(new Intent(this, LocationService.class));
 
 
 //    manager = (LocationManager) getSystemService(LOCATION_SERVICE);

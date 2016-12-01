@@ -8,21 +8,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Looper;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-/**
- * Created by Alif on 10/5/2016.
- */import org.json.JSONException;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -31,13 +24,16 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import magia.af.ezpay.ChatPageActivity;
+import magia.af.ezpay.GroupChatPageActivity;
 import magia.af.ezpay.MainActivity;
 import magia.af.ezpay.Parser.PayLogItem;
-import magia.af.ezpay.Parser.RSSItem;
 import magia.af.ezpay.R;
-import magia.af.ezpay.Splash;
+import magia.af.ezpay.interfaces.MessageHandler;
 
-import static magia.af.ezpay.ChatPageActivity.informNotif;
+/**
+ * Created by Alif on 10/5/2016.
+ */
 
 
 /**
@@ -45,33 +41,54 @@ import static magia.af.ezpay.ChatPageActivity.informNotif;
  */
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
+  MessageHandler groupMessageHandler;
+  MessageHandler chatMessageHandler;
+  private static final String TAG = "MyFirebaseMsgService";
 
-    private static final String TAG = "MyFirebaseMsgService";
 
-    @Override
-    public void onMessageReceived(RemoteMessage remoteMessage) {
-        //Displaying data in log
-        //It is optional
-        Log.e(TAG, "From: " + remoteMessage.getFrom());
-        Log.e(TAG, "Notification Message Body: " + remoteMessage.getNotification().getBody());
 
-        PayLogItem payLogItem = getChatItem(remoteMessage.getNotification().getBody());
 
-        Log.e(TAG, "onMessageReceived: "+ payLogItem);
+  @Override
+  public void onMessageReceived(RemoteMessage remoteMessage) {
+    //Displaying data in log
+    //It is optional
+    Log.e(TAG, "From: " + remoteMessage.getFrom());
+    Log.e(TAG, "Notification Message Body: " + remoteMessage.getNotification().getBody());
 
-        informNotif(payLogItem);
+    PayLogItem payLogItem = getChatItem(remoteMessage.getNotification().getBody());
+    try {
+      JSONObject jsonObject = new JSONObject(remoteMessage.getNotification().getBody());
+      if (jsonObject.isNull("chatItem")) {
+        groupMessageHandler = GroupChatPageActivity.informNotif();
+        groupMessageHandler.handleMessage(payLogItem);
+      }
+      if (jsonObject.isNull("groupChatItem")){
+        chatMessageHandler = ChatPageActivity.informNotif();
+        chatMessageHandler.handleMessage(payLogItem);
+      }
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
+    Log.e(TAG, "onMessageReceived: " + payLogItem);
 
-        //Calling method to generate notification
+//    else {
+//      chatMessageHandler = ChatPageActivity.informNotif();
+//      chatMessageHandler.handleMessage(payLogItem);
+//
+//    }
+//        informNotif(payLogItem);
+    //Calling method to generate notification
 //        sendNotification(getChatItem(remoteMessage.getNotification().getBody()));
 //        new
-    }
 
-    //This method is only generating push notification
-    //It is same as we did in earlier posts
-    private void sendNotification(PayLogItem messageBody) {
+  }
 
-        Log.e(TAG, "sendNotification: " + messageBody.getNotifType());
-        Log.e(TAG, "sendNotification: " + messageBody.getNotifBody());
+  //This method is only generating push notification
+  //It is same as we did in earlier posts
+  private void sendNotification(PayLogItem messageBody) {
+
+    Log.e(TAG, "sendNotification: " + messageBody.getNotifType());
+    Log.e(TAG, "sendNotification: " + messageBody.getNotifBody());
 //        Toast.makeText(getApplicationContext(), "salam, " + messageBody.getNotifType(), Toast.LENGTH_SHORT).show();
         /*if (messageBody.getNotifType() == 4) {
             Log.e(TAG, "sendNotification: 0000000");
@@ -98,94 +115,105 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
         }*/
 
+  }
+
+  public class generatePictureStyleNotification extends AsyncTask<String, Void, Bitmap> {
+
+    private Context mContext;
+    private String title, message, imageUrl;
+
+    public generatePictureStyleNotification(Context context, String title, String message, String imageUrl) {
+      super();
+      this.mContext = context;
+      this.title = title;
+      this.message = message;
+      this.imageUrl = imageUrl;
     }
 
-    public class generatePictureStyleNotification extends AsyncTask<String, Void, Bitmap> {
-
-        private Context mContext;
-        private String title, message, imageUrl;
-
-        public generatePictureStyleNotification(Context context, String title, String message, String imageUrl) {
-            super();
-            this.mContext = context;
-            this.title = title;
-            this.message = message;
-            this.imageUrl = imageUrl;
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... params) {
-            InputStream in;
-            try {
-                URL url = new URL(this.imageUrl);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setDoInput(true);
-                connection.connect();
-                in = connection.getInputStream();
-                Bitmap myBitmap = BitmapFactory.decodeStream(in);
-                return myBitmap;
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            super.onPostExecute(result);
-            Intent intent = new Intent(mContext, MainActivity.class);
-            intent.putExtra("key", "value");
-            PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 100, intent, PendingIntent.FLAG_ONE_SHOT);
-
-            NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-            Notification notif = new Notification.Builder(mContext)
-                    .setContentIntent(pendingIntent)
-                    .setContentTitle(title)
-                    .setContentText(message)
-                    .setSmallIcon(R.mipmap.phone)
-                    .setLargeIcon(result)
-                    .setVibrate(new long[]{400, 400})
-                    .setStyle(new Notification.BigPictureStyle().bigPicture(result))
-                    .build();
-            notif.flags |= Notification.FLAG_AUTO_CANCEL;
-            notificationManager.notify(1, notif);
-        }
+    @Override
+    protected Bitmap doInBackground(String... params) {
+      InputStream in;
+      try {
+        URL url = new URL(this.imageUrl);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setDoInput(true);
+        connection.connect();
+        in = connection.getInputStream();
+        Bitmap myBitmap = BitmapFactory.decodeStream(in);
+        return myBitmap;
+      } catch (MalformedURLException e) {
+        e.printStackTrace();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+      return null;
     }
 
-    private PayLogItem getChatItem(String json) {
-        try {
-            JSONObject jsonObject = new JSONObject(json);
-            PayLogItem rssItem = new PayLogItem();
-            rssItem.setNotifBody(jsonObject.getString("body"));
-            rssItem.setNotifType(jsonObject.getInt("type"));
-            rssItem.setNotifParam1(jsonObject.getString("param1"));
-            if (!jsonObject.isNull("chatItem")) {
-                JSONObject lastChatObject = jsonObject.getJSONObject("chatItem");
-                rssItem.setId(lastChatObject.getInt("id"));
-                rssItem.setFrom(lastChatObject.getString("f"));
-                rssItem.setTo(lastChatObject.getString("t"));
-                rssItem.setAmount(lastChatObject.getInt("a"));
-                rssItem.setDate(lastChatObject.getString("d"));
-                rssItem.setPaideBool(lastChatObject.getBoolean("o"));
-                rssItem.setStatus(lastChatObject.getBoolean("s"));
-                rssItem.setGroup(lastChatObject.getBoolean("g"));
-                rssItem.setComment(lastChatObject.getString("c"));
-            } else if (!jsonObject.isNull("groupChatItem")) {
-                JSONObject lastChatObject = jsonObject.getJSONObject("chatItem");
-//                rssItem.setidGroupId(lastChatObject.getInt("id"));
-//                rssItem.setGroupPhoto(lastChatObject.getString("photo"));
-//                rssItem.setGroupTitle(lastChatObject.getString("title"));
-//                rssItem.setGroup(true);
-//                rssItem.setGroupStatus(true);
-            }
-            return rssItem;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    @Override
+    protected void onPostExecute(Bitmap result) {
+      super.onPostExecute(result);
+      Intent intent = new Intent(mContext, MainActivity.class);
+      intent.putExtra("key", "value");
+      PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 100, intent, PendingIntent.FLAG_ONE_SHOT);
+
+      NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+      Notification notif = new Notification.Builder(mContext)
+        .setContentIntent(pendingIntent)
+        .setContentTitle(title)
+        .setContentText(message)
+        .setSmallIcon(R.mipmap.phone)
+        .setLargeIcon(result)
+        .setVibrate(new long[]{400, 400})
+        .setStyle(new Notification.BigPictureStyle().bigPicture(result))
+        .build();
+      notif.flags |= Notification.FLAG_AUTO_CANCEL;
+      notificationManager.notify(1, notif);
     }
+  }
+
+  private static PayLogItem getChatItem(String json) {
+    PayLogItem rssItem = new PayLogItem();
+    try {
+      JSONObject jsonObject = new JSONObject(json);
+      rssItem.setNotifBody(jsonObject.getString("body"));
+      rssItem.setNotifType(jsonObject.getInt("type"));
+      rssItem.setNotifParam1(jsonObject.getString("param1"));
+      if (!jsonObject.isNull("chatItem")) {
+        JSONObject lastChatObject = jsonObject.getJSONObject("chatItem");
+        rssItem.setId(lastChatObject.getInt("id"));
+        rssItem.setfMobile(lastChatObject.getString("f"));
+        rssItem.settMobile(lastChatObject.getString("t"));
+        rssItem.setAmount(lastChatObject.getInt("a"));
+        rssItem.setDate(lastChatObject.getString("d"));
+        rssItem.setPaideBool(lastChatObject.getBoolean("o"));
+        rssItem.setStatus(lastChatObject.getBoolean("s"));
+        rssItem.setGroup(lastChatObject.getBoolean("g"));
+        rssItem.setComment(lastChatObject.getString("c"));
+      } else if (!jsonObject.isNull("groupChatItem")) {
+        JSONObject lastChatObject = jsonObject.getJSONObject("groupChatItem");
+        JSONObject jsonObjectf = lastChatObject.getJSONObject("f");
+        JSONObject jsonObjectt = lastChatObject.getJSONObject("t");
+        rssItem.setfPhoto("http://new.opaybot.ir" + jsonObjectf.getString("photo"));
+        rssItem.setfMobile(jsonObjectf.getString("mobile"));
+        rssItem.setfId(jsonObjectf.getString("id"));
+        rssItem.setfTitle(jsonObjectf.getString("title"));
+        rssItem.settPhoto("http://new.opaybot.ir" + jsonObjectt.getString("photo"));
+        rssItem.settMobile(jsonObjectt.getString("mobile"));
+        rssItem.settId(jsonObjectt.getString("id"));
+        rssItem.settTitle(jsonObjectt.getString("title"));
+        rssItem.setId(lastChatObject.getInt("id"));
+        rssItem.setAmount(lastChatObject.getInt("a"));
+        rssItem.setDate(lastChatObject.getString("d"));
+        rssItem.setPaideBool(lastChatObject.getBoolean("o"));
+        rssItem.setStatus(lastChatObject.getBoolean("s"));
+        rssItem.setGroup(lastChatObject.getBoolean("g"));
+        rssItem.setComment(lastChatObject.getString("c"));
+      }
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
+    return rssItem;
+  }
 
 }

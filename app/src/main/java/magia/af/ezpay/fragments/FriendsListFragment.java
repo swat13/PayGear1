@@ -141,7 +141,7 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
     } else {
       Intent goToChatPageActivity = new Intent(getActivity(), ChatPageActivity.class);
       goToChatPageActivity.putExtra("phone", rssFeed.getTelNo());
-      goToChatPageActivity.putExtra("contactName", rssFeed.getContactName());
+      goToChatPageActivity.putExtra("contactName", rssFeed.getTitle());
       goToChatPageActivity.putExtra("image", rssFeed.getContactImg());
       goToChatPageActivity.putExtra("pos", rssFeed.getPosition());
       goToChatPageActivity.putExtra("date", rssFeed.getLastChatDate());

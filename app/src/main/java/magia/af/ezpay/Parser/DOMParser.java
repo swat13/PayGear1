@@ -876,8 +876,8 @@ public class DOMParser {
         //kk
         try {
           payLogItem1.setId(jsonObject.getInt("id"));
-          payLogItem1.setFrom(jsonObject.getString("f"));
-          payLogItem1.setTo(jsonObject.getString("t"));
+          payLogItem1.setfMobile(jsonObject.getString("f"));
+          payLogItem1.settMobile(jsonObject.getString("t"));
           payLogItem1.setAmount(jsonObject.getInt("a"));
           payLogItem1.setDate(jsonObject.getString("d"));
           payLogItem1.setPaideBool(jsonObject.getBoolean("o"));
@@ -977,8 +977,8 @@ public class DOMParser {
       JSONObject jsonObject1 = new JSONObject(sb.toString());
       try {
         payLogItem.setId(jsonObject1.getInt("id"));
-        payLogItem.setFrom(jsonObject1.getString("f"));
-        payLogItem.setTo(jsonObject1.getString("t"));
+        payLogItem.setfMobile(jsonObject1.getString("f"));
+        payLogItem.settMobile(jsonObject1.getString("t"));
         payLogItem.setAmount(jsonObject1.getInt("a"));
         payLogItem.setDate(jsonObject1.getString("d"));
         payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
@@ -1156,8 +1156,8 @@ public class DOMParser {
       JSONObject jsonObject1 = new JSONObject(sb.toString());
       try {
         payLogItem.setId(jsonObject1.getInt("id"));
-        payLogItem.setFrom(jsonObject1.getString("f"));
-        payLogItem.setTo(jsonObject1.getString("t"));
+        payLogItem.setfMobile(jsonObject1.getString("f"));
+        payLogItem.settMobile(jsonObject1.getString("t"));
         payLogItem.setAmount(jsonObject1.getInt("a"));
         payLogItem.setDate(jsonObject1.getString("d"));
         payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
@@ -1349,8 +1349,8 @@ public class DOMParser {
       JSONObject jsonObject1 = new JSONObject(sb.toString());
       try {
         payLogItem.setId(jsonObject1.getInt("id"));
-        payLogItem.setFrom(jsonObject1.getString("f"));
-        payLogItem.setTo(jsonObject1.getString("t"));
+        payLogItem.setfMobile(jsonObject1.getString("f"));
+        payLogItem.settMobile(jsonObject1.getString("t"));
         payLogItem.setAmount(jsonObject1.getInt("a"));
         payLogItem.setDate(jsonObject1.getString("d"));
         payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
@@ -1833,8 +1833,8 @@ public class DOMParser {
       JSONObject jsonObject1 = new JSONObject(sb.toString());
       try {
         payLogItem.setId(jsonObject1.getInt("id"));
-        payLogItem.setFrom(jsonObject1.getString("f"));
-        payLogItem.setTo(jsonObject1.getString("t"));
+        payLogItem.setfMobile(jsonObject1.getString("f"));
+        payLogItem.settMobile(jsonObject1.getString("t"));
         payLogItem.setAmount(jsonObject1.getInt("a"));
         payLogItem.setDate(jsonObject1.getString("d"));
         payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
@@ -1923,8 +1923,8 @@ public class DOMParser {
       JSONObject jsonObject1 = new JSONObject(sb.toString());
       try {
         payLogItem.setId(jsonObject1.getInt("id"));
-        payLogItem.setFrom(jsonObject1.getString("f"));
-        payLogItem.setTo(jsonObject1.getString("t"));
+        payLogItem.setfMobile(jsonObject1.getString("f"));
+        payLogItem.settMobile(jsonObject1.getString("t"));
         payLogItem.setAmount(jsonObject1.getInt("a"));
         payLogItem.setDate(jsonObject1.getString("d"));
         payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
@@ -1998,7 +1998,7 @@ public class DOMParser {
           payLogItem = new PayLogItem();
           JSONObject object = jsonArray.getJSONObject(i);
           JSONObject jsonObjectf = object.getJSONObject("f");
-          JSONObject jsonObjectt = object.getJSONObject("f");
+          JSONObject jsonObjectt = object.getJSONObject("t");
           payLogItem.setfPhoto("http://new.opaybot.ir" + jsonObjectf.getString("photo"));
           payLogItem.setfMobile(jsonObjectf.getString("mobile"));
           payLogItem.setfId(jsonObjectf.getString("id"));
@@ -2098,7 +2098,7 @@ public class DOMParser {
       JSONObject jsonObject1 = new JSONObject(sb.toString());
       try {
         JSONObject jsonObjectf = jsonObject1.getJSONObject("f");
-        JSONObject jsonObjectt = jsonObject1.getJSONObject("f");
+        JSONObject jsonObjectt = jsonObject1.getJSONObject("t");
         payLogItem.setfPhoto("http://new.opaybot.ir" + jsonObjectf.getString("photo"));
         payLogItem.setfMobile(jsonObjectf.getString("mobile"));
         payLogItem.setfId(jsonObjectf.getString("id"));
