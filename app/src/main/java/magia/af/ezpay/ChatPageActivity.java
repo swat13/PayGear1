@@ -543,14 +543,14 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
             removePosition = holder.getAdapterPosition();
           }
         });
-        holder.btn_cancel.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            pos = holder.getAdapterPosition();
-            Log.e("eeeeeeeee", "onClick: " + pos);
-            new DeletePaymentRequest().execute(feed.getItem(pos).getId());
-          }
-        });
+//        holder.btn_cancel.setOnClickListener(new View.OnClickListener() {
+//          @Override
+//          public void onClick(View v) {
+//            pos = holder.getAdapterPosition();
+//            Log.e("eeeeeeeee", "onClick: " + pos);
+//            new DeletePaymentRequest().execute(feed.getItem(pos).getId());
+//          }
+//        });
         holder.btn_replay.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {

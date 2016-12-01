@@ -34,6 +34,7 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/nameApplicant"
                 android:text="Saeid Yazdany"
                 android:layout_marginTop="2dp"
                 android:layout_marginLeft="10dp"

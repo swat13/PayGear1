@@ -455,7 +455,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
       } else if (viewType == 2) {
         rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_chat_item_pay_from, parent, false);
       } else if (viewType == 3) {
-        rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_pay_to, parent, false);
+        rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_chat_item_pay_to, parent, false);
       } else if (viewType == 4) {
         rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_chat_item_from, parent, false);
       } else {
@@ -515,6 +515,21 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
         holder.txt_description.setText(feed.getItem(pos).getComment());
+        holder.nameOfApplicant.setText(feed.getItem(pos).gettTitle());
+        Log.e(TAG, "onBindViewHolder: " + feed.getItem(pos).gettPhoto());
+        Glide.with(GroupChatPageActivity.this)
+          .load(feed.getItem(pos).gettPhoto())
+          .asBitmap()
+          .centerCrop()
+          .placeholder(R.drawable.pic_profile)
+          .into(new BitmapImageViewTarget(holder.requesterUserAvatar) {
+            @Override
+            protected void setResource(Bitmap resource) {
+              RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
+              circularBitmapDrawable.setCornerRadius(700);
+              holder.requesterUserAvatar.setImageDrawable(circularBitmapDrawable);
+            }
+          });
         holder.btn_accept.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
@@ -534,14 +549,6 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
 //                        holder.removeAt(pos);
 //                        adapter.notifyDataSetChanged();
 //            removePosition = holder.getAdapterPosition();
-          }
-        });
-        holder.btn_cancel.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            pos = holder.getAdapterPosition();
-            Log.e("eeeeeeeee", "onClick: " + pos);
-//            new ChatPageActivity.DeletePaymentRequest().execute(feed.getItem(pos).getId());
           }
         });
       }
@@ -608,9 +615,11 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
       TextView txt_clock;
       TextView txt_date;
       TextView payerName;
+      TextView nameOfApplicant;
       Button btn_cancel;
       Button btn_accept;
       ImageView requestUserAvatar;
+      ImageView requesterUserAvatar;
       ImageView payerImage;
       ImageView payToUserImage;
 
@@ -625,9 +634,11 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         btn_cancel = (Button) itemView.findViewById(R.id.btn_cancel_pay);
         btn_accept = (Button) itemView.findViewById(R.id.btn_accept_pay);
 //        requestUserAvatar = (ImageView) itemView.findViewById(R.id.requestUserAvatar);
+        requesterUserAvatar = (ImageView) itemView.findViewById(R.id.requesterImage);
         payerImage = (ImageView) itemView.findViewById(R.id.payerProfileImage);
         payToUserImage = (ImageView) itemView.findViewById(R.id.payToUserProfile);
         payerName = (TextView) itemView.findViewById(R.id.payerName);
+        nameOfApplicant = (TextView) itemView.findViewById(R.id.nameApplicant);
 //        btn_cancel.setOnClickListener(this);
       }
 
