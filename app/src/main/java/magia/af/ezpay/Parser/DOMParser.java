@@ -738,15 +738,17 @@ public class DOMParser {
               groupMembers.add(item);
               rssItem2.setGroupMembers(groupMembers);
             }
-            if (!contactObject.isNull("lastchat")) {
-              JSONArray groupLastChatArray = contactObject.getJSONArray("lastchat");
+            if (!contactObject.isNull("lastChats")) {
+              Log.e("THIS LINE 743", "checkContactListWithGroup: ");
+              JSONArray groupLastChatArray = contactObject.getJSONArray("lastChats");
               for (int j = 0; j < groupLastChatArray.length(); j++) {
+                Log.e("THIS LINE 745", "checkContactListWithGroup: ");
                 JSONObject lastChatGroupObject = groupLastChatArray.getJSONObject(j);
-                Log.e("Test6666666666", "checkContactListWithGroup: " + lastChatGroupObject.toString());
-                rssItem2.setGroupLastChatId(lastChatGroupObject.getInt("id"));
-                rssItem2.setGroupLastChatFrom(lastChatGroupObject.getString("f"));
-                rssItem2.setGroupLastChatTo(lastChatGroupObject.getString("t"));
+                Log.e("Test6666666666", "checkContactListWithGroup: " + lastChatGroupObject.getInt("a"));
                 rssItem2.setGroupLastChatAmount(lastChatGroupObject.getInt("a"));
+                rssItem2.setGroupLastChatId(lastChatGroupObject.getInt("id"));
+//                rssItem2.setGroupLastChatFrom(lastChatGroupObject.getString("f"));
+//                rssItem2.setGroupLastChatTo(lastChatGroupObject.getString("t"));
                 rssItem2.setGroupLastChatDate(lastChatGroupObject.getString("d"));
                 rssItem2.setGroupLastChatOrderPay(lastChatGroupObject.getBoolean("o"));
                 rssItem2.setGroupLastChatStatus(lastChatGroupObject.getBoolean("s"));
@@ -765,11 +767,15 @@ public class DOMParser {
       Log.e("Rss 2", "checkContactListWithGroup: " + rssFeed2.getItemCount());
       Log.e("gMember", "checkContactListWithGroup: " + gMembers.size());
 
-      for (int i = 0; i < gMembers.size(); i++) {
-        ArrayList<RSSItem> rssItems = gMembers.get(i).getGroupMembers();
-        for (int j = 0; j < rssItems.size(); j++) {
-          Log.e("gStar", "onCreateView: " + rssItems.get(j).getGroupMemberTitle());
-        }
+//      for (int i = 0; i < gMembers.size(); i++) {
+//        ArrayList<RSSItem> rssItems = gMembers.get(i).getGroupMembers();
+//        for (int j = 0; j < rssItems.size(); j++) {
+//          Log.e("gStar", "onCreateView: " + rssItems.get(j).getGroupLastChatAmount());
+//        }
+//      }
+
+      for (int i = 0; i < rssFeed2.getItemCount(); i++) {
+          Log.e("gStar", "onCreateView: " + rssFeed2.getItem(i).getGroupLastChatAmount());
       }
       rssFeed3.addAll(0, rssFeed);
       rssFeed3.addAll(1, rssFeed2);
@@ -931,7 +937,7 @@ public class DOMParser {
 
       JSONObject jsonObject = new JSONObject();
       jsonObject.put("anotherMobile", phone);
-      jsonObject.put("amount", Amount);
+      jsonObject.put("amount", Integer.parseInt(Amount.replace(",", "")));
       jsonObject.put("comment", cm);
 //            String request = "{\n" +
 //                    "\"anotherMobile\" : \"" + phone + "\",\n" +
@@ -1950,7 +1956,7 @@ public class DOMParser {
 
     try {
 
-      URL url = new URL(mainUrl + "api/Group/"+id+"/Chat?pagesize="+page+"&maxDate="+date);
+      URL url = new URL(mainUrl + "api/Group/" + id + "/Chat?pagesize=" + page + "&maxDate=" + date);
       Log.e("1111111", "doInBackground: " + url);
       HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
       httpConn.setDoOutput(false);
@@ -2032,7 +2038,7 @@ public class DOMParser {
 
   }
 
-  public PayLogItem sendGroupPaymentRequest(String phone, String detail, String comment, String amount,String id) {
+  public PayLogItem sendGroupPaymentRequest(String phone, String detail, String comment, String amount, String id) {
 
     try {
 

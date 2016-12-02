@@ -3,6 +3,7 @@ package magia.af.ezpay.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -78,6 +79,7 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
     Log.e("Size", "onCreateView: " + _feed.getItemCount());
     for (int i = 0; i < _feed.getItemCount(); i++) {
       Log.e("SS", "onCreateView: " + _feed.getItem(i).getTitle());
+      Log.e("THIS LINE IS 81", "onCreateView: " + _feed.getItem(i).getGroupLastChatAmount());
       contacts = _feed.getItem(i).getContactMembers();
       groups = _feed.getItem(i).getGroupArray();
     }
@@ -198,7 +200,16 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
       Log.e("(((((((((((", "onBindViewHolder: " + fe.getTelNo());
       Log.e("Test", "onBindViewHolder: " + fe.getGroupTitle());
       Log.e("Boolean", "onBindViewHolder: " + fe.isGroup());
+      Log.e("THIS LINE IS 202", "onBindViewHolder: " + fe.getGroupLastChatAmount());
       if (!fe.isGroupStatus()) {
+        if (fe.isLastChatOrderByFromOrTo()) {
+          FeedViewHolder.pay.setTextColor(Color.RED);
+          FeedViewHolder.pay.setText("-" + getDividedToman((long) fe.getLastChatAmount()) + "");
+        } else {
+          FeedViewHolder.pay.setTextColor(Color.parseColor("#6db314"));
+          FeedViewHolder.pay.setText(getDividedToman((long) fe.getLastChatAmount()) + "");
+        }
+        FeedViewHolder.description.setText(fe.getComment());
         if (fe.getTitle().length() > 15) {
           contactName = fe.getTitle();
           FeedViewHolder.contactName.setText(contactName.substring(0, 15) + "...");
@@ -207,6 +218,14 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
         }
       }
       if (fe.isGroupStatus()) {
+        if (!fe.isGroupLastChatOrderPay()) {
+          FeedViewHolder.pay.setTextColor(Color.parseColor("#6db314"));
+          FeedViewHolder.pay.setText("+" + getDividedToman((long) fe.getGroupLastChatAmount()) + "");
+        } else {
+          FeedViewHolder.pay.setTextColor(Color.RED);
+          FeedViewHolder.pay.setText("-" + getDividedToman((long) fe.getGroupLastChatAmount()) + "");
+        }
+        FeedViewHolder.description.setText(fe.getGroupLastChatComment());
         if (fe.getGroupTitle().length() > 15) {
           contactName = fe.getGroupTitle();
           FeedViewHolder.contactName.setText(contactName.substring(0, 15) + "...");
@@ -214,6 +233,7 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
           FeedViewHolder.contactName.setText(fe.getGroupTitle());
         }
         Log.e("DDDD", "onBindViewHolder: " + "http://new.opaybot.ir" + fe.getGroupPhoto());
+//          FeedViewHolder.description.setText(fe.getGroupLastChatComment());
         Glide.with(getActivity())
           .load("http://new.opaybot.ir" + fe.getGroupPhoto())
           .asBitmap()
@@ -244,8 +264,6 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
           });
       }
 
-      FeedViewHolder.description.setText(fe.getComment());
-      FeedViewHolder.pay.setText(getDividedToman((long) fe.getLastChatAmount()) + "");
       fe.setPosition(position);
 
 //        FeedViewHolder.contactImage.setImageDrawable(fe.getContactImg());

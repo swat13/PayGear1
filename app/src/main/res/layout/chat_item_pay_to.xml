@@ -5,7 +5,7 @@
     android:layout_margin="5dp"
     android:orientation="horizontal"
     android:paddingLeft="0dp"
-    android:paddingRight="15dp">
+    android:paddingRight="25dp">
 
     <RelativeLayout
         android:layout_width="0dp"
@@ -62,6 +62,7 @@
                     android:layout_height="25dp"
                     android:layout_gravity="right"
                     android:layout_marginRight="10dp"
+                    android:maxLength="9"
                     android:gravity="right|center"
                     android:text="قیمت"
                     android:textColor="#cb5958" />
@@ -80,6 +81,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+                <Button
+                    android:id="@+id/btn_cancel_pay"
+                    android:textColor="#7a7a7a"
+                    android:layout_marginLeft="1dp"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:background="@drawable/btn_cancel_from_background"
+                    android:layout_weight="0.5"
+                    android:text="لغو"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"/>
 
                 <Button
                     android:id="@+id/btn_accept_pay"

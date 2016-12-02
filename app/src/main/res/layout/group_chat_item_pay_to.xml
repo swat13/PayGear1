@@ -80,6 +80,7 @@
                     android:layout_marginRight="10dp"
                     android:gravity="right|center"
                     android:text="قیمت"
+                    android:maxLength="9"
                     android:textColor="#cb5958" />
 
             </LinearLayout>

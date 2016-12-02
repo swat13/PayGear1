@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
     android:orientation="horizontal">
+
     <RelativeLayout
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
@@ -56,6 +57,7 @@
                         android:layout_marginRight="10dp"
                         android:gravity="right|center"
                         android:text="قیمت"
+                        android:maxLength="9"
                         android:textColor="#cb5958" />
 
                 </LinearLayout>
@@ -125,6 +127,7 @@
             android:background="@drawable/circle_clock_text_background"
             android:text="12:58"/>
     </RelativeLayout>
+
     <ImageView
         android:visibility="gone"
         android:id="@+id/payerProfileImage"
