@@ -61,6 +61,7 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
   public PaymentFragment paymentFragment;
   public RequestPaymentFragment requestPaymentFragment;
   public int fragment_status = 0;
+  int newPos;
 
   public String description;
   public int amount;
@@ -91,7 +92,6 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
   private Dialog cardDialog;
   private Dialog payDialog;
   private Dialog requestDialog;
-  HashMap<Integer, Integer> hashMap;
 
   static {
     handler = new Handler(Looper.getMainLooper());
@@ -676,6 +676,7 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
     int pos;
 
     public DeletePaymentRequestWithID(int pos) {
+      Log.e("(((((((", "DeletePaymentRequestWithID: "+pos );
       this.pos = pos;
     }
 
@@ -825,7 +826,7 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
       CalendarConversion conversion = null;
       Log.e("EQ", "onBindViewHolder: " + feed.getItem(0).getId());
       pos = holder.getAdapterPosition();
-      hashMap = getPositionFromId(feed.getItem(holder.getAdapterPosition()).getId(), holder.getAdapterPosition());
+      Log.e("************((", "onBindViewHolder: "+feed.getItem(holder.getAdapterPosition()).getId() );
       if (holder.getItemViewType() == 0) {
         pos = holder.getAdapterPosition();
         year = Integer.parseInt(feed.getItem(pos).getDate().substring(0, 4));
@@ -1187,8 +1188,9 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
       public void run() {
         if (deleteState) {
           Log.e("EQ2", "run: " + logItem.getCancelId());
-          Log.e("EQ2", "run: " + hashMap.get(logItem.getCancelId()));
-          new DeletePaymentRequestWithID(hashMap.get(logItem.getCancelId())).execute(logItem.getCancelId());
+          Log.e("EQ2", "run: " + feed.getHash().get(logItem.getCancelId()));
+          newPos = feed.getHash().get(feed.getItem(pos).getId());
+          new DeletePaymentRequestWithID(newPos).execute(logItem.getCancelId());
           adapter.notifyDataSetChanged();
         } else {
           Log.e("TTTT", "handleMessage pv: ");
@@ -1216,11 +1218,5 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
       }
     }
     return true;
-  }
-
-  public HashMap<Integer, Integer> getPositionFromId(int id, int pos) {
-    HashMap<Integer, Integer> hashMap = new HashMap<>();
-    hashMap.put(id, pos);
-    return hashMap;
   }
 }

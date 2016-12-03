@@ -888,9 +888,8 @@ public class DOMParser {
           payLogItem1.setDate(jsonObject.getString("d"));
           payLogItem1.setPaideBool(jsonObject.getBoolean("o"));
           payLogItem1.setStatus(jsonObject.getBoolean("s"));
-
           payLogItem1.setComment(jsonObject.getString("c"));
-
+          payLogFeed.getHash().put(jsonObject.getInt("id"), i);
         } catch (JSONException e) {
           e.printStackTrace();
         }

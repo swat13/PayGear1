@@ -2,24 +2,36 @@ package magia.af.ezpay.Parser;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
 public class PayLogFeed implements Serializable {
 
 
+	HashMap<Integer, Integer> hashMap;
 	private static final long serialVersionUID = 1L;
 	private int _itemcount = 0;
 	private List<PayLogItem> _itemlist;
 
 	public PayLogFeed() {
 		_itemlist = new Vector<PayLogItem>(0);
+		hashMap = new HashMap<>();
 	}
 
 	public void addItem(PayLogItem item) {
 		_itemlist.add(item);
 		_itemcount++;
 	}
+
+	public void addItemHash(int id, int pos) {
+		hashMap.put(id, pos);
+	}
+
+	public HashMap<Integer, Integer> getHash() {
+		return hashMap;
+	}
+
 	public void addItem(PayLogItem item , int pos) {
 		_itemlist.add(pos,item);
 		_itemcount++;
