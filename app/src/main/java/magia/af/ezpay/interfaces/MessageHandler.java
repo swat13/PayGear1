@@ -7,5 +7,5 @@ import magia.af.ezpay.Parser.PayLogItem;
  */
 
 public interface MessageHandler {
-  void handleMessage(PayLogItem logItem ,boolean deleteState);
+  void handleMessage(PayLogItem logItem ,boolean deleteState,String chatMemberMobile);
 }
