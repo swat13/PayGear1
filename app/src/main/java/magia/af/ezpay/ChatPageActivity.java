@@ -1189,7 +1189,7 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
         if (deleteState) {
           Log.e("EQ2", "run: " + logItem.getCancelId());
           Log.e("EQ2", "run: " + feed.getHash().get(logItem.getCancelId()));
-          newPos = feed.getHash().get(feed.getItem(pos).getId());
+          newPos = feed.getHash().get(logItem.getCancelId());
           new DeletePaymentRequestWithID(newPos).execute(logItem.getCancelId());
           adapter.notifyDataSetChanged();
         } else {
