@@ -824,8 +824,8 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
       int day = 0;
       CalendarConversion conversion = null;
       Log.e("EQ", "onBindViewHolder: " + feed.getItem(0).getId());
-      hashMap = getPositionFromId(feed.getItem(holder.getAdapterPosition()).getId(), holder.getAdapterPosition());
       pos = holder.getAdapterPosition();
+      hashMap = getPositionFromId(feed.getItem(holder.getAdapterPosition()).getId(), holder.getAdapterPosition());
       if (holder.getItemViewType() == 0) {
         pos = holder.getAdapterPosition();
         year = Integer.parseInt(feed.getItem(pos).getDate().substring(0, 4));
