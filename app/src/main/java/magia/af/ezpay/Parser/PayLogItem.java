@@ -30,6 +30,15 @@ public class PayLogItem implements Serializable {
     private String tTitle;
     private String tMobile;
     private String tId;
+    private int cancelId;
+
+    public int getCancelId() {
+        return cancelId;
+    }
+
+    public void setCancelId(int cancelId) {
+        this.cancelId = cancelId;
+    }
 
     public String get_telNo() {
         return _telNo;

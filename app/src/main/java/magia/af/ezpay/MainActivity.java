@@ -1,10 +1,13 @@
 package magia.af.ezpay;
 
+import android.*;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.View;
@@ -46,6 +49,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (Build.VERSION.SDK_INT >= 23) {
+            checkPermissions();
+        }
         darkDialog = (RelativeLayout) findViewById(R.id.dark_dialog);
         waitingDialog = (RelativeLayout) findViewById(R.id.wait_layout);
         friendsLayout = (LinearLayout) findViewById(R.id.friends_layout);
@@ -139,6 +145,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onDestroy() {
         startService(new Intent(this, LocationService.class));
         super.onDestroy();
+    }
+
+    public void checkPermissions(){
+        ActivityCompat.requestPermissions(this,new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION},0);
     }
 
     @Override

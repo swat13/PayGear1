@@ -46,8 +46,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
   private static final String TAG = "MyFirebaseMsgService";
 
 
-
-
   @Override
   public void onMessageReceived(RemoteMessage remoteMessage) {
     //Displaying data in log
@@ -58,11 +56,19 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     PayLogItem payLogItem = getChatItem(remoteMessage.getNotification().getBody());
     try {
       JSONObject jsonObject = new JSONObject(remoteMessage.getNotification().getBody());
+      if (jsonObject.getString("param1").equals("Group")) {
+        groupMessageHandler = GroupChatPageActivity.informNotif();
+        groupMessageHandler.handleMessage(payLogItem);
+      }
+      if (jsonObject.getString("param1").equals("PV")) {
+        chatMessageHandler = ChatPageActivity.informNotif();
+        chatMessageHandler.handleMessage(payLogItem);
+      }
       if (jsonObject.isNull("chatItem")) {
         groupMessageHandler = GroupChatPageActivity.informNotif();
         groupMessageHandler.handleMessage(payLogItem);
       }
-      if (jsonObject.isNull("groupChatItem")){
+      if (jsonObject.isNull("groupChatItem")) {
         chatMessageHandler = ChatPageActivity.informNotif();
         chatMessageHandler.handleMessage(payLogItem);
       }
@@ -179,6 +185,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
       rssItem.setNotifBody(jsonObject.getString("body"));
       rssItem.setNotifType(jsonObject.getInt("type"));
       rssItem.setNotifParam1(jsonObject.getString("param1"));
+      if (!jsonObject.isNull("param2")) {
+        rssItem.setCancelId(Integer.parseInt(jsonObject.getString("param2")));
+      }
       if (!jsonObject.isNull("chatItem")) {
         JSONObject lastChatObject = jsonObject.getJSONObject("chatItem");
         rssItem.setId(lastChatObject.getInt("id"));

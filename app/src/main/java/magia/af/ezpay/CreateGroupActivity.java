@@ -14,9 +14,11 @@ import android.graphics.Rect;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AlertDialog;
@@ -75,6 +77,9 @@ public class CreateGroupActivity extends BaseActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_create_group);
+    if (Build.VERSION.SDK_INT >= 23) {
+      checkPermissions();
+    }
     rssFeed = (ArrayList<RSSItem>) getIntent().getSerializableExtra("contact");
     Bundle bundle = getIntent().getExtras();
     if (bundle != null) {
@@ -601,6 +606,10 @@ public class CreateGroupActivity extends BaseActivity {
 
     return filename;
 
+  }
+
+  public void checkPermissions(){
+    ActivityCompat.requestPermissions(this,new String[]{android.Manifest.permission.CAMERA},0);
   }
 
   public String getFilename() {

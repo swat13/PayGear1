@@ -91,6 +91,10 @@ public class ProfileFragment extends Fragment {
         imageBtn = (ImageView) rootView.findViewById(R.id.imageButton);
         imageSignOut = (ImageView) rootView.findViewById(R.id.log_out);
 
+        if (Build.VERSION.SDK_INT >= 23) {
+            checkPermissions();
+        }
+
         contactName = (TextView) rootView.findViewById(R.id.txt_user_name);
         amount = (TextView) rootView.findViewById(R.id.txt_account_availability);
         phoneNumber = (TextView) rootView.findViewById(R.id.txt_phone_number);
@@ -172,6 +176,10 @@ public class ProfileFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    public void checkPermissions(){
+        ActivityCompat.requestPermissions(getActivity(),new String[]{android.Manifest.permission.CAMERA},0);
     }
 
     Bitmap thumbnail;

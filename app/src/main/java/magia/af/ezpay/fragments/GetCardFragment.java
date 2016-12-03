@@ -240,7 +240,7 @@ public class GetCardFragment extends Fragment {
             ((ChatPageActivity) getActivity()).fragment_status = 0;
             ((ChatPageActivity) getActivity()).darkDialog.setVisibility(View.GONE);
             if (isCommit) {
-                ((ChatPageActivity) getActivity()).accPay(id, card);
+//                ((ChatPageActivity) getActivity()).accPay(id, card);
             }
 
 
