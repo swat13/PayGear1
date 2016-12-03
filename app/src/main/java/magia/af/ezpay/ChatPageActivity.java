@@ -852,14 +852,14 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
                 holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
                 holder.txt_date.setText(conversion.getIranianDate() + "");
                 holder.txt_description.setText("توضیحات: " + feed.getItem(pos).getComment());
-//        holder.btn_cancel.setOnClickListener(new View.OnClickListener() {
-//          @Override
-//          public void onClick(View v) {
-//            pos = holder.getAdapterPosition();
-//            Log.e("eeeeeeeee", "onClick: " + pos);
-//            new DeletePaymentRequest().execute(feed.getItem(pos).getId());
-//          }
-//        });
+                holder.btn_cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        pos = holder.getAdapterPosition();
+                        Log.e("eeeeeeeee", "onClick: " + pos);
+                        new DeletePaymentRequest(holder.getAdapterPosition()).execute(feed.getItem(pos).getId());
+                    }
+                });
             } else if (holder.getItemViewType() == 3) {
                 Log.e("id", "0000000000: " + pos);
                 pos = holder.getAdapterPosition();

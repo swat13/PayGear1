@@ -202,13 +202,24 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
       Log.e("Boolean", "onBindViewHolder: " + fe.isGroup());
       Log.e("THIS LINE IS 202", "onBindViewHolder: " + fe.getGroupLastChatAmount());
       if (!fe.isGroupStatus()) {
-        if (fe.isLastChatOrderByFromOrTo()) {
+        if (fe.isLastChatOrderByFromOrTo() && !fe.getTelNo().equals(fe.getLastChatTo())) {
           FeedViewHolder.pay.setTextColor(Color.RED);
           FeedViewHolder.pay.setText("-" + getDividedToman((long) fe.getLastChatAmount()) + "");
-        } else {
+        }
+        else {
           FeedViewHolder.pay.setTextColor(Color.parseColor("#6db314"));
+          FeedViewHolder.pay.setText("+" + getDividedToman((long) fe.getLastChatAmount()) + "");
+//          FeedViewHolder.pay.setTextColor(Color.parseColor("#6db314"));
+//          FeedViewHolder.pay.setText(getDividedToman((long) fe.getLastChatAmount()) + "");
+        }
+        if (fe.isContactStatus()){
+          FeedViewHolder.pay.setTextColor(Color.GRAY);
           FeedViewHolder.pay.setText(getDividedToman((long) fe.getLastChatAmount()) + "");
         }
+//        else {
+//          FeedViewHolder.pay.setTextColor(Color.parseColor("#6db314"));
+//          FeedViewHolder.pay.setText("+" + getDividedToman((long) fe.getLastChatAmount()) + "");
+//        }
         FeedViewHolder.description.setText(fe.getComment());
         if (fe.getTitle().length() > 15) {
           contactName = fe.getTitle();
