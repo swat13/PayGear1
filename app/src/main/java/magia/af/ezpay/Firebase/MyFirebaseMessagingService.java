@@ -58,19 +58,19 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
       JSONObject jsonObject = new JSONObject(remoteMessage.getNotification().getBody());
       if (jsonObject.getString("param1").equals("Group")) {
         groupMessageHandler = GroupChatPageActivity.informNotif();
-        groupMessageHandler.handleMessage(payLogItem);
+        groupMessageHandler.handleMessage(payLogItem,true);
       }
       if (jsonObject.getString("param1").equals("PV")) {
         chatMessageHandler = ChatPageActivity.informNotif();
-        chatMessageHandler.handleMessage(payLogItem);
+        chatMessageHandler.handleMessage(payLogItem,true);
       }
-      if (jsonObject.isNull("chatItem")) {
-        groupMessageHandler = GroupChatPageActivity.informNotif();
-        groupMessageHandler.handleMessage(payLogItem);
-      }
-      if (jsonObject.isNull("groupChatItem")) {
+      if (!jsonObject.isNull("chatItem")) {
         chatMessageHandler = ChatPageActivity.informNotif();
-        chatMessageHandler.handleMessage(payLogItem);
+        chatMessageHandler.handleMessage(payLogItem,false);
+      }
+      if (!jsonObject.isNull("groupChatItem")) {
+        groupMessageHandler = GroupChatPageActivity.informNotif();
+        groupMessageHandler.handleMessage(payLogItem,false);
       }
     } catch (JSONException e) {
       e.printStackTrace();

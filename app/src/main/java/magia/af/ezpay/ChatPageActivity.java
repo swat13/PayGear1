@@ -91,6 +91,7 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
   private Dialog cardDialog;
   private Dialog payDialog;
   private Dialog requestDialog;
+  HashMap<Integer, Integer> hashMap;
 
   static {
     handler = new Handler(Looper.getMainLooper());
@@ -822,8 +823,8 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
       int month = 0;
       int day = 0;
       CalendarConversion conversion = null;
-      HashMap<Integer,Integer> hashMap = getPositionFromId(feed.getItem(holder.getAdapterPosition()).getId(),holder.getAdapterPosition());
-      Log.e("HASH", "onBindViewHolder: " + hashMap.get(feed.getItem(holder.getAdapterPosition()).getId()));
+      Log.e("EQ", "onBindViewHolder: " + feed.getItem(0).getId());
+      hashMap = getPositionFromId(feed.getItem(holder.getAdapterPosition()).getId(), holder.getAdapterPosition());
       pos = holder.getAdapterPosition();
       if (holder.getItemViewType() == 0) {
         pos = holder.getAdapterPosition();
@@ -1180,13 +1181,21 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
   }
 
   @Override
-  public void handleMessage(final PayLogItem logItem) {
+  public void handleMessage(final PayLogItem logItem, final boolean deleteState) {
     runOnUiThread(new Runnable() {
       @Override
       public void run() {
+        if (deleteState) {
+          Log.e("EQ2", "run: " + logItem.getCancelId());
+          Log.e("EQ2", "run: " + hashMap.get(logItem.getCancelId()));
+          new DeletePaymentRequestWithID(hashMap.get(logItem.getCancelId())).execute(logItem.getCancelId());
+          adapter.notifyDataSetChanged();
+        } else {
           Log.e("TTTT", "handleMessage pv: ");
           feed.addItem(logItem, 0);
           adapter.notifyDataSetChanged();
+
+        }
       }
     });
   }
@@ -1209,9 +1218,9 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
     return true;
   }
 
-  public HashMap<Integer,Integer> getPositionFromId(int id,int pos){
-    HashMap<Integer,Integer> hashMap = new HashMap<>();
-    hashMap.put(id,pos);
+  public HashMap<Integer, Integer> getPositionFromId(int id, int pos) {
+    HashMap<Integer, Integer> hashMap = new HashMap<>();
+    hashMap.put(id, pos);
     return hashMap;
   }
 }

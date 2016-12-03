@@ -1001,7 +1001,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
 
 
   @Override
-  public void handleMessage(final PayLogItem logItem) {
+  public void handleMessage(final PayLogItem logItem,boolean deleteState) {
     Log.e(TAG, "handleMessage: " + logItem.getComment());
     runOnUiThread(new Runnable() {
       @Override
