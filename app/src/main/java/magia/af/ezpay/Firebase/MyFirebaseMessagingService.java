@@ -64,14 +64,30 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         chatMessageHandler = ChatPageActivity.informNotif();
         chatMessageHandler.handleMessage(payLogItem,true,"");
       }
+      if (jsonObject.getString("param1").contains("0")||
+        jsonObject.getString("param1").contains("1")||
+        jsonObject.getString("param1").contains("2")||
+        jsonObject.getString("param1").contains("3")||
+        jsonObject.getString("param1").contains("4")||
+        jsonObject.getString("param1").contains("5")||
+        jsonObject.getString("param1").contains("6")||
+        jsonObject.getString("param1").contains("7")||
+        jsonObject.getString("param1").contains("8")||
+        jsonObject.getString("param1").contains("9")){
+        groupMessageHandler = GroupChatPageActivity.informNotif();
+        groupMessageHandler.handleMessage(payLogItem,true,"");
+      }
       if (!jsonObject.isNull("chatItem")) {
         JSONObject object = new JSONObject(jsonObject.getString("chatItem"));
+        JSONObject object2 = new JSONObject(object.getString("t"));
         chatMessageHandler = ChatPageActivity.informNotif();
-        chatMessageHandler.handleMessage(payLogItem,false,object.getString("t"));
+        chatMessageHandler.handleMessage(payLogItem,false,object2.getString("mobile"));
       }
       if (!jsonObject.isNull("groupChatItem")) {
+        JSONObject object = new JSONObject(jsonObject.getString("groupChatItem"));
+        JSONObject object2 = new JSONObject(object.getString("t"));
         groupMessageHandler = GroupChatPageActivity.informNotif();
-        groupMessageHandler.handleMessage(payLogItem,false,"");
+        groupMessageHandler.handleMessage(payLogItem,false,object2.getString("mobile"));
       }
     } catch (JSONException e) {
       e.printStackTrace();

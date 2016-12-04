@@ -196,30 +196,21 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
       RSSItem fe = _feed.getItem(position);
 //      ContactDatabase database = new ContactDatabase(getActivity());
 //      fe.setContactName(database.getNameFromNumber(fe.getTelNo()));
-      Log.e("sssssssss", "onBindViewHolder: " + fe.getTelNo());
-      Log.e("(((((((((((", "onBindViewHolder: " + fe.getTelNo());
-      Log.e("Test", "onBindViewHolder: " + fe.getGroupTitle());
-      Log.e("Boolean", "onBindViewHolder: " + fe.isGroup());
-      Log.e("THIS LINE IS 202", "onBindViewHolder: " + fe.getGroupLastChatAmount());
       if (!fe.isGroupStatus()) {
-        if (fe.isLastChatOrderByFromOrTo() && !fe.getTelNo().equals(fe.getLastChatTo())) {
+        if (fe.isLastChatOrderByFromOrTo()) {
           FeedViewHolder.pay.setTextColor(Color.RED);
           FeedViewHolder.pay.setText("-" + getDividedToman((long) fe.getLastChatAmount()) + "");
-        }
-        else {
+        } else if (!fe.isLastChatOrderByFromOrTo()) {
+          FeedViewHolder.pay.setTextColor(Color.GRAY);
+          FeedViewHolder.pay.setText(getDividedToman((long) fe.getLastChatAmount()) + "");
+        } else {
           FeedViewHolder.pay.setTextColor(Color.parseColor("#6db314"));
           FeedViewHolder.pay.setText("+" + getDividedToman((long) fe.getLastChatAmount()) + "");
-//          FeedViewHolder.pay.setTextColor(Color.parseColor("#6db314"));
-//          FeedViewHolder.pay.setText(getDividedToman((long) fe.getLastChatAmount()) + "");
         }
-        if (fe.isContactStatus()){
+        if (fe.isContactStatus()) {
           FeedViewHolder.pay.setTextColor(Color.GRAY);
           FeedViewHolder.pay.setText(getDividedToman((long) fe.getLastChatAmount()) + "");
         }
-//        else {
-//          FeedViewHolder.pay.setTextColor(Color.parseColor("#6db314"));
-//          FeedViewHolder.pay.setText("+" + getDividedToman((long) fe.getLastChatAmount()) + "");
-//        }
         FeedViewHolder.description.setText(fe.getComment());
         if (fe.getTitle().length() > 15) {
           contactName = fe.getTitle();

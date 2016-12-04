@@ -2021,6 +2021,7 @@ public class DOMParser {
           payLogItem.setStatus(object.getBoolean("s"));
           payLogItem.setGroup(object.getBoolean("g"));
           payLogItem.setComment(object.getString("c"));
+          feed.getHash().put(object.getInt("id"), i);
         } catch (JSONException e) {
           e.printStackTrace();
         }

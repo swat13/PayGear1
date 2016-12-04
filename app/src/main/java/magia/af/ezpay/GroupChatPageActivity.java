@@ -1,7 +1,6 @@
 package magia.af.ezpay;
 
 import android.app.Dialog;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -47,23 +46,16 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
   private String groupTitle;
   private String groupPhoto;
   private String phone;
-
   private ImageView groupImage;
   private TextView txtGroupTitle;
-
   private ArrayList<RSSItem> members;
-
   private RecyclerView payListRecycler;
-
   private Dialog dialog;
   private Dialog cardDialog;
   private Dialog payDialog;
   private Dialog requestDialog;
-
   PayLogFeed feed;
-
   GroupChatPageAdapter adapter;
-
   public int amount;
   private int position;
   int pos;
@@ -80,7 +72,8 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
   String mCardPassword;
   static MessageHandler mHandler;
   RSSItem rssItem;
-
+  PayLogItem logItem;
+  int newPos;
   private static final String TAG = GroupChatPageActivity.class.getSimpleName();
   private String date;
 
@@ -96,10 +89,10 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
       groupPhoto = bundle.getString("photo");
       groupTitle = bundle.getString("title");
     }
+    Log.e(TAG, "onCreate: " + groupId);
     phone = getSharedPreferences("EZpay", 0).getString("phoneNumber", "");
 
     date = "2050-01-01T00:00:00.000";
-
 
     members = (ArrayList<RSSItem>) getIntent().getSerializableExtra("members");
     for (int i = 0; i < members.size(); i++) {
@@ -444,7 +437,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
               Toast.makeText(GroupChatPageActivity.this, "مبلغ وارد شده صحیح نمیباشد!", Toast.LENGTH_SHORT).show();
             } else {
               hideKey(commment);
-              new requestFromAnother(phone, payAmount.getText().toString().replace(",",""), commment.getText().toString(), groupId).execute();
+              new requestFromAnother(phone, payAmount.getText().toString().replace(",", ""), commment.getText().toString(), groupId).execute();
               dialog.dismiss();
             }
           }
@@ -626,60 +619,61 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
 
     @Override
     public int getItemViewType(int position) {
-      int viewType;
+      int viewType = 8;
+
       if (feed.getItem(position).getfMobile().equals(phone)) {
         if (feed.getItem(position).isStatus()) {
-          viewType = 1;
+          Log.e(TAG, "getItemViewType: " + "state2");
+          viewType = 0;//cancel from
         } else if (feed.getItem(position).isPaideBool()) {
-          viewType = 5;
-
-        } else
-          viewType = 2;
-      } else {
+          Log.e(TAG, "getItemViewType: " + "state3");
+          viewType = 1;//payed from
+        } else {
+          Log.e(TAG, "getItemViewType: " + "state4");
+          viewType = 2;//request to
+        }
+      } else if (feed.getItem(position).getfMobile().equals(feed.getItem(position).gettMobile())) {
         if (feed.getItem(position).isStatus()) {
-          viewType = 0;
+          Log.e(TAG, "getItemViewType: " + "state6");
+          viewType = 3;//cancel from other
         } else if (feed.getItem(position).isPaideBool()) {
-          viewType = 4;
-
-        } else
-          viewType = 3;
+          Log.e(TAG, "getItemViewType: " + "state7");
+          viewType = 0;// Payed From Another which is impossible
+        } else {
+          Log.e(TAG, "getItemViewType: " + "state8");
+          viewType = 5;//request from other
+        }
+      } else if (feed.getItem(position).gettMobile().equals(phone)) {
+        if (feed.getItem(position).isPaideBool()) {
+          Log.e(TAG, "getItemViewType: " + "state10");
+          viewType = 4; //payed to from
+        }
+      } else {
+        if (feed.getItem(position).isPaideBool()) {
+          Log.e(TAG, "getItemViewType: " + "state11");
+          viewType = 6; //done
+        }
       }
-
-//      if (feed.getItem(pos).getFrom().equals(phone)) {
-//        if (feed.getItem(pos).isPaideBool()) {
-//          if (feed.getItem(pos).isStatus()) {
-//            return 4;
-//          }
-//          return 0;
-//        } else
-//          return 2;
-//      } else {
-//        if (feed.getItem(pos).isPaideBool()) {
-//          if (!feed.getItem(pos).isStatus()) {
-//            return 5;
-//          }
-//          return 1;
-//        } else
-//          return 3;
-//      }
       return viewType;
     }
 
     @Override
     public GroupChatPageAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-      View rootView;
+      View rootView = null;
       if (viewType == 0) {
         rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_cancel_from, parent, false);
       } else if (viewType == 1) {
-        rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_cancel_to, parent, false);
+        rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_chat_item_from, parent, false);
       } else if (viewType == 2) {
         rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_chat_item_pay_from, parent, false);
       } else if (viewType == 3) {
-        rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_chat_item_pay_to, parent, false);
+        rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_chat_item_cancel_to, parent, false);
       } else if (viewType == 4) {
-        rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_chat_item_from, parent, false);
-      } else {
         rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_chat_item_to, parent, false);
+      } else if (viewType == 5) {
+        rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_chat_item_pay_to, parent, false);
+      } else if (viewType == 6) {
+        rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_chat_item_payed_to, parent, false);
       }
       return new GroupChatPageAdapter.ViewHolder(rootView);
     }
@@ -699,87 +693,30 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         day = Integer.parseInt(feed.getItem(pos).getDate().substring(8, 10));
         conversion = new CalendarConversion(year, month, day);
         holder.txt_price.setText(getDividedToman(Long.valueOf(feed.getItem(pos).getAmount() + "")));
-        //holder.txt_status.setText(feed.getItem(pos).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
-        holder.txt_description.setText("توضیحات: " + feed.getItem(pos).getComment());
-      } else if (holder.getItemViewType() == 2) {
-        pos = holder.getAdapterPosition();
-        year = Integer.parseInt(feed.getItem(pos).getDate().substring(0, 4));
-        month = Integer.parseInt(feed.getItem(pos).getDate().substring(5, 7));
-        day = Integer.parseInt(feed.getItem(pos).getDate().substring(8, 10));
-        conversion = new CalendarConversion(year, month, day);
-        holder.txt_price.setText(getDividedToman(Long.valueOf(feed.getItem(pos).getAmount() + "")));
-//        holder.txt_status.setText("درخواست شده توسط " + feed.getItem(pos).getfTitle());
-        holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
-        holder.txt_date.setText(conversion.getIranianDate() + "");
-        holder.txt_description.setText("توضیحات: " + feed.getItem(pos).getComment());
-        holder.btn_cancel.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            pos = holder.getAdapterPosition();
-            Log.e("eeeeeeeee", "onClick: " + pos);
-//            new ChatPageActivity.DeletePaymentRequest().execute(feed.getItem(pos).getId());
-          }
-        });
-      } else if (holder.getItemViewType() == 3) {
-        Log.e("id", "0000000000: " + pos);
-        pos = holder.getAdapterPosition();
-        year = Integer.parseInt(feed.getItem(pos).getDate().substring(0, 4));
-        month = Integer.parseInt(feed.getItem(pos).getDate().substring(5, 7));
-        day = Integer.parseInt(feed.getItem(pos).getDate().substring(8, 10));
-        conversion = new CalendarConversion(year, month, day);
-        holder.txt_price.setText(getDividedToman(Long.valueOf(feed.getItem(pos).getAmount() + "")));
-
-//        holder.txt_status.setText(feed.getItem(pos).isPaideBool() ? "پرداخت شد" : "پرداخت نشد");
-        holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
-        holder.txt_date.setText(conversion.getIranianDate() + "");
-        holder.txt_description.setText("توضیحات: " + feed.getItem(pos).getComment());
-        holder.nameOfApplicant.setText(feed.getItem(pos).gettTitle());
-        Log.e(TAG, "onBindViewHolder: " + feed.getItem(pos).gettPhoto());
-        Glide.with(GroupChatPageActivity.this)
-          .load(feed.getItem(pos).gettPhoto())
-          .asBitmap()
-          .centerCrop()
-          .placeholder(R.drawable.pic_profile)
-          .into(new BitmapImageViewTarget(holder.requesterUserAvatar) {
-            @Override
-            protected void setResource(Bitmap resource) {
-              RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
-              circularBitmapDrawable.setCornerRadius(700);
-              holder.requesterUserAvatar.setImageDrawable(circularBitmapDrawable);
-            }
-          });
-        holder.btn_accept.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-//            darkDialog.setVisibility(View.VISIBLE);
-            pos = holder.getAdapterPosition();
-            Log.e("id", "1111111111111: " + pos);
-//            getCardFragment = GetCardFragment.newInstance(feed.getItem(pos).getId());
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            ft.setCustomAnimations(R.animator.enter_from_right, R.animator.exit_to_right);
-//            ft.add(android.R.id.content, getCardFragment).commit();
-//            if (success) {
-//              holder.btn_cancel.setVisibility(View.GONE);
-//              holder.btn_accept.setVisibility(View.GONE);
-//              holder.txt_status.setText("پرداخت شد");
-//              adapter.notifyDataSetChanged();
+//        holder.payerName.setText(feed.getItem(pos).gettTitle());
+//        Glide.with(GroupChatPageActivity.this)
+//          .load(feed.getItem(pos).gettPhoto())
+//          .asBitmap()
+//          .centerCrop()
+//          .placeholder(R.drawable.pic_profile)
+//          .into(new BitmapImageViewTarget(holder.payToUserImage) {
+//            @Override
+//            protected void setResource(Bitmap resource) {
+//              RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
+//              circularBitmapDrawable.setCornerRadius(700);
+//              this.view.setImageDrawable(circularBitmapDrawable);
 //            }
-//                        holder.removeAt(pos);
-//                        adapter.notifyDataSetChanged();
-//            removePosition = holder.getAdapterPosition();
-          }
-        });
-      }
-      if (holder.getItemViewType() == 4) {
+//          });
+        holder.txt_description.setText("توضیحات: " + feed.getItem(pos).getComment());
+      } else if (holder.getItemViewType() == 1) {
         pos = holder.getAdapterPosition();
         year = Integer.parseInt(feed.getItem(pos).getDate().substring(0, 4));
         month = Integer.parseInt(feed.getItem(pos).getDate().substring(5, 7));
         day = Integer.parseInt(feed.getItem(pos).getDate().substring(8, 10));
         conversion = new CalendarConversion(year, month, day);
         holder.txt_price.setText(getDividedToman(Long.valueOf(feed.getItem(pos).getAmount() + "")));
-        // holder.txt_status.setText("پرداخت شد");
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
         holder.txt_description.setText("توضیحات: " + feed.getItem(pos).getComment());
@@ -794,24 +731,84 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
             protected void setResource(Bitmap resource) {
               RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
               circularBitmapDrawable.setCornerRadius(700);
-              holder.payToUserImage.setImageDrawable(circularBitmapDrawable);
+              this.view.setImageDrawable(circularBitmapDrawable);
             }
           });
-      }
-      if (holder.getItemViewType() == 5) {
+      } else if (holder.getItemViewType() == 2) {
+        Log.e("id", "0000000000: " + pos);
         pos = holder.getAdapterPosition();
         year = Integer.parseInt(feed.getItem(pos).getDate().substring(0, 4));
         month = Integer.parseInt(feed.getItem(pos).getDate().substring(5, 7));
         day = Integer.parseInt(feed.getItem(pos).getDate().substring(8, 10));
         conversion = new CalendarConversion(year, month, day);
         holder.txt_price.setText(getDividedToman(Long.valueOf(feed.getItem(pos).getAmount() + "")));
-        // holder.txt_status.setText("لغو شد");
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
         holder.txt_description.setText("توضیحات: " + feed.getItem(pos).getComment());
-        holder.userReceiverName.setText(feed.getItem(pos).gettTitle());
+        holder.btn_cancel.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            new DeletePaymentRequest(holder.getAdapterPosition()).execute(feed.getItem(holder.getAdapterPosition()).getId());
+          }
+        });
+//        holder.btn_accept.setOnClickListener(new View.OnClickListener() {
+//          @Override
+//          public void onClick(View v) {
+////            darkDialog.setVisibility(View.VISIBLE);
+//            pos = holder.getAdapterPosition();
+//            Log.e("id", "1111111111111: " + pos);
+////            getCardFragment = GetCardFragment.newInstance(feed.getItem(pos).getId());
+//            FragmentTransaction ft = getFragmentManager().beginTransaction();
+//            ft.setCustomAnimations(R.animator.enter_from_right, R.animator.exit_to_right);
+////            ft.add(android.R.id.content, getCardFragment).commit();
+////            if (success) {
+////              holder.btn_cancel.setVisibility(View.GONE);
+////              holder.btn_accept.setVisibility(View.GONE);
+////              holder.txt_status.setText("پرداخت شد");
+////              adapter.notifyDataSetChanged();
+////            }
+////                        holder.removeAt(pos);
+////                        adapter.notifyDataSetChanged();
+////            removePosition = holder.getAdapterPosition();
+//          }
+//        });
+      }
+      if (holder.getItemViewType() == 3) {
+        pos = holder.getAdapterPosition();
+        year = Integer.parseInt(feed.getItem(pos).getDate().substring(0, 4));
+        month = Integer.parseInt(feed.getItem(pos).getDate().substring(5, 7));
+        day = Integer.parseInt(feed.getItem(pos).getDate().substring(8, 10));
+        conversion = new CalendarConversion(year, month, day);
+        holder.txt_price.setText(getDividedToman(Long.valueOf(feed.getItem(pos).getAmount() + "")));
+        holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
+        holder.txt_date.setText(conversion.getIranianDate() + "");
+        holder.txt_description.setText("توضیحات: " + feed.getItem(pos).getComment());
         Glide.with(GroupChatPageActivity.this)
           .load(feed.getItem(pos).gettPhoto())
+          .asBitmap()
+          .centerCrop()
+          .placeholder(R.drawable.pic_profile)
+          .into(new BitmapImageViewTarget(holder.cancelUserAvatar) {
+            @Override
+            protected void setResource(Bitmap resource) {
+              RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
+              circularBitmapDrawable.setCornerRadius(700);
+              this.view.setImageDrawable(circularBitmapDrawable);
+            }
+          });
+      }
+      if (holder.getItemViewType() == 4) {
+        pos = holder.getAdapterPosition();
+        year = Integer.parseInt(feed.getItem(pos).getDate().substring(0, 4));
+        month = Integer.parseInt(feed.getItem(pos).getDate().substring(5, 7));
+        day = Integer.parseInt(feed.getItem(pos).getDate().substring(8, 10));
+        conversion = new CalendarConversion(year, month, day);
+        holder.txt_price.setText(getDividedToman(Long.valueOf(feed.getItem(pos).getAmount() + "")));
+        holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
+        holder.txt_date.setText(conversion.getIranianDate() + "");
+        holder.txt_description.setText("توضیحات: " + feed.getItem(pos).getComment());
+        Glide.with(GroupChatPageActivity.this)
+          .load(feed.getItem(pos).getfPhoto())
           .asBitmap()
           .centerCrop()
           .placeholder(R.drawable.pic_profile)
@@ -820,10 +817,10 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
             protected void setResource(Bitmap resource) {
               RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
               circularBitmapDrawable.setCornerRadius(700);
-              holder.requesterUserAvatar.setImageDrawable(circularBitmapDrawable);
+              this.view.setImageDrawable(circularBitmapDrawable);
             }
           });
-      } else {
+      } else if (holder.getItemViewType() == 5) {
         pos = holder.getAdapterPosition();
         year = Integer.parseInt(feed.getItem(pos).getDate().substring(0, 4));
         month = Integer.parseInt(feed.getItem(pos).getDate().substring(5, 7));
@@ -833,6 +830,181 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
         holder.txt_date.setText(conversion.getIranianDate() + "");
         holder.txt_description.setText("توضیحات: " + feed.getItem(pos).getComment());
+        holder.nameOfApplicant.setText(feed.getItem(pos).getfTitle());
+        Glide.with(GroupChatPageActivity.this)
+          .load(feed.getItem(pos).getfPhoto())
+          .asBitmap()
+          .centerCrop()
+          .placeholder(R.drawable.pic_profile)
+          .into(new BitmapImageViewTarget(holder.requesterUserAvatar) {
+            @Override
+            protected void setResource(Bitmap resource) {
+              RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
+              circularBitmapDrawable.setCornerRadius(700);
+              this.view.setImageDrawable(circularBitmapDrawable);
+            }
+          });
+        holder.btn_accept.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            payDialog = new Dialog(GroupChatPageActivity.this, R.style.PauseDialog);
+            payDialog.setContentView(R.layout.group_card_layout);
+            edtCardNumber = (EditText) payDialog.findViewById(R.id.payAmount);
+            edtCardNumber.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+              @Override
+              public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                  edtCardNumber.setGravity(Gravity.LEFT);
+                  edtCardNumber.setHint("");
+                } else {
+                  if (edtCardNumber.getText().length() == 0) {
+                    edtCardNumber.setGravity(Gravity.CENTER);
+                    edtCardNumber.setHint("شماره کارت");
+                  }
+                }
+              }
+            });
+            edtCardNumber.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                edtCardNumber.setSelection(edtCardNumber.getText().length());
+              }
+            });
+            edtCardPassword = (EditText) payDialog.findViewById(R.id.comments);
+            edtCardPassword.setCursorVisible(false);
+            edtCardPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+              @Override
+              public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                  edtCardPassword.setGravity(Gravity.LEFT);
+                  edtCardPassword.setHint("");
+                } else {
+                  if (edtCardPassword.getText().length() == 0) {
+                    edtCardPassword.setGravity(Gravity.CENTER);
+                    edtCardPassword.setHint("رمز دوم");
+                  }
+                }
+              }
+            });
+
+            edtCardPassword.addTextChangedListener(new TextWatcher() {
+              @Override
+              public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+              }
+
+              @Override
+              public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                if (s.length() == 0) {
+                  edtCardPassword.setGravity(Gravity.CENTER);
+                  edtCardPassword.setHint("رمز دوم");
+                } else {
+                  edtCardPassword.setGravity(Gravity.LEFT);
+                  edtCardPassword.setHint("");
+                }
+              }
+
+              @Override
+              public void afterTextChanged(Editable s) {
+              }
+            });
+            edtCardNumber.addTextChangedListener(new TextWatcher() {
+              private static final char space = '-';
+
+              @Override
+              public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+              }
+
+              @Override
+              public void onTextChanged(CharSequence s, int start, int before, int count) {
+              }
+
+              @Override
+              public void afterTextChanged(Editable s) {
+                if (s.length() == 19) {
+                  edtCardPassword.requestFocus();
+                }
+                if (s.length() == 0) {
+
+                  edtCardNumber.setGravity(Gravity.RIGHT);
+                  edtCardNumber.setHint("شماره کارت");
+
+                } else {
+                  edtCardNumber.setGravity(Gravity.LEFT);
+                  if (s.length() > 0 && (s.length() % 5) == 0) {
+                    final char c = s.charAt(s.length() - 1);
+                    if (space == c) {
+                      s.delete(s.length() - 1, s.length());
+                    }
+                  }
+                  if (s.length() > 0 && (s.length() % 5) == 0) {
+                    char c = s.charAt(s.length() - 1);
+                    // Only if its a digit where there should be a space we insert a space
+                    if (Character.isDigit(c) && TextUtils.split(s.toString(), String.valueOf(space)).length <= 3) {
+                      s.insert(s.length() - 1, String.valueOf(space));
+                    }
+                  }
+                }
+              }
+            });
+            Button btnCancel = (Button) payDialog.findViewById(R.id.cancel);
+            btnCancel.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                payDialog.dismiss();
+              }
+            });
+            Button btnConfirm = (Button) payDialog.findViewById(R.id.confirm);
+            btnConfirm.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                pos = holder.getAdapterPosition();
+                Log.e("POOOOS", "onClick: " + holder.getAdapterPosition());
+                new GroupChatPageActivity.accPaymentRequest(holder.getAdapterPosition()).execute(feed.getItem(holder.getAdapterPosition()).getId() + "", edtCardNumber.getText().toString() + edtCardPassword.getText().toString());
+                payDialog.dismiss();
+              }
+            });
+            payDialog.show();
+          }
+        });
+      } else if (holder.getItemViewType() == 6) {
+        pos = holder.getAdapterPosition();
+        year = Integer.parseInt(feed.getItem(pos).getDate().substring(0, 4));
+        month = Integer.parseInt(feed.getItem(pos).getDate().substring(5, 7));
+        day = Integer.parseInt(feed.getItem(pos).getDate().substring(8, 10));
+        conversion = new CalendarConversion(year, month, day);
+        holder.txt_price.setText(getDividedToman(Long.valueOf(feed.getItem(pos).getAmount() + "")));
+        holder.txt_clock.setText(feed.getItem(pos).getDate().substring(11, 16) + "");
+        holder.txt_date.setText(conversion.getIranianDate() + "");
+        holder.txt_description.setText("توضیحات: " + feed.getItem(pos).getComment());
+        holder.userReceiverName.setText(feed.getItem(pos).getfTitle());
+        holder.payedToUserName.setText(feed.getItem(pos).gettTitle());
+        Glide.with(GroupChatPageActivity.this)
+          .load(feed.getItem(pos).gettPhoto())
+          .asBitmap()
+          .centerCrop()
+          .placeholder(R.drawable.pic_profile)
+          .into(new BitmapImageViewTarget(holder.payedToUserImage) {
+            @Override
+            protected void setResource(Bitmap resource) {
+              RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
+              circularBitmapDrawable.setCornerRadius(700);
+              this.view.setImageDrawable(circularBitmapDrawable);
+            }
+          });
+        Glide.with(GroupChatPageActivity.this)
+          .load(feed.getItem(pos).getfPhoto())
+          .asBitmap()
+          .centerCrop()
+          .placeholder(R.drawable.pic_profile)
+          .into(new BitmapImageViewTarget(holder.requesterUserAvatar) {
+            @Override
+            protected void setResource(Bitmap resource) {
+              RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
+              circularBitmapDrawable.setCornerRadius(700);
+              this.view.setImageDrawable(circularBitmapDrawable);
+            }
+          });
       }
     }
 
@@ -857,6 +1029,9 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
       ImageView payerImage;
       ImageView payToUserImage;
       TextView userReceiverName;
+      ImageView payedToUserImage;
+      TextView payedToUserName;
+      ImageView cancelUserAvatar;
 
       ViewHolder(View itemView) {
         super(itemView);
@@ -874,12 +1049,14 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         payerName = (TextView) itemView.findViewById(R.id.payerName);
         nameOfApplicant = (TextView) itemView.findViewById(R.id.nameApplicant);
         userReceiverName = (TextView) itemView.findViewById(R.id.userReceiverName);
+        payedToUserImage = (ImageView) itemView.findViewById(R.id.payedToUserImage);
+        payedToUserName = (TextView) itemView.findViewById(R.id.payedToUserName);
+        cancelUserAvatar = (ImageView) itemView.findViewById(R.id.cancelUserAvatar);
 //        btn_cancel.setOnClickListener(this);
       }
 
       @Override
       public void onClick(View v) {
-
       }
 
       public void removeAt(int position) {
@@ -960,7 +1137,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
 //        feed.removeItem(pos);
         Log.e("POS", pos + "");
         feed.addItem(result, 0);
-//        adapter.notifyItemRangeChanged(pos,feed.getItemCount());
+        feed.getHash().put(result.getId(), 0);
         new LocalPersistence().writeObjectToFile(GroupChatPageActivity.this, feed, "Payment_Chat_List");
         adapter.notifyDataSetChanged();
       } else
@@ -999,16 +1176,139 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
     return GroupChatPageActivity.class.getSimpleName();
   }
 
+  private class accPaymentRequest extends AsyncTask<String, Void, PayLogItem> {
+
+    int pos;
+
+    public accPaymentRequest(int pos) {
+      this.pos = pos;
+    }
+
+    @Override
+    protected void onPreExecute() {
+      super.onPreExecute();
+    }
+
+    @Override
+    protected PayLogItem doInBackground(String... params) {
+      DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
+      Log.e("0000", "accpayment0000: " + getSharedPreferences("EZpay", 0).getString("id", ""));
+      return domParser.accPaymentRequest(params[0], params[1]);
+
+    }
+
+    @Override
+    protected void onPostExecute(PayLogItem result) {
+      if (result != null) {
+        feed.removeItem(pos);
+        adapter.notifyDataSetChanged();
+        feed.addItem(result, 0);
+        adapter.notifyDataSetChanged();
+        new LocalPersistence().writeObjectToFile(GroupChatPageActivity.this, feed, "Payment_Chat_List");
+      } else {
+        Toast.makeText(GroupChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
+      }
+    }
+  }
+
+  private class DeletePaymentRequest extends AsyncTask<Integer, Boolean, Boolean> {
+    int pos;
+
+    public DeletePaymentRequest(int pos) {
+      this.pos = pos;
+    }
+
+    @Override
+    protected void onPreExecute() {
+      super.onPreExecute();
+    }
+
+    @Override
+    protected Boolean doInBackground(Integer... params) {
+      DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
+      Log.e("0000", "accpayment0000: " + getSharedPreferences("EZpay", 0).getString("id", ""));
+      return domParser.deletePayment(params[0]);
+
+    }
+
+    @Override
+    protected void onPostExecute(Boolean result) {
+      if (result != null) {
+        Log.e("TEst", "onClick: " + result);
+        if (result) {
+          Log.e("TEst", "onClick: " + pos);
+          feed.getItem(pos).setStatus(true);
+          adapter.notifyDataSetChanged();
+        }
+      } else {
+        Toast.makeText(GroupChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
+      }
+    }
+  }
+
+  private class DeletePaymentRequestWithID extends AsyncTask<Integer, Boolean, Boolean> {
+    int pos;
+
+    public DeletePaymentRequestWithID(int pos) {
+      Log.e("(((((((", "DeletePaymentRequestWithID: " + pos);
+      this.pos = pos;
+    }
+
+    @Override
+    protected void onPreExecute() {
+      super.onPreExecute();
+    }
+
+    @Override
+    protected Boolean doInBackground(Integer... params) {
+      DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
+      Log.e("0000", "accpayment0000: " + getSharedPreferences("EZpay", 0).getString("id", ""));
+      return domParser.deletePayment(params[0]);
+    }
+
+    @Override
+    protected void onPostExecute(Boolean result) {
+      if (result != null) {
+        Log.e("TEst", "onClick: " + result);
+        if (result) {
+          Log.e("TEst", "onClick: " + pos);
+          feed.getItem(pos).setStatus(true);
+          adapter.notifyDataSetChanged();
+        }
+      } else {
+        Toast.makeText(GroupChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
+      }
+    }
+  }
 
   @Override
-  public void handleMessage(final PayLogItem logItem,boolean deleteState , String chatMemberMobile) {
+  public void handleMessage(final PayLogItem logItem, final boolean deleteState, final String chatMemberMobile) {
     Log.e(TAG, "handleMessage: " + logItem.getComment());
     runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        Log.e("TTTT", "handleMessage: ");
-        feed.addItem(logItem, 0);
-        adapter.notifyDataSetChanged();
+        if (deleteState) {
+          Log.e("EQ2", "run: " + logItem.getCancelId());
+          Log.e("EQ2", "run: " + feed.getHash());
+          for (int i = 0; i < feed.getHash().size(); i++) {
+          }
+          try {
+            newPos = feed.getHash().get(logItem.getCancelId());
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+          new GroupChatPageActivity.DeletePaymentRequestWithID(newPos).execute(logItem.getCancelId());
+          adapter.notifyDataSetChanged();
+        } else {
+          Log.e("chatMemberMobile", "run: " + chatMemberMobile);
+          Log.e("phone", "run: " + phone);
+          Log.e("TTTT", "handleMessage pv: ");
+          if (chatMemberMobile.equals(phone) || logItem.getfMobile().equals(phone)) {
+            feed.getHash().put(logItem.getId(), 0);
+            feed.addItem(logItem, 0);
+            adapter.notifyDataSetChanged();
+          }
+        }
       }
     });
   }
