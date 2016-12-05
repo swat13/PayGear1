@@ -31,7 +31,9 @@ import magia.af.ezpay.location.LocationService;
  * Created by erfan on 11/3/2016.
  */
 
-public class MainActivity extends BaseActivity implements View.OnClickListener {
+public class
+
+MainActivity extends BaseActivity implements View.OnClickListener {
 
 
     public RelativeLayout darkDialog, waitingDialog;

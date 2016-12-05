@@ -52,6 +52,7 @@ public class LoginActivity extends BaseActivity {
     public void loadActiveFragment(String phone) {
         Bundle bundle = new Bundle();
         bundle.putString("number", phone);
+
         Log.i("Input phone", phone);
         activationCodeFragment = ActivationCodeFragment.getInstance();
         activationCodeFragment.setArguments(bundle);

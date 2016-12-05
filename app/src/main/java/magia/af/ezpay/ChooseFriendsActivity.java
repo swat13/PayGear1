@@ -33,195 +33,192 @@ import magia.af.ezpay.Parser.RSSItem;
 import magia.af.ezpay.helper.ContactDatabase;
 
 public class ChooseFriendsActivity extends BaseActivity {
-  ArrayList<RSSItem> rssFeed2 = new ArrayList<>();
-  ArrayList<RSSItem> rssFeed = new ArrayList<>();
-  EditText groupTitle;
-  RecyclerView recyclerView;
-  ImageView imageView;
-  ArrayList<String> phone = new ArrayList<>();
-  ContactDatabase database;
-  RecyclerAdapter adapter;
+    ArrayList<RSSItem> rssFeed2 = new ArrayList<>();
+    ArrayList<RSSItem> rssFeed = new ArrayList<>();
+    EditText groupTitle;
+    RecyclerView recyclerView;
+    ImageView imageView;
+    ArrayList<String> phone = new ArrayList<>();
+    ContactDatabase database;
+    RecyclerAdapter adapter;
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_choose_friends);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_choose_friends);
 //    database = new ContactDatabase(this);
-    rssFeed2 = (ArrayList<RSSItem>) getIntent().getSerializableExtra("contact");
-    for (int i = 0; i < rssFeed.size(); i++) {
-      Log.e("Size cccc", "onCreateView: " + rssFeed.get(i).getTitle());
-    }
-    ;
-    rssFeed = rssFeed2;
-    groupTitle = (EditText) findViewById(R.id.edt_group_title);
-    recyclerView = (RecyclerView) findViewById(R.id.contact_recycler);
-    LinearLayoutManager manager = new LinearLayoutManager(this);
-    manager.setOrientation(LinearLayoutManager.VERTICAL);
-    recyclerView.setLayoutManager(manager);
-    imageView = (ImageView) findViewById(R.id.btn_done);
-    adapter = new RecyclerAdapter();
-    recyclerView.setAdapter(adapter);
-    groupTitle.addTextChangedListener(new TextWatcher() {
-      @Override
-      public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        rssFeed2 = (ArrayList<RSSItem>) getIntent().getSerializableExtra("contact");
 
-      }
+        rssFeed = rssFeed2;
+        groupTitle = (EditText) findViewById(R.id.edt_group_title);
+        recyclerView = (RecyclerView) findViewById(R.id.contact_recycler);
+        LinearLayoutManager manager = new LinearLayoutManager(this);
+        manager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(manager);
+        imageView = (ImageView) findViewById(R.id.btn_done);
+        adapter = new RecyclerAdapter();
+        recyclerView.setAdapter(adapter);
+        groupTitle.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-      @Override
-      public void onTextChanged(CharSequence s, int start, int before, int count) {
-        Log.e("RRRRR", "afterTextChanged: " + s.toString());
-        if (groupTitle.getText().toString().length() == 0 || groupTitle.getText().toString().isEmpty()) {
-          rssFeed = rssFeed2;
-          adapter.notifyDataSetChanged();
-        } else {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.e("RRRRR", "afterTextChanged: " + s.toString());
+                if (groupTitle.getText().toString().length() == 0 || groupTitle.getText().toString().isEmpty()) {
+                    rssFeed = rssFeed2;
+                    adapter.notifyDataSetChanged();
+                } else {
 //          rssFeed = database.search(s.toString());
 //          rssFeed = (ArrayList<RSSItem>) getIntent().getSerializableExtra("contact");
-          adapter.getFilter().filter(s);
-          adapter.notifyDataSetChanged();
+                    adapter.getFilter().filter(s);
+                    adapter.notifyDataSetChanged();
 
-        }
-      }
+                }
+            }
 
-      @Override
-      public void afterTextChanged(Editable s) {
+            @Override
+            public void afterTextChanged(Editable s) {
 
 //        adapter.getFilter().filter(s.toString());
 //        adapter.notifyDataSetChanged();
 
-      }
-    });
-    imageView.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        Log.e("Phones", phone.toString());
-        JSONArray jsonArray = new JSONArray();
-        for (int i = 0; i < phone.size(); i++) {
-          try {
-            jsonArray.put(i, phone.get(i));
-          } catch (JSONException e) {
-            e.printStackTrace();
-          }
-        }
-        if (jsonArray.length() > 0) {
-          Intent intent = new Intent(ChooseFriendsActivity.this, CreateGroupActivity.class);
-          intent.putExtra("contact", rssFeed);
-          intent.putExtra("json", jsonArray.toString());
-          startActivity(intent);
-          finish();
-        } else {
-          Toast.makeText(ChooseFriendsActivity.this, "حداقل یک نفر را انتخاب کنید", Toast.LENGTH_SHORT).show();
-        }
-      }
-    });
-  }
-
-  public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> implements Filterable {
-
-    @Override
-    public RecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-      View rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_contact_item, parent, false);
-      return new ViewHolder(rootView);
-    }
-
-    @Override
-    public void onBindViewHolder(final RecyclerAdapter.ViewHolder holder, int position) {
-      Log.e("POOOOS", "onBindViewHolder: " + position);
-      Log.e("Saeid TEST", "onBindViewHolder: " + rssFeed.get(position).getTitle());
-      if (rssFeed.get(position).getTitle().length() > 15) {
-        holder.txt_contact_item_name.setText(rssFeed.get(position).getTitle().substring(0, 15) + "...");
-      } else {
-        holder.txt_contact_item_name.setText(rssFeed.get(position).getTitle());
-      }
-      holder.txt_contact_item_phone.setText(rssFeed.get(position).getTelNo());
-      String imageUrl = "http://new.opaybot.ir";
-      Glide.with(ChooseFriendsActivity.this)
-        .load(imageUrl + rssFeed.get(position).getContactImg())
-        .asBitmap()
-        .centerCrop()
-        .placeholder(R.drawable.pic_profile)
-        .into(new BitmapImageViewTarget(holder.contact_item_image) {
-          @Override
-          protected void setResource(Bitmap resource) {
-            RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
-            circularBitmapDrawable.setCornerRadius(700);
-            holder.contact_item_image.setImageDrawable(circularBitmapDrawable);
-          }
+            }
+        });
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e("Phones", phone.toString());
+                JSONArray jsonArray = new JSONArray();
+                for (int i = 0; i < phone.size(); i++) {
+                    try {
+                        jsonArray.put(i, phone.get(i));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (jsonArray.length() > 0) {
+                    Intent intent = new Intent(ChooseFriendsActivity.this, CreateGroupActivity.class);
+                    intent.putExtra("contact", rssFeed);
+                    intent.putExtra("json", jsonArray.toString());
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(ChooseFriendsActivity.this, "حداقل یک نفر را انتخاب کنید", Toast.LENGTH_SHORT).show();
+                }
+            }
         });
     }
 
-    @Override
-    public int getItemCount() {
-      return rssFeed.size();
-    }
+    public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> implements Filterable {
 
-    @Override
-    public Filter getFilter() {
-
-      return new Filter() {
-
-        @SuppressWarnings("unchecked")
         @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-          rssFeed = (ArrayList<RSSItem>) results.values;
-          notifyDataSetChanged();
+        public RecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_contact_item, parent, false);
+            return new ViewHolder(rootView);
         }
 
         @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-          rssFeed = rssFeed2;
-
-          FilterResults results = new FilterResults();
-          ArrayList<RSSItem> FilteredArrayNames = new ArrayList<>();
-
-          constraint = constraint.toString().toLowerCase();
-          for (int i = 0; i < rssFeed.size(); i++) {
-//            String dataNames = rssFeed.getItem(i).getContactName();
-            RSSItem rssItem = new RSSItem();
-            if (rssFeed.get(i).getTitle().toLowerCase().startsWith(constraint.toString())) {
-              rssItem.setTitle(rssFeed.get(i).getTitle());
-              rssItem.setTelNo(rssFeed.get(i).getTelNo());
-              rssItem.setContactImg(rssFeed.get(i).getContactImg());
-              FilteredArrayNames.add(rssItem);
+        public void onBindViewHolder(final RecyclerAdapter.ViewHolder holder, int position) {
+            Log.e("POOOOS", "onBindViewHolder: " + position);
+            Log.e("Saeid TEST", "onBindViewHolder: " + rssFeed.get(position).getTitle());
+            if (rssFeed.get(position).getTitle().length() > 15) {
+                holder.txt_contact_item_name.setText(rssFeed.get(position).getTitle().substring(0, 15) + "...");
+            } else {
+                holder.txt_contact_item_name.setText(rssFeed.get(position).getTitle());
             }
-          }
-
-          results.count = FilteredArrayNames.size();
-          results.values = FilteredArrayNames;
-          Log.e("VALUES", results.values.toString());
-
-          return results;
+            holder.txt_contact_item_phone.setText(rssFeed.get(position).getTelNo());
+            String imageUrl = "http://new.opaybot.ir";
+            Glide.with(ChooseFriendsActivity.this)
+                    .load(imageUrl + rssFeed.get(position).getContactImg())
+                    .asBitmap()
+                    .centerCrop()
+                    .placeholder(R.drawable.pic_profile)
+                    .into(new BitmapImageViewTarget(holder.contact_item_image) {
+                        @Override
+                        protected void setResource(Bitmap resource) {
+                            RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
+                            circularBitmapDrawable.setCornerRadius(700);
+                            holder.contact_item_image.setImageDrawable(circularBitmapDrawable);
+                        }
+                    });
         }
-      };
-    }
 
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-      TextView txt_contact_item_name;
-      TextView txt_contact_item_phone;
-      ImageView contact_item_image;
-      ImageView status_circle;
-
-      ViewHolder(View itemView) {
-        super(itemView);
-        txt_contact_item_name = (TextView) itemView.findViewById(R.id.txt_contact_item_name);
-        txt_contact_item_phone = (TextView) itemView.findViewById(R.id.txt_contact_item_phone);
-        contact_item_image = (ImageView) itemView.findViewById(R.id.contact_img);
-        status_circle = (ImageView) itemView.findViewById(R.id.status_circle);
-        itemView.setOnClickListener(this);
-      }
-
-      @Override
-      public void onClick(View v) {
-        if (status_circle.getVisibility() == View.GONE) {
-          status_circle.setVisibility(View.VISIBLE);
-          phone.add(rssFeed.get(getAdapterPosition()).getTelNo());
-        } else {
-          status_circle.setVisibility(View.GONE);
-          phone.remove(rssFeed.get(getAdapterPosition()).getTelNo());
+        @Override
+        public int getItemCount() {
+            return rssFeed.size();
         }
-        Log.e("Phones", phone.toString());
-      }
+
+        @Override
+        public Filter getFilter() {
+
+            return new Filter() {
+
+                @SuppressWarnings("unchecked")
+                @Override
+                protected void publishResults(CharSequence constraint, FilterResults results) {
+                    rssFeed = (ArrayList<RSSItem>) results.values;
+                    notifyDataSetChanged();
+                }
+
+                @Override
+                protected FilterResults performFiltering(CharSequence constraint) {
+                    rssFeed = rssFeed2;
+
+                    FilterResults results = new FilterResults();
+                    ArrayList<RSSItem> FilteredArrayNames = new ArrayList<>();
+
+                    constraint = constraint.toString().toLowerCase();
+                    for (int i = 0; i < rssFeed.size(); i++) {
+//            String dataNames = rssFeed.getItem(i).getContactName();
+                        RSSItem rssItem = new RSSItem();
+                        if (rssFeed.get(i).getTitle().toLowerCase().startsWith(constraint.toString())) {
+                            rssItem.setTitle(rssFeed.get(i).getTitle());
+                            rssItem.setTelNo(rssFeed.get(i).getTelNo());
+                            rssItem.setContactImg(rssFeed.get(i).getContactImg());
+                            FilteredArrayNames.add(rssItem);
+                        }
+                    }
+
+                    results.count = FilteredArrayNames.size();
+                    results.values = FilteredArrayNames;
+                    Log.e("VALUES", results.values.toString());
+
+                    return results;
+                }
+            };
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+            TextView txt_contact_item_name;
+            TextView txt_contact_item_phone;
+            ImageView contact_item_image;
+            ImageView status_circle;
+
+            ViewHolder(View itemView) {
+                super(itemView);
+                txt_contact_item_name = (TextView) itemView.findViewById(R.id.txt_contact_item_name);
+                txt_contact_item_phone = (TextView) itemView.findViewById(R.id.txt_contact_item_phone);
+                contact_item_image = (ImageView) itemView.findViewById(R.id.contact_img);
+                status_circle = (ImageView) itemView.findViewById(R.id.status_circle);
+                itemView.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View v) {
+                if (status_circle.getVisibility() == View.GONE) {
+                    status_circle.setVisibility(View.VISIBLE);
+                    phone.add(rssFeed.get(getAdapterPosition()).getTelNo());
+                } else {
+                    status_circle.setVisibility(View.GONE);
+                    phone.remove(rssFeed.get(getAdapterPosition()).getTelNo());
+                }
+                Log.e("Phones", phone.toString());
+            }
+        }
     }
-  }
 
 //  public class CreateGroup extends AsyncTask<String, Void, Boolean> {
 //    String title;
