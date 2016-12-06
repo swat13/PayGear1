@@ -2,6 +2,7 @@ package magia.af.ezpay;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -73,8 +74,9 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
   static MessageHandler mHandler;
   RSSItem rssItem;
   PayLogItem logItem;
+  ArrayList<RSSItem> groupMembers;
   int newPos;
-  private static final String TAG = GroupChatPageActivity.class.getSimpleName();
+  public static final String TAG = GroupChatPageActivity.class.getSimpleName();
   private String date;
 
   @Override
@@ -88,8 +90,10 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
       groupId = bundle.getInt("id");
       groupPhoto = bundle.getString("photo");
       groupTitle = bundle.getString("title");
+      groupMembers = (ArrayList<RSSItem>) bundle.getSerializable("members");
     }
     Log.e(TAG, "onCreate: " + groupId);
+    Log.e(TAG, "onCreate: " + groupTitle);
     phone = getSharedPreferences("EZpay", 0).getString("phoneNumber", "");
 
     date = "2050-01-01T00:00:00.000";
@@ -97,12 +101,24 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
     members = (ArrayList<RSSItem>) getIntent().getSerializableExtra("members");
     for (int i = 0; i < members.size(); i++) {
       Log.e(TAG, "onCreate: " + members.get(i).getGroupMemberPhone());
+      Log.e(TAG, "onCreate: " + members.get(i).getGroupMemberTitle());
       if (members.get(i).getGroupMemberPhone().equals(phone)) {
         members.remove(i);
       }
     }
 
     groupImage = (ImageView) findViewById(R.id.groupImage);
+    groupImage.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        Intent intent = new Intent(GroupChatPageActivity.this, GroupDetails.class);
+        intent.putExtra("id", groupId);
+        intent.putExtra("photo", groupPhoto);
+        intent.putExtra("title", groupTitle);
+        intent.putExtra("members", groupMembers);
+        startActivity(intent);
+      }
+    });
     setGroupPhoto();
     txtGroupTitle = (TextView) findViewById(R.id.groupTitle);
     txtGroupTitle.setText(groupTitle);
@@ -1303,7 +1319,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
           Log.e("chatMemberMobile", "run: " + chatMemberMobile);
           Log.e("phone", "run: " + phone);
           Log.e("TTTT", "handleMessage pv: ");
-          if (chatMemberMobile.equals(phone) || logItem.getfMobile().equals(phone)) {
+          if (chatMemberMobile.equals("2")) {
             feed.getHash().put(logItem.getId(), 0);
             feed.addItem(logItem, 0);
             adapter.notifyDataSetChanged();

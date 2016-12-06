@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/actionBarLayout"
+        android:background="@color/colorAccent"
+        android:layout_width="match_parent"
+        android:layout_height="80dp">
+        <ImageView
+            android:id="@+id/groupAvatar"
+            android:src="@drawable/pic_profile"
+            android:layout_width="60dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_height="60dp"/>
+        <TextView
+            android:id="@+id/nameOfGroup"
+            android:text="Name Of Group"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
+            android:textColor="#FFFFFF"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/groupAvatar"
+            android:layout_marginRight="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ImageButton
+            android:id="@+id/assignPicForGroup"
+            android:layout_marginLeft="10dp"
+            android:alpha="0.5"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_camera"
+            android:background="@drawable/camera_placeholder"
+            android:layout_width="40dp"
+            android:layout_height="40dp"/>
+    </RelativeLayout>
+    <Button
+        android:id="@+id/btnAddMemberToGroup"
+        android:layout_below="@+id/actionBarLayout"
+        android:drawableLeft="@drawable/ic_add_member"
+        android:text="اضافه کردن افراد جدید"
+        android:paddingLeft="100dp"
+        android:paddingRight="100dp"
+        android:background="#FFFFFF"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"/>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/memberRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnAddMemberToGroup">
+
+    </android.support.v7.widget.RecyclerView>
+
+</RelativeLayout>

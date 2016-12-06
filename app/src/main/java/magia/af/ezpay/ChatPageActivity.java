@@ -1206,7 +1206,7 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
                 } else {
                     Log.e("chatMemberMobile", "run: " + chatMemberMobile);
                     Log.e("phone", "run: " + phone);
-                    if (chatMemberMobile.equals(phone) || logItem.getfMobile().equals(phone)) {
+                    if (chatMemberMobile.equals("1")) {
                         Log.e("TTTT", "handleMessage pv: ");
                         feed.getHash().put(logItem.getId(), 0);
                         feed.addItem(logItem, 0);

@@ -81,6 +81,10 @@ public class CreateGroupActivity extends BaseActivity {
             checkPermissions();
         }
         rssFeed = (ArrayList<RSSItem>) getIntent().getSerializableExtra("contact");
+        for (int i = 0; i < rssFeed.size(); i++) {
+            Log.e(TAG, "onCreate: " + rssFeed.get(i).getTitle());
+            Log.e(TAG, "onCreate: " + rssFeed.get(i).getTelNo());
+        }
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             json = bundle.getString("json");
@@ -98,7 +102,7 @@ public class CreateGroupActivity extends BaseActivity {
                 for (int j = 0; j < rssFeed.size(); j++) {
                     if (jsonArray.getString(i).equals(rssFeed.get(j).getTelNo())) {
                         Log.e(TAG, "onCreate: " + imageUrl + rssFeed.get(j).getContactImg());
-                        rssItem.setContactName(rssFeed.get(j).getContactName());
+                        rssItem.setContactName(rssFeed.get(j).getTitle());
                         rssItem.setTelNo(rssFeed.get(j).getTelNo());
                         rssItem.setContactImg(rssFeed.get(j).getContactImg());
                     }
@@ -284,6 +288,7 @@ public class CreateGroupActivity extends BaseActivity {
 
         @Override
         public void onBindViewHolder(final RecyclerAdapter.ViewHolder holder, int position) {
+            Log.e(TAG, "onBindViewHolder: " + groupMember.getItem(position).getContactName());
             holder.txt_contact_item_name.setText(groupMember.getItem(position).getContactName());
             holder.txt_contact_item_phone.setText(groupMember.getItem(position).getTelNo());
             Glide.with(CreateGroupActivity.this)

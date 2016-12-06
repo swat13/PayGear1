@@ -58,11 +58,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
       JSONObject jsonObject = new JSONObject(remoteMessage.getNotification().getBody());
       if (jsonObject.getString("param1").equals("Group")) {
         groupMessageHandler = GroupChatPageActivity.informNotif();
-        groupMessageHandler.handleMessage(payLogItem,true,"");
+        groupMessageHandler.handleMessage(payLogItem,true,"2");
       }
       if (jsonObject.getString("param1").equals("PV")) {
         chatMessageHandler = ChatPageActivity.informNotif();
-        chatMessageHandler.handleMessage(payLogItem,true,"");
+        chatMessageHandler.handleMessage(payLogItem,true,"1");
       }
       if (jsonObject.getString("param1").contains("0")||
         jsonObject.getString("param1").contains("1")||
@@ -75,19 +75,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         jsonObject.getString("param1").contains("8")||
         jsonObject.getString("param1").contains("9")){
         groupMessageHandler = GroupChatPageActivity.informNotif();
-        groupMessageHandler.handleMessage(payLogItem,true,"");
+        groupMessageHandler.handleMessage(payLogItem,true,"2");
       }
       if (!jsonObject.isNull("chatItem")) {
-        JSONObject object = new JSONObject(jsonObject.getString("chatItem"));
-        JSONObject object2 = new JSONObject(object.getString("t"));
         chatMessageHandler = ChatPageActivity.informNotif();
-        chatMessageHandler.handleMessage(payLogItem,false,object2.getString("mobile"));
+        chatMessageHandler.handleMessage(payLogItem,false,"1");
       }
       if (!jsonObject.isNull("groupChatItem")) {
-        JSONObject object = new JSONObject(jsonObject.getString("groupChatItem"));
-        JSONObject object2 = new JSONObject(object.getString("t"));
         groupMessageHandler = GroupChatPageActivity.informNotif();
-        groupMessageHandler.handleMessage(payLogItem,false,object2.getString("mobile"));
+        groupMessageHandler.handleMessage(payLogItem,false,"2");
       }
     } catch (JSONException e) {
       e.printStackTrace();

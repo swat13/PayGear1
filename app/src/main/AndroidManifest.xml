@@ -75,6 +75,8 @@
         <activity android:name=".GroupChatPageActivity"/>
         <activity android:name=".CreateGroupActivity">
         </activity>
+        <activity android:name=".GroupDetails">
+        </activity>
     </application>
 
 </manifest>

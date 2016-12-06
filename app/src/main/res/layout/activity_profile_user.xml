@@ -168,6 +168,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="#FFFFFF"
+                        android:layout_marginRight="10dp"
                         android:layout_centerVertical="true"
                         android:layout_toLeftOf="@+id/user_avatar"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title"
@@ -184,7 +185,7 @@
                     <ImageView
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        android:src="@drawable/ali"
+                        android:src="@drawable/pic_profile"
                         android:id="@+id/user_avatar"
                         android:layout_alignParentTop="true"
                         android:layout_alignParentRight="true"
