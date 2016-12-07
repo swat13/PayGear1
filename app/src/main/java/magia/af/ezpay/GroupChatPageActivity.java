@@ -32,9 +32,11 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
 import java.util.ArrayList;
 
+import magia.af.ezpay.Firebase.MyFirebaseMessagingService;
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.PayLogFeed;
 import magia.af.ezpay.Parser.PayLogItem;
+import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.Parser.RSSItem;
 import magia.af.ezpay.Utilities.LocalPersistence;
 import magia.af.ezpay.helper.CalendarConversion;
@@ -79,10 +81,18 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
   public static final String TAG = GroupChatPageActivity.class.getSimpleName();
   private String date;
 
+  private String lastChatAmount;
+  private String comment;
+  private boolean payState;
+  private boolean requestState;
+  private boolean cancelState;
+  private String selfPhoneNumber;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_group_chat_page);
+    MyFirebaseMessagingService.mode = 2;
     feed = new PayLogFeed();
     mHandler = this;
     Bundle bundle = getIntent().getExtras();
@@ -620,6 +630,10 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
     protected void onPostExecute(PayLogItem result) {
       if (result != null) {
         feed.addItem(result, 0);
+        lastChatAmount = getDividedToman((long) result.getAmount());
+        comment = result.getComment();
+        payState = true;
+        selfPhoneNumber = result.getfMobile();
         new LocalPersistence().writeObjectToFile(GroupChatPageActivity.this, feed, "Payment_Chat_List");
         adapter.notifyDataSetChanged();
       } else {
@@ -863,124 +877,234 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         holder.btn_accept.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
-            payDialog = new Dialog(GroupChatPageActivity.this, R.style.PauseDialog);
-            payDialog.setContentView(R.layout.group_card_layout);
-            edtCardNumber = (EditText) payDialog.findViewById(R.id.payAmount);
-            edtCardNumber.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            cardDialog = new Dialog(GroupChatPageActivity.this, R.style.PauseDialog);
+            cardDialog.setContentView(R.layout.group_payment_layout);
+            edtAmount = (EditText) cardDialog.findViewById(R.id.payAmount);
+            edtAmount.setText(getDividedToman(Long.valueOf(feed.getItem(holder.getAdapterPosition()).getAmount()+"")));
+            edtAmount.setOnFocusChangeListener(new View.OnFocusChangeListener() {
               @Override
               public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                  edtCardNumber.setGravity(Gravity.LEFT);
-                  edtCardNumber.setHint("");
+                  edtAmount.setGravity(Gravity.LEFT);
+                  edtAmount.setHint("");
                 } else {
-                  if (edtCardNumber.getText().length() == 0) {
-                    edtCardNumber.setGravity(Gravity.CENTER);
-                    edtCardNumber.setHint("شماره کارت");
+                  if (edtAmount.getText().length() == 0) {
+                    edtAmount.setGravity(Gravity.CENTER);
+                    edtAmount.setHint("مبلغ پرداختی");
                   }
                 }
               }
             });
-            edtCardNumber.setOnClickListener(new View.OnClickListener() {
-              @Override
-              public void onClick(View v) {
-                edtCardNumber.setSelection(edtCardNumber.getText().length());
-              }
-            });
-            edtCardPassword = (EditText) payDialog.findViewById(R.id.comments);
-            edtCardPassword.setCursorVisible(false);
-            edtCardPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-              @Override
-              public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                  edtCardPassword.setGravity(Gravity.LEFT);
-                  edtCardPassword.setHint("");
-                } else {
-                  if (edtCardPassword.getText().length() == 0) {
-                    edtCardPassword.setGravity(Gravity.CENTER);
-                    edtCardPassword.setHint("رمز دوم");
-                  }
-                }
-              }
-            });
+            edtAmount.addTextChangedListener(new TextWatcher() {
+              private static final char space = ',';
 
-            edtCardPassword.addTextChangedListener(new TextWatcher() {
               @Override
               public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
               }
 
               @Override
               public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                if (s.length() == 0) {
-                  edtCardPassword.setGravity(Gravity.CENTER);
-                  edtCardPassword.setHint("رمز دوم");
-                } else {
-                  edtCardPassword.setGravity(Gravity.LEFT);
-                  edtCardPassword.setHint("");
-                }
               }
 
               @Override
               public void afterTextChanged(Editable s) {
-              }
-            });
-            edtCardNumber.addTextChangedListener(new TextWatcher() {
-              private static final char space = '-';
-
-              @Override
-              public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-              }
-
-              @Override
-              public void onTextChanged(CharSequence s, int start, int before, int count) {
-              }
-
-              @Override
-              public void afterTextChanged(Editable s) {
-                if (s.length() == 19) {
-                  edtCardPassword.requestFocus();
-                }
                 if (s.length() == 0) {
 
-                  edtCardNumber.setGravity(Gravity.RIGHT);
-                  edtCardNumber.setHint("شماره کارت");
+                  edtAmount.setGravity(Gravity.CENTER);
+                  edtAmount.setHint("مبلغ پرداختی");
+
 
                 } else {
-                  edtCardNumber.setGravity(Gravity.LEFT);
-                  if (s.length() > 0 && (s.length() % 5) == 0) {
-                    final char c = s.charAt(s.length() - 1);
+                  edtAmount.setGravity(Gravity.LEFT);
+                  if (s.length() > 0 && (s.length() % 4) == 0) {
+                    final char c = s.charAt(s.length() - 3);
                     if (space == c) {
-                      s.delete(s.length() - 1, s.length());
+                      s.delete(s.length() - 3, s.length() - 2);
                     }
                   }
-                  if (s.length() > 0 && (s.length() % 5) == 0) {
-                    char c = s.charAt(s.length() - 1);
+//                    && TextUtils.split(s.toString(), String.valueOf(space)).length <= 5
+
+                  if (s.length() > 0 && (s.length() % 4) == 0) {
+                    char c = s.charAt(s.length() - 3);
                     // Only if its a digit where there should be a space we insert a space
-                    if (Character.isDigit(c) && TextUtils.split(s.toString(), String.valueOf(space)).length <= 3) {
-                      s.insert(s.length() - 1, String.valueOf(space));
+                    Log.e("iffffffffff", "afterTextChanged: ");
+                    if (Character.isDigit(c)) {
+                      s.insert(s.length() - 3, String.valueOf(space));
                     }
+                  }
+
+
+                }
+              }
+            });
+            edtAmount.addTextChangedListener(new NumberTextWatcher(edtAmount));
+            edtComment = (EditText) cardDialog.findViewById(R.id.comments);
+            edtComment.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+              @Override
+              public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                  edtComment.setGravity(Gravity.RIGHT);
+                  edtComment.setHint("");
+                } else {
+                  if (edtComment.getText().length() == 0) {
+                    edtComment.setGravity(Gravity.CENTER);
+                    edtComment.setHint("مبلغ پرداختی");
                   }
                 }
               }
             });
-            Button btnCancel = (Button) payDialog.findViewById(R.id.cancel);
+            TextView contactDetail = (TextView) cardDialog.findViewById(R.id.texx);
+            contactDetail.setText("پرداخت وجه به " + feed.getItem(holder.getAdapterPosition()).gettTitle());
+            Button btnCancel = (Button) cardDialog.findViewById(R.id.cancel);
             btnCancel.setOnClickListener(new View.OnClickListener() {
               @Override
               public void onClick(View v) {
-                payDialog.dismiss();
+                cardDialog.dismiss();
               }
             });
-            Button btnConfirm = (Button) payDialog.findViewById(R.id.confirm);
+            Button btnConfirm = (Button) cardDialog.findViewById(R.id.confirm);
             btnConfirm.setOnClickListener(new View.OnClickListener() {
               @Override
               public void onClick(View v) {
-                pos = holder.getAdapterPosition();
-                Log.e("POOOOS", "onClick: " + holder.getAdapterPosition());
-                new GroupChatPageActivity.accPaymentRequest(holder.getAdapterPosition()).execute(feed.getItem(holder.getAdapterPosition()).getId() + "", edtCardNumber.getText().toString() + edtCardPassword.getText().toString());
-                payDialog.dismiss();
+                if (edtAmount.getText().toString().length() == 0) {
+                  Toast.makeText(GroupChatPageActivity.this, "مبلغ وارد شده نمیتواند خالی باشد!", Toast.LENGTH_SHORT).show();
+                } else if (edtComment.getText().toString().length() == 0) {
+                  Toast.makeText(GroupChatPageActivity.this, "توضیحات نمیتواند خالی باشد!", Toast.LENGTH_SHORT).show();
+                } else if (!validate_number(edtAmount.getText().toString().replace(",", ""))) {
+                  Toast.makeText(GroupChatPageActivity.this, "مبلغ وارد شده صحیح نمیباشد!", Toast.LENGTH_SHORT).show();
+                } else {
+                  mAmount = edtAmount.getText().toString().replace(",", "");
+                  mComment = edtComment.getText().toString();
+                  hideKey(edtComment);
+                  payDialog = new Dialog(GroupChatPageActivity.this, R.style.PauseDialog);
+                  payDialog.setContentView(R.layout.group_card_layout);
+                  edtCardNumber = (EditText) payDialog.findViewById(R.id.payAmount);
+                  edtCardNumber.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                      if (hasFocus) {
+                        edtCardNumber.setGravity(Gravity.LEFT);
+                        edtCardNumber.setHint("");
+                      } else {
+                        if (edtCardNumber.getText().length() == 0) {
+                          edtCardNumber.setGravity(Gravity.CENTER);
+                          edtCardNumber.setHint("شماره کارت");
+                        }
+                      }
+                    }
+                  });
+                  edtCardNumber.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                      edtCardNumber.setSelection(edtCardNumber.getText().length());
+                    }
+                  });
+                  edtCardPassword = (EditText) payDialog.findViewById(R.id.comments);
+                  edtCardPassword.setCursorVisible(false);
+                  edtCardPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                      if (hasFocus) {
+                        edtCardPassword.setGravity(Gravity.LEFT);
+                        edtCardPassword.setHint("");
+                      } else {
+                        if (edtCardPassword.getText().length() == 0) {
+                          edtCardPassword.setGravity(Gravity.CENTER);
+                          edtCardPassword.setHint("رمز دوم");
+                        }
+                      }
+                    }
+                  });
+
+                  edtCardPassword.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                      if (s.length() == 0) {
+                        edtCardPassword.setGravity(Gravity.CENTER);
+                        edtCardPassword.setHint("رمز دوم");
+                      } else {
+                        edtCardPassword.setGravity(Gravity.LEFT);
+                        edtCardPassword.setHint("");
+                      }
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                    }
+                  });
+                  edtCardNumber.addTextChangedListener(new TextWatcher() {
+                    private static final char space = '-';
+
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                      if (s.length() == 19) {
+                        edtCardPassword.requestFocus();
+                      }
+                      if (s.length() == 0) {
+
+                        edtCardNumber.setGravity(Gravity.RIGHT);
+                        edtCardNumber.setHint("شماره کارت");
+
+                      } else {
+                        edtCardNumber.setGravity(Gravity.LEFT);
+                        if (s.length() > 0 && (s.length() % 5) == 0) {
+                          final char c = s.charAt(s.length() - 1);
+                          if (space == c) {
+                            s.delete(s.length() - 1, s.length());
+                          }
+                        }
+                        if (s.length() > 0 && (s.length() % 5) == 0) {
+                          char c = s.charAt(s.length() - 1);
+                          // Only if its a digit where there should be a space we insert a space
+                          if (Character.isDigit(c) && TextUtils.split(s.toString(), String.valueOf(space)).length <= 3) {
+                            s.insert(s.length() - 1, String.valueOf(space));
+                          }
+                        }
+                      }
+                    }
+                  });
+                  Button btnCancel = (Button) payDialog.findViewById(R.id.cancel);
+                  btnCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                      payDialog.dismiss();
+                    }
+                  });
+                  Button btnConfirm = (Button) payDialog.findViewById(R.id.confirm);
+                  btnConfirm.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                      Log.e(TAG, "onClick1: " + anotherMobile);
+                      Log.e(TAG, "onClick2: " + edtCardNumber.getText().toString() + edtCardPassword.getText().toString());
+                      Log.e(TAG, "onClick3: " + mComment);
+                      Log.e(TAG, "onClick4: " + mAmount);
+                      new sendPaymentRequest().execute(feed.getItem(holder.getAdapterPosition()).gettMobile()
+                        , edtCardNumber.getText().toString().replace("-", "") + edtCardPassword.getText().toString()
+                        , mComment, mAmount, String.valueOf(groupId));
+                      payDialog.dismiss();
+                    }
+                  });
+                  payDialog.show();
+                  cardDialog.dismiss();
+                }
               }
             });
-            payDialog.show();
+            cardDialog.show();
           }
         });
       } else if (holder.getItemViewType() == 6) {
@@ -1153,6 +1277,10 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
 //        feed.removeItem(pos);
         Log.e("POS", pos + "");
         feed.addItem(result, 0);
+        lastChatAmount = getDividedToman((long) result.getAmount());
+        comment = result.getComment();
+        payState = true;
+        selfPhoneNumber = result.getfMobile();
         feed.getHash().put(result.getId(), 0);
         new LocalPersistence().writeObjectToFile(GroupChatPageActivity.this, feed, "Payment_Chat_List");
         adapter.notifyDataSetChanged();
@@ -1216,8 +1344,6 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
     @Override
     protected void onPostExecute(PayLogItem result) {
       if (result != null) {
-        feed.removeItem(pos);
-        adapter.notifyDataSetChanged();
         feed.addItem(result, 0);
         adapter.notifyDataSetChanged();
         new LocalPersistence().writeObjectToFile(GroupChatPageActivity.this, feed, "Payment_Chat_List");
@@ -1252,6 +1378,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
       if (result != null) {
         Log.e("TEst", "onClick: " + result);
         if (result) {
+          cancelState = true;
           Log.e("TEst", "onClick: " + pos);
           feed.getItem(pos).setStatus(true);
           adapter.notifyDataSetChanged();
@@ -1285,6 +1412,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
     @Override
     protected void onPostExecute(Boolean result) {
       if (result != null) {
+        cancelState = true;
         Log.e("TEst", "onClick: " + result);
         if (result) {
           Log.e("TEst", "onClick: " + pos);
@@ -1319,13 +1447,57 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
           Log.e("chatMemberMobile", "run: " + chatMemberMobile);
           Log.e("phone", "run: " + phone);
           Log.e("TTTT", "handleMessage pv: ");
-          if (chatMemberMobile.equals("2")) {
-            feed.getHash().put(logItem.getId(), 0);
-            feed.addItem(logItem, 0);
-            adapter.notifyDataSetChanged();
-          }
+          lastChatAmount = getDividedToman((long) logItem.getAmount());
+          comment = logItem.getComment();
+          payState = logItem.isPaideBool();
+          selfPhoneNumber = logItem.getfMobile();
+          feed.getHash().put(logItem.getId(), 0);
+          feed.addItem(logItem, 0);
+          adapter.notifyDataSetChanged();
         }
       }
     });
   }
+
+  @Override
+  public void onBackPressed() {
+
+    new fillContact().execute("[]");
+    super.onBackPressed();
+//    Intent intent = new Intent(ChatPageActivity.this, MainActivity.class);
+//    if (_feed != null && _feed.getItemCount() > 0 && _feed.getItemCount() != 0) {
+//      Log.e("CHAT TRUE", "onBackPressed: ");
+//      intent.putExtra("contact", _feed);
+//    }
+//    startActivity(intent);
+    finish();
+//    Intent intent = new Intent(GroupChatPageActivity.this , MainActivity.class);
+//    startActivity(intent);
+//    super.onBackPressed();
+//    finish();
+  }
+  public class fillContact extends AsyncTask<String, Void, RSSFeed> {
+
+    @Override
+    protected void onPreExecute() {
+      super.onPreExecute();
+    }
+
+    @Override
+    protected RSSFeed doInBackground(String... params) {
+      DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
+      return domParser.checkContactListWithGroup(params[0]);
+    }
+
+    @Override
+    protected void onPostExecute(RSSFeed result) {
+      if (result != null) {
+      } else {
+        Toast.makeText(GroupChatPageActivity.this, "problem in connection!", Toast.LENGTH_SHORT).show();
+      }
+      super.onPostExecute(result);
+    }
+
+  }
+
 }

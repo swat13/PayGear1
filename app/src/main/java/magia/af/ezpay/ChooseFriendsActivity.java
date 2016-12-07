@@ -102,6 +102,7 @@ public class ChooseFriendsActivity extends BaseActivity {
                 if (jsonArray.length() > 0) {
                     Intent intent = new Intent(ChooseFriendsActivity.this, CreateGroupActivity.class);
                     intent.putExtra("contact", rssFeed);
+                    intent.putExtra("contact2", rssFeed2);
                     intent.putExtra("json", jsonArray.toString());
                     startActivity(intent);
                     finish();

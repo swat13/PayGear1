@@ -670,12 +670,14 @@ public class DOMParser {
                 rssItem = new RSSItem();
                 JSONObject contactObject = jsonArray.getJSONObject(i);
                 if (contactObject.getString("$type").contains("FriendModel")) {
+
                     Log.e("Test11111", "checkContactListWithGroup: " + contactObject.toString());
                     rssItem.setContactImg(contactObject.getString("photo"));
                     rssItem.setTelNo(contactObject.getString("mobile"));
                     rssItem.setUserId(contactObject.getString("id"));
                     rssItem.setTitle(contactObject.getString("title"));
                     rssItem.setContactCount(i);
+                    contactMembers.add(rssItem);
                     Log.e("Test123123", "checkContactListWithGroup: " + contactObject.toString());
                     if (!contactObject.isNull("lastchat")) {
                         JSONObject lastChatObject = contactObject.getJSONObject("lastchat");
@@ -690,25 +692,14 @@ public class DOMParser {
                         rssItem.setGroup(lastChatObject.getBoolean("g"));
                         rssItem.setComment(lastChatObject.getString("c"));
                     }
-                } else {
-                    continue;
                 }
-                contactMembers.add(rssItem);
-                rssItem.setContactMembers(contactMembers);
-                rssFeed.addItem(rssItem);
-            }
-
-            for (int i = 0; i < jsonArray.length(); i++) {
-                Log.e("%%%%%%%", "checkContactListWithGroup: " + i);
-                rssItem2 = new RSSItem();
-                JSONObject contactObject = jsonArray.getJSONObject(i);
                 if (contactObject.getString("$type").contains("GroupModel")) {
                     Log.e("%%%%%%%2", "checkContactListWithGroup: " + i);
-                    rssItem2.setGroupId(contactObject.getInt("id"));
-                    rssItem2.setGroupPhoto(contactObject.getString("photo"));
-                    rssItem2.setGroupTitle(contactObject.getString("title"));
-                    rssItem2.setGroup(true);
-                    rssItem2.setGroupStatus(true);
+                    rssItem.setGroupId(contactObject.getInt("id"));
+                    rssItem.setGroupPhoto(contactObject.getString("photo"));
+                    rssItem.setGroupTitle(contactObject.getString("title"));
+                    rssItem.setGroup(true);
+                    rssItem.setGroupStatus(true);
                     if (!contactObject.isNull("members")) {
                         JSONArray groupsMemberObject = contactObject.getJSONArray("members");
                         ArrayList<RSSItem> groupMembers = new ArrayList<>();
@@ -734,7 +725,7 @@ public class DOMParser {
                                 item.setGroupMemberLastChatComment(groupsMembersLastChat.getString("c"));
                             }
                             groupMembers.add(item);
-                            rssItem2.setGroupMembers(groupMembers);
+                            rssItem.setGroupMembers(groupMembers);
                         }
                         if (!contactObject.isNull("lastChats")) {
                             Log.e("THIS LINE 743", "checkContactListWithGroup: ");
@@ -743,25 +734,34 @@ public class DOMParser {
                                 Log.e("THIS LINE 745", "checkContactListWithGroup: ");
                                 JSONObject lastChatGroupObject = groupLastChatArray.getJSONObject(j);
                                 Log.e("Test6666666666", "checkContactListWithGroup: " + lastChatGroupObject.getInt("a"));
-                                rssItem2.setGroupLastChatAmount(lastChatGroupObject.getInt("a"));
-                                rssItem2.setGroupLastChatId(lastChatGroupObject.getInt("id"));
-//                rssItem2.setGroupLastChatFrom(lastChatGroupObject.getString("f"));
-//                rssItem2.setGroupLastChatTo(lastChatGroupObject.getString("t"));
-                                rssItem2.setGroupLastChatDate(lastChatGroupObject.getString("d"));
-                                rssItem2.setGroupLastChatOrderPay(lastChatGroupObject.getBoolean("o"));
-                                rssItem2.setGroupLastChatStatus(lastChatGroupObject.getBoolean("s"));
-                                rssItem2.setGroupLastChatFromGroup(lastChatGroupObject.getBoolean("g"));
-                                rssItem2.setGroupLastChatComment(lastChatGroupObject.getString("c"));
+                                rssItem.setGroupLastChatAmount(lastChatGroupObject.getInt("a"));
+                                rssItem.setGroupLastChatId(lastChatGroupObject.getInt("id"));
+//                rssItem.setGroupLastChatFrom(lastChatGroupObject.getString("f"));
+//                rssItem.setGroupLastChatTo(lastChatGroupObject.getString("t"));
+                                rssItem.setGroupLastChatDate(lastChatGroupObject.getString("d"));
+                                rssItem.setGroupLastChatOrderPay(lastChatGroupObject.getBoolean("o"));
+                                rssItem.setGroupLastChatStatus(lastChatGroupObject.getBoolean("s"));
+                                rssItem.setGroupLastChatFromGroup(lastChatGroupObject.getBoolean("g"));
+                                rssItem.setGroupLastChatComment(lastChatGroupObject.getString("c"));
                             }
                         }
                     }
-                } else {
-                    continue;
                 }
-                gMembers.add(rssItem2);
-                rssItem2.setGroupArray(gMembers);
-                rssFeed2.addItem(rssItem2);
+                rssItem.setContactMembers(contactMembers);
+                rssFeed.addItem(rssItem);
             }
+
+//            for (int i = 0; i < jsonArray.length(); i++) {
+//                Log.e("%%%%%%%", "checkContactListWithGroup: " + i);
+//                rssItem2 = new RSSItem();
+//                JSONObject contactObject = jsonArray.getJSONObject(i);
+//                else {
+//                    continue;
+//                }
+//                gMembers.add(rssItem2);
+//                rssItem2.setGroupArray(gMembers);
+//                rssFeed2.addItem(rssItem2);
+//            }
             Log.e("Rss 2", "checkContactListWithGroup: " + rssFeed2.getItemCount());
             Log.e("gMember", "checkContactListWithGroup: " + gMembers.size());
 
@@ -772,13 +772,13 @@ public class DOMParser {
 //        }
 //      }
 
-            for (int i = 0; i < rssFeed2.getItemCount(); i++) {
-                Log.e("gStar", "onCreateView: " + rssFeed2.getItem(i).getGroupLastChatAmount());
-            }
-            rssFeed3.addAll(0, rssFeed);
-            rssFeed3.addAll(1, rssFeed2);
+//            for (int i = 0; i < rssFeed2.getItemCount(); i++) {
+//                Log.e("gStar", "onCreateView: " + rssFeed2.getItem(i).getGroupLastChatAmount());
+//            }
+//            rssFeed3.addAll(0, rssFeed);
+//            rssFeed3.addAll(1, rssFeed2);
 
-            return rssFeed3;
+            return rssFeed;
 
             /**
              * TODO: check if activated then return the token to Splash class

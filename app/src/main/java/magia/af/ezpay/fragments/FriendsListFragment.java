@@ -1,12 +1,14 @@
 package magia.af.ezpay.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -32,21 +34,24 @@ import java.util.ArrayList;
 
 import magia.af.ezpay.ChatPageActivity;
 import magia.af.ezpay.ChooseFriendsActivity;
+import magia.af.ezpay.Firebase.MyFirebaseMessagingService;
 import magia.af.ezpay.GroupChatPageActivity;
 import magia.af.ezpay.MainActivity;
 import magia.af.ezpay.Parser.DOMParser;
+import magia.af.ezpay.Parser.PayLogItem;
 import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.Parser.RSSItem;
 import magia.af.ezpay.R;
 import magia.af.ezpay.helper.ContactDatabase;
 import magia.af.ezpay.helper.GetContact;
+import magia.af.ezpay.interfaces.MessageHandler;
 import magia.af.ezpay.interfaces.OnClickHandler;
 
 /**
  * Created by erfan on 11/3/2016.
  */
 
-public class FriendsListFragment extends Fragment implements OnClickHandler {
+public class FriendsListFragment extends Fragment implements OnClickHandler,MessageHandler {
 
     static RSSFeed _feed;
     ArrayList<RSSItem> contacts;
@@ -59,6 +64,7 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
     ContactDatabase database;
     JSONArray jsonArray;
     static Handler handler = new Handler();
+    public static MessageHandler mHandler;
 
     public static FriendsListFragment getInstance(RSSFeed rssFeed) {
         _feed = rssFeed;
@@ -70,8 +76,14 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
         super.onAttach(activity);
     }
 
+    public static MessageHandler informNotif() {
+        return mHandler;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        MyFirebaseMessagingService.mode = 3;
+        mHandler =this;
         View v = inflater.inflate(R.layout.activity_friend_list, container, false);
         ((MainActivity) getActivity()).fragment_status = 2;
         recBills = (RecyclerView) v.findViewById(R.id.contact_recycler);
@@ -151,6 +163,11 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
         }
     }
 
+    @Override
+    public void handleMessage(PayLogItem logItem, boolean deleteState, String chatMemberMobile) {
+        new fillContact().execute("[]");
+    }
+
     public class FeedViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView contactName;
@@ -218,6 +235,21 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
                 } else {
                     FeedViewHolder.contactName.setText(fe.getTitle());
                 }
+
+                Log.e("#######", "onBindViewHolder: " + "http://new.opaybot.ir" + fe.getContactImg());
+                Glide.with(getActivity())
+                  .load("http://new.opaybot.ir" + fe.getContactImg())
+                  .asBitmap()
+                  .centerCrop()
+                  .placeholder(R.drawable.pic_profile)
+                  .into(new BitmapImageViewTarget(FeedViewHolder.contactImage) {
+                      @Override
+                      protected void setResource(Bitmap resource) {
+                          RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
+                          circularBitmapDrawable.setCornerRadius(700);
+                          FeedViewHolder.contactImage.setImageDrawable(circularBitmapDrawable);
+                      }
+                  });
             }
             if (fe.isGroupStatus()) {
                 if (!fe.isGroupLastChatOrderPay()) {
@@ -250,20 +282,7 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
                             }
                         });
             } else {
-                Log.e("#######", "onBindViewHolder: " + "http://new.opaybot.ir" + fe.getContactImg());
-                Glide.with(getActivity())
-                        .load("http://new.opaybot.ir" + fe.getContactImg())
-                        .asBitmap()
-                        .centerCrop()
-                        .placeholder(R.drawable.pic_profile)
-                        .into(new BitmapImageViewTarget(FeedViewHolder.contactImage) {
-                            @Override
-                            protected void setResource(Bitmap resource) {
-                                RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
-                                circularBitmapDrawable.setCornerRadius(700);
-                                FeedViewHolder.contactImage.setImageDrawable(circularBitmapDrawable);
-                            }
-                        });
+
             }
 
             fe.setPosition(position);
@@ -310,48 +329,53 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
         return stringBuilder.toString();
     }
 
-//  @Override
-//  public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+  @Override
+  public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 //    new ComparingContactWithDatabase().execute();
-//    if (adapter != null) {
-//      adapter.notifyDataSetChanged();
-//    }
-//    super.onViewCreated(view, savedInstanceState);
-//  }
+      new fillContact().execute("[]");
+    if (adapter != null) {
+      adapter.notifyDataSetChanged();
+    }
+    super.onViewCreated(view, savedInstanceState);
+  }
 
-//  @Override
-//  public void onAttach(Context context) {
+  @Override
+  public void onAttach(Context context) {
 //    new ComparingContactWithDatabase().execute();
-//    if (adapter != null) {
-//      adapter.notifyDataSetChanged();
-//    }
-//    super.onAttach(context);
-//  }
+      new fillContact().execute("[]");
+    if (adapter != null) {
+      adapter.notifyDataSetChanged();
+    }
+    super.onAttach(context);
+  }
 
-//  @Override
-//  public void onCreate(@Nullable Bundle savedInstanceState) {
+  @Override
+  public void onCreate(@Nullable Bundle savedInstanceState) {
 //    new ComparingContactWithDatabase().execute();
-//    if (adapter != null) {
-//      adapter.notifyDataSetChanged();
-//    }
-//    super.onCreate(savedInstanceState);
-//  }
+      new fillContact().execute("[]");
+    if (adapter != null) {
+      adapter.notifyDataSetChanged();
+    }
+    super.onCreate(savedInstanceState);
+  }
 
-//  @Override
-//  public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+  @Override
+  public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 //    new ComparingContactWithDatabase().execute();
-//    if (adapter != null) {
-//      adapter.notifyDataSetChanged();
-//    }
-//    super.onActivityCreated(savedInstanceState);
-//  }
+      new fillContact().execute("[]");
+    if (adapter != null) {
+      adapter.notifyDataSetChanged();
+    }
+    super.onActivityCreated(savedInstanceState);
+  }
 
-//  @Override
-//  public void onResume() {
+  @Override
+  public void onResume() {
 //    new ComparingContactWithDatabase().execute();
-//    adapter.notifyDataSetChanged();
-//    super.onResume();
-//  }
+      new fillContact().execute("[]");
+    adapter.notifyDataSetChanged();
+    super.onResume();
+  }
 
 
     public String newContact(JSONArray jsonArray) {
@@ -401,7 +425,7 @@ public class FriendsListFragment extends Fragment implements OnClickHandler {
         }
     }
 
-    private class fillContact extends AsyncTask<String, Void, RSSFeed> {
+    public class fillContact extends AsyncTask<String, Void, RSSFeed> {
 
         @Override
         protected void onPreExecute() {

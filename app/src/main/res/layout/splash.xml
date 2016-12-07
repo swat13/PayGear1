@@ -27,6 +27,7 @@
             android:text="PayFriends"
             android:layout_below="@+id/imageView"
             android:textColor="#335a00" />
+
     </RelativeLayout>
 
     <RelativeLayout

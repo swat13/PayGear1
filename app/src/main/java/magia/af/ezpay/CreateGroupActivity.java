@@ -55,6 +55,7 @@ import magia.af.ezpay.helper.GetContact;
 public class CreateGroupActivity extends BaseActivity {
 
     ArrayList<RSSItem> rssFeed;
+    ArrayList<RSSItem> rssFeed2;
     RSSFeed databaseRssFeed;
     EditText groupTitle;
     RecyclerView recyclerView;
@@ -81,6 +82,7 @@ public class CreateGroupActivity extends BaseActivity {
             checkPermissions();
         }
         rssFeed = (ArrayList<RSSItem>) getIntent().getSerializableExtra("contact");
+        rssFeed2= (ArrayList<RSSItem>) getIntent().getSerializableExtra("contact2");
         for (int i = 0; i < rssFeed.size(); i++) {
             Log.e(TAG, "onCreate: " + rssFeed.get(i).getTitle());
             Log.e(TAG, "onCreate: " + rssFeed.get(i).getTelNo());
@@ -274,6 +276,7 @@ public class CreateGroupActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Intent intent = new Intent(this, ChooseFriendsActivity.class);
+        intent.putExtra("contact",rssFeed2);
         startActivity(intent);
         finish();
     }

@@ -1,16 +1,22 @@
 package magia.af.ezpay;
 
+import android.*;
+import android.Manifest;
 import android.app.KeyguardManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import magia.af.ezpay.Parser.DOMParser;
 import magia.af.ezpay.Parser.RSSFeed;
 import magia.af.ezpay.helper.ContactDatabase;
@@ -31,24 +37,36 @@ public class Splash extends BaseActivity {
         setContentView(R.layout.splash);
 
         keyguardManager =
-                (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
-        fingerprintManager =
-                (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
+          (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            fingerprintManager =
+              (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
+        }
 
         if (!keyguardManager.isKeyguardSecure()) {
 
             Toast.makeText(this,
-                    "Lock screen security not enabled in Settings",
-                    Toast.LENGTH_LONG).show();
+              "Lock screen security not enabled in Settings",
+              Toast.LENGTH_LONG).show();
         }
 
-        if (!fingerprintManager.hasEnrolledFingerprints()) {
-
-            // This happens when no fingerprints are registered.
-            Toast.makeText(this,
-                    "Register at least one fingerprint in Settings",
-                    Toast.LENGTH_LONG).show();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
         }
+//        if (!fingerprintManager.hasEnrolledFingerprints()) {
+//
+//            // This happens when no fingerprints are registered.
+//            Toast.makeText(this,
+//              "Register at least one fingerprint in Settings",
+//              Toast.LENGTH_LONG).show();
+//        }
 
 
         if (!getSharedPreferences("EZpay", 0).getString("token", "").isEmpty()) {
