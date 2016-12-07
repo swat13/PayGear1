@@ -110,7 +110,7 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.chat_page_activity);
     MyFirebaseMessagingService.mode = 1;
-    _feed = new RSSFeed();
+//    _feed = new RSSFeed();
 //        service.setMessageHandler(this);
     mHandler = this;
     Bundle bundle = getIntent().getExtras();
@@ -124,6 +124,7 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
       Log.e("ContactName", "contactName" + contactName);
       imageUrl = imageUrl + bundle.getString("image");
       Log.e("image", "image" + imageUrl);
+      _feed = (RSSFeed) bundle.getSerializable("contact");
     }
 
     date = "2050-01-01T00:00:00.000";
@@ -1172,15 +1173,12 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
 
   @Override
   public void onBackPressed() {
-    new fillContact().execute("[]");
-    super.onBackPressed();
-//    Intent intent = new Intent(ChatPageActivity.this, MainActivity.class);
-//    if (_feed != null && _feed.getItemCount() > 0 && _feed.getItemCount() != 0) {
-//      Log.e("CHAT TRUE", "onBackPressed: ");
-//      intent.putExtra("contact", _feed);
-//    }
-//    startActivity(intent);
+//    new fillContact().execute("[]");
+    Intent intent = new Intent(ChatPageActivity.this, MainActivity.class);
+    intent.putExtra("contact", _feed);
+    startActivity(intent);
     finish();
+    super.onBackPressed();
   }
 
   private String getDividedToman(Long price) {
@@ -1280,7 +1278,6 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
     protected void onPostExecute(RSSFeed result) {
       if (result != null) {
         _feed = result;
-        adapter.notifyDataSetChanged();
       } else {
         Toast.makeText(ChatPageActivity.this, "problem in connection!", Toast.LENGTH_SHORT).show();
       }

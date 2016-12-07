@@ -151,6 +151,7 @@ public class FriendsListFragment extends Fragment implements OnClickHandler,Mess
             goToChatPageActivity.putExtra("photo", "http://new.opaybot.ir" + rssFeed.getGroupPhoto());
             goToChatPageActivity.putExtra("id", rssFeed.getGroupId());
             goToChatPageActivity.putExtra("members", rssFeed.getGroupMembers());
+            goToChatPageActivity.putExtra("contact", _feed);
             startActivityForResult(goToChatPageActivity, 10);
         } else {
             Intent goToChatPageActivity = new Intent(getActivity(), ChatPageActivity.class);
@@ -159,6 +160,7 @@ public class FriendsListFragment extends Fragment implements OnClickHandler,Mess
             goToChatPageActivity.putExtra("image", rssFeed.getContactImg());
             goToChatPageActivity.putExtra("pos", rssFeed.getPosition());
             goToChatPageActivity.putExtra("date", rssFeed.getLastChatDate());
+            goToChatPageActivity.putExtra("contact", _feed);
             startActivityForResult(goToChatPageActivity, 10);
         }
     }

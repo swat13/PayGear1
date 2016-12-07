@@ -76,6 +76,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
   static MessageHandler mHandler;
   RSSItem rssItem;
   PayLogItem logItem;
+  RSSFeed _feed;
   ArrayList<RSSItem> groupMembers;
   int newPos;
   public static final String TAG = GroupChatPageActivity.class.getSimpleName();
@@ -101,6 +102,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
       groupPhoto = bundle.getString("photo");
       groupTitle = bundle.getString("title");
       groupMembers = (ArrayList<RSSItem>) bundle.getSerializable("members");
+      _feed = (RSSFeed) bundle.getSerializable("contact");
     }
     Log.e(TAG, "onCreate: " + groupId);
     Log.e(TAG, "onCreate: " + groupTitle);
@@ -630,10 +632,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
     protected void onPostExecute(PayLogItem result) {
       if (result != null) {
         feed.addItem(result, 0);
-        lastChatAmount = getDividedToman((long) result.getAmount());
-        comment = result.getComment();
-        payState = true;
-        selfPhoneNumber = result.getfMobile();
+        new fillContact().execute("[]");
         new LocalPersistence().writeObjectToFile(GroupChatPageActivity.this, feed, "Payment_Chat_List");
         adapter.notifyDataSetChanged();
       } else {
@@ -880,7 +879,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
             cardDialog = new Dialog(GroupChatPageActivity.this, R.style.PauseDialog);
             cardDialog.setContentView(R.layout.group_payment_layout);
             edtAmount = (EditText) cardDialog.findViewById(R.id.payAmount);
-            edtAmount.setText(getDividedToman(Long.valueOf(feed.getItem(holder.getAdapterPosition()).getAmount()+"")));
+            edtAmount.setText(getDividedToman(Long.valueOf(feed.getItem(holder.getAdapterPosition()).getAmount() + "")));
             edtAmount.setOnFocusChangeListener(new View.OnFocusChangeListener() {
               @Override
               public void onFocusChange(View v, boolean hasFocus) {
@@ -1277,10 +1276,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
 //        feed.removeItem(pos);
         Log.e("POS", pos + "");
         feed.addItem(result, 0);
-        lastChatAmount = getDividedToman((long) result.getAmount());
-        comment = result.getComment();
-        payState = true;
-        selfPhoneNumber = result.getfMobile();
+        new fillContact().execute("[]");
         feed.getHash().put(result.getId(), 0);
         new LocalPersistence().writeObjectToFile(GroupChatPageActivity.this, feed, "Payment_Chat_List");
         adapter.notifyDataSetChanged();
@@ -1376,9 +1372,9 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
     @Override
     protected void onPostExecute(Boolean result) {
       if (result != null) {
+        new fillContact().execute("[]");
         Log.e("TEst", "onClick: " + result);
         if (result) {
-          cancelState = true;
           Log.e("TEst", "onClick: " + pos);
           feed.getItem(pos).setStatus(true);
           adapter.notifyDataSetChanged();
@@ -1412,7 +1408,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
     @Override
     protected void onPostExecute(Boolean result) {
       if (result != null) {
-        cancelState = true;
+        new fillContact().execute("[]");
         Log.e("TEst", "onClick: " + result);
         if (result) {
           Log.e("TEst", "onClick: " + pos);
@@ -1447,10 +1443,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
           Log.e("chatMemberMobile", "run: " + chatMemberMobile);
           Log.e("phone", "run: " + phone);
           Log.e("TTTT", "handleMessage pv: ");
-          lastChatAmount = getDividedToman((long) logItem.getAmount());
-          comment = logItem.getComment();
-          payState = logItem.isPaideBool();
-          selfPhoneNumber = logItem.getfMobile();
+          new fillContact().execute("[]");
           feed.getHash().put(logItem.getId(), 0);
           feed.addItem(logItem, 0);
           adapter.notifyDataSetChanged();
@@ -1462,20 +1455,18 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
   @Override
   public void onBackPressed() {
 
-    new fillContact().execute("[]");
-    super.onBackPressed();
-//    Intent intent = new Intent(ChatPageActivity.this, MainActivity.class);
-//    if (_feed != null && _feed.getItemCount() > 0 && _feed.getItemCount() != 0) {
-//      Log.e("CHAT TRUE", "onBackPressed: ");
-//      intent.putExtra("contact", _feed);
-//    }
-//    startActivity(intent);
+//    new fillContact().execute("[]");
+    Intent intent = new Intent(GroupChatPageActivity.this, MainActivity.class);
+    intent.putExtra("contact", _feed);
+    startActivity(intent);
     finish();
+    super.onBackPressed();
 //    Intent intent = new Intent(GroupChatPageActivity.this , MainActivity.class);
 //    startActivity(intent);
 //    super.onBackPressed();
 //    finish();
   }
+
   public class fillContact extends AsyncTask<String, Void, RSSFeed> {
 
     @Override
@@ -1492,6 +1483,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
     @Override
     protected void onPostExecute(RSSFeed result) {
       if (result != null) {
+        _feed = result;
       } else {
         Toast.makeText(GroupChatPageActivity.this, "problem in connection!", Toast.LENGTH_SHORT).show();
       }
