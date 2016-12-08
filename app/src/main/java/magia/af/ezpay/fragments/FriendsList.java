@@ -33,14 +33,16 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import magia.af.ezpay.ChatPageActivity;
-import magia.af.ezpay.ChooseFriendsActivity;
+import magia.af.ezpay.ChooseMemberActivity;
 import magia.af.ezpay.Firebase.MyFirebaseMessagingService;
 import magia.af.ezpay.GroupChatPageActivity;
 import magia.af.ezpay.MainActivity;
-import magia.af.ezpay.Parser.DOMParser;
-import magia.af.ezpay.Parser.PayLogItem;
-import magia.af.ezpay.Parser.RSSFeed;
-import magia.af.ezpay.Parser.RSSItem;
+import magia.af.ezpay.Parser.GroupItem;
+import magia.af.ezpay.Parser.LogItem;
+import magia.af.ezpay.Parser.MembersFeed;
+import magia.af.ezpay.Parser.Parser;
+import magia.af.ezpay.Parser.Item;
+import magia.af.ezpay.Parser.Feed;
 import magia.af.ezpay.R;
 import magia.af.ezpay.helper.ContactDatabase;
 import magia.af.ezpay.helper.GetContact;
@@ -51,13 +53,14 @@ import magia.af.ezpay.interfaces.OnClickHandler;
  * Created by erfan on 11/3/2016.
  */
 
-public class FriendsListFragment extends Fragment implements OnClickHandler,MessageHandler {
+public class FriendsList extends Fragment implements OnClickHandler, MessageHandler {
 
-    static RSSFeed _feed;
-    ArrayList<RSSItem> contacts;
-    ArrayList<RSSItem> groups;
+    static Feed _feed;
+    static GroupItem groups;
+    static MembersFeed membersFeed;
+    ArrayList<Item> contacts;
     RecyclerView recBills;
-    FriendsListFragment.ListAdapter adapter;
+    FriendsList.ListAdapter adapter;
     public String comment;
     public int amount;
     public int position;
@@ -66,9 +69,9 @@ public class FriendsListFragment extends Fragment implements OnClickHandler,Mess
     static Handler handler = new Handler();
     public static MessageHandler mHandler;
 
-    public static FriendsListFragment getInstance(RSSFeed rssFeed) {
-        _feed = rssFeed;
-        return new FriendsListFragment();
+    public static FriendsList getInstance(Feed feed) {
+        _feed = feed;
+        return new FriendsList();
     }
 
     @Override
@@ -83,38 +86,28 @@ public class FriendsListFragment extends Fragment implements OnClickHandler,Mess
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         MyFirebaseMessagingService.mode = 3;
-        mHandler =this;
+        mHandler = this;
         View v = inflater.inflate(R.layout.activity_friend_list, container, false);
         ((MainActivity) getActivity()).fragment_status = 2;
         recBills = (RecyclerView) v.findViewById(R.id.contact_recycler);
-        _feed = (RSSFeed) getActivity().getIntent().getSerializableExtra("contact");
-        Log.e("Size", "onCreateView: " + _feed.getItemCount());
+        _feed = (Feed) getActivity().getIntent().getSerializableExtra("contact");
         for (int i = 0; i < _feed.getItemCount(); i++) {
-            Log.e("SS", "onCreateView: " + _feed.getItem(i).getTitle());
-            Log.e("THIS LINE IS 81", "onCreateView: " + _feed.getItem(i).getGroupLastChatAmount());
-            contacts = _feed.getItem(i).getContactMembers();
-            groups = _feed.getItem(i).getGroupArray();
+            if (_feed.getItem(i).getGroupItem() != null) {
+                groups = _feed.getItem(i).getGroupItem();
+            } else {
+                contacts = _feed.getItem(i).getContactMembers();
+            }
+
+
         }
 
         new getAccount().execute();
 
-
-//    for (int i = 0; i < _feed.getItemCount(); i++) {
-//      Log.e("Size", "onCreateView: " + _feed.getItem(i).getContactMembers().toString());
-//    }
-//    contacts = _feed.getItem(_feed.getItemCount()-1).getContactMembers();
-//    groups = _feed.getItem(37).getGroupArray();
-        for (int i = 0; i < contacts.size(); i++) {
-            Log.e("Size", "onCreateView: " + contacts.get(i).getTitle());
-        }
-//    for (int i = 0; i < groups.size(); i++) {
-//      Log.e("Size2", "onCreateView: " + groups.get(i).getGroupTitle());
-//    }
         CardView inviteFriends = (CardView) v.findViewById(R.id.invite_friends);
         inviteFriends.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), ChooseFriendsActivity.class);
+                Intent intent = new Intent(getActivity(), ChooseMemberActivity.class);
                 intent.putExtra("contact", contacts);
                 getActivity().startActivity(intent);
             }
@@ -130,7 +123,7 @@ public class FriendsListFragment extends Fragment implements OnClickHandler,Mess
             }
         }
         if (_feed != null && _feed.getItemCount() != 0) {
-            adapter = new FriendsListFragment.ListAdapter(this);
+            adapter = new FriendsList.ListAdapter(this);
             recBills.setAdapter(adapter);
             LinearLayoutManager llm = new LinearLayoutManager(getActivity());
             llm.setOrientation(LinearLayoutManager.VERTICAL);
@@ -144,29 +137,36 @@ public class FriendsListFragment extends Fragment implements OnClickHandler,Mess
 
 
     @Override
-    public void onClick(RSSItem rssFeed) {
-        if (rssFeed.isGroupStatus()) {
+    public void onClick(Item item) {
+
+        if (item.getGroupItem() != null) {
+            Log.e("In GP", "000000");
             Intent goToChatPageActivity = new Intent(getActivity(), GroupChatPageActivity.class);
-            goToChatPageActivity.putExtra("title", rssFeed.getGroupTitle());
-            goToChatPageActivity.putExtra("photo", "http://new.opaybot.ir" + rssFeed.getGroupPhoto());
-            goToChatPageActivity.putExtra("id", rssFeed.getGroupId());
-            goToChatPageActivity.putExtra("members", rssFeed.getGroupMembers());
+            GroupItem groupItem = item.getGroupItem();
+            MembersFeed membersFeed = groupItem.getMembersFeed();
+            goToChatPageActivity.putExtra("title", groupItem.getGroupTitle());
+            goToChatPageActivity.putExtra("photo", "http://new.opaybot.ir" + groupItem.getGroupPhoto());
+            goToChatPageActivity.putExtra("id", groupItem.getGroupId());
+            goToChatPageActivity.putExtra("members", membersFeed);
             goToChatPageActivity.putExtra("contact", _feed);
             startActivityForResult(goToChatPageActivity, 10);
         } else {
+            Log.e("In PV", "1111111");
             Intent goToChatPageActivity = new Intent(getActivity(), ChatPageActivity.class);
-            goToChatPageActivity.putExtra("phone", rssFeed.getTelNo());
-            goToChatPageActivity.putExtra("contactName", rssFeed.getTitle());
-            goToChatPageActivity.putExtra("image", rssFeed.getContactImg());
-            goToChatPageActivity.putExtra("pos", rssFeed.getPosition());
-            goToChatPageActivity.putExtra("date", rssFeed.getLastChatDate());
+            goToChatPageActivity.putExtra("phone", item.getTelNo());
+            goToChatPageActivity.putExtra("contactName", item.getTitle());
+            goToChatPageActivity.putExtra("image", item.getContactImg());
+            goToChatPageActivity.putExtra("pos", item.getPosition());
+            goToChatPageActivity.putExtra("date", item.getLastChatDate());
             goToChatPageActivity.putExtra("contact", _feed);
             startActivityForResult(goToChatPageActivity, 10);
         }
+
+
     }
 
     @Override
-    public void handleMessage(PayLogItem logItem, boolean deleteState, String chatMemberMobile) {
+    public void handleMessage(LogItem logItem, boolean deleteState, String chatMemberMobile) {
         new fillContact().execute("[]");
     }
 
@@ -192,12 +192,12 @@ public class FriendsListFragment extends Fragment implements OnClickHandler,Mess
 
         @Override
         public void onClick(View v) {
-            RSSItem rssItem = _feed.getItem(getAdapterPosition());
-            onClickHandler.onClick(rssItem);
+            Item item = _feed.getItem(getAdapterPosition());
+            onClickHandler.onClick(item);
         }
     }
 
-    public class ListAdapter extends RecyclerView.Adapter<FriendsListFragment.FeedViewHolder> {
+    public class ListAdapter extends RecyclerView.Adapter<FriendsList.FeedViewHolder> {
         OnClickHandler onClickHandler;
 
         public ListAdapter(OnClickHandler onClickHandler) {
@@ -210,12 +210,47 @@ public class FriendsListFragment extends Fragment implements OnClickHandler,Mess
         }
 
         @Override
-        public void onBindViewHolder(final FriendsListFragment.FeedViewHolder FeedViewHolder, final int position) {
+        public void onBindViewHolder(final FriendsList.FeedViewHolder FeedViewHolder, final int position) {
             String contactName = "";
-            RSSItem fe = _feed.getItem(position);
+            Item fe = _feed.getItem(position);
 //      ContactDatabase database = new ContactDatabase(getActivity());
 //      fe.setContactName(database.getNameFromNumber(fe.getTelNo()));
-            if (!fe.isGroupStatus()) {
+            if (fe.getGroupItem() != null) {
+
+                if (!fe.getGroupItem().isGroupLastChatOrderPay()) {
+                    FeedViewHolder.pay.setTextColor(Color.parseColor("#6db314"));
+                    FeedViewHolder.pay.setText("+" + getDividedToman((long) fe.getGroupItem().getGroupLastChatAmount()) + "");
+                } else {
+                    FeedViewHolder.pay.setTextColor(Color.RED);
+                    FeedViewHolder.pay.setText("-" + getDividedToman((long) fe.getGroupItem().getGroupLastChatAmount()) + "");
+                }
+                FeedViewHolder.description.setText(fe.getGroupItem().getGroupLastChatComment());
+                if (fe.getGroupItem().getGroupTitle().length() > 15) {
+                    contactName = fe.getGroupItem().getGroupTitle();
+                    FeedViewHolder.contactName.setText(contactName.substring(0, 15) + "...");
+                } else {
+                    FeedViewHolder.contactName.setText(fe.getGroupItem().getGroupTitle());
+                }
+//          FeedViewHolder.description.setText(fe.getGroupLastChatComment());
+                Glide.with(getActivity())
+                        .load("http://new.opaybot.ir" + fe.getGroupItem().getGroupPhoto())
+                        .asBitmap()
+                        .centerCrop()
+                        .placeholder(R.drawable.pic_profile)
+                        .into(new BitmapImageViewTarget(FeedViewHolder.contactImage) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
+                                circularBitmapDrawable.setCornerRadius(700);
+                                FeedViewHolder.contactImage.setImageDrawable(circularBitmapDrawable);
+                            }
+                        });
+
+                fe.setPosition(position);
+
+
+            } else {
+
                 if (fe.isLastChatOrderByFromOrTo()) {
                     FeedViewHolder.pay.setTextColor(Color.RED);
                     FeedViewHolder.pay.setText("-" + getDividedToman((long) fe.getLastChatAmount()) + "");
@@ -238,40 +273,8 @@ public class FriendsListFragment extends Fragment implements OnClickHandler,Mess
                     FeedViewHolder.contactName.setText(fe.getTitle());
                 }
 
-                Log.e("#######", "onBindViewHolder: " + "http://new.opaybot.ir" + fe.getContactImg());
                 Glide.with(getActivity())
-                  .load("http://new.opaybot.ir" + fe.getContactImg())
-                  .asBitmap()
-                  .centerCrop()
-                  .placeholder(R.drawable.pic_profile)
-                  .into(new BitmapImageViewTarget(FeedViewHolder.contactImage) {
-                      @Override
-                      protected void setResource(Bitmap resource) {
-                          RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
-                          circularBitmapDrawable.setCornerRadius(700);
-                          FeedViewHolder.contactImage.setImageDrawable(circularBitmapDrawable);
-                      }
-                  });
-            }
-            if (fe.isGroupStatus()) {
-                if (!fe.isGroupLastChatOrderPay()) {
-                    FeedViewHolder.pay.setTextColor(Color.parseColor("#6db314"));
-                    FeedViewHolder.pay.setText("+" + getDividedToman((long) fe.getGroupLastChatAmount()) + "");
-                } else {
-                    FeedViewHolder.pay.setTextColor(Color.RED);
-                    FeedViewHolder.pay.setText("-" + getDividedToman((long) fe.getGroupLastChatAmount()) + "");
-                }
-                FeedViewHolder.description.setText(fe.getGroupLastChatComment());
-                if (fe.getGroupTitle().length() > 15) {
-                    contactName = fe.getGroupTitle();
-                    FeedViewHolder.contactName.setText(contactName.substring(0, 15) + "...");
-                } else {
-                    FeedViewHolder.contactName.setText(fe.getGroupTitle());
-                }
-                Log.e("DDDD", "onBindViewHolder: " + "http://new.opaybot.ir" + fe.getGroupPhoto());
-//          FeedViewHolder.description.setText(fe.getGroupLastChatComment());
-                Glide.with(getActivity())
-                        .load("http://new.opaybot.ir" + fe.getGroupPhoto())
+                        .load("http://new.opaybot.ir" + fe.getContactImg())
                         .asBitmap()
                         .centerCrop()
                         .placeholder(R.drawable.pic_profile)
@@ -283,24 +286,12 @@ public class FriendsListFragment extends Fragment implements OnClickHandler,Mess
                                 FeedViewHolder.contactImage.setImageDrawable(circularBitmapDrawable);
                             }
                         });
-            } else {
 
             }
-
-            fe.setPosition(position);
-
-//        FeedViewHolder.contactImage.setImageDrawable(fe.getContactImg());
-
-            /*if (fe.isContactStatus()) {
-                FeedViewHolder.contactStat.setImageResource(R.drawable.circle_bg_online_stat);
-
-            } else
-                FeedViewHolder.contactStat.setImageResource(R.drawable.circle_bg_offline_stat);*/
-
         }
 
         @Override
-        public FriendsListFragment.FeedViewHolder onCreateViewHolder(final ViewGroup viewGroup, final int position) {
+        public FriendsList.FeedViewHolder onCreateViewHolder(final ViewGroup viewGroup, final int position) {
             View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.contact_item, viewGroup, false);
             return new FeedViewHolder(itemView, onClickHandler);
         }
@@ -311,74 +302,74 @@ public class FriendsListFragment extends Fragment implements OnClickHandler,Mess
     private String getDividedToman(Long price) {
         if (price == 0) {
             return price + "";
-        }
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < price.toString().length(); i += 3) {
-            try {
-                if (i == 0)
-                    stringBuilder.insert(0, price.toString().substring(price.toString().length() - 3 - i, price.toString().length() - i));
-                else
-                    stringBuilder.insert(0, price.toString().substring(price.toString().length() - 3 - i, price.toString().length() - i) + ",");
-            } catch (Exception e) {
+        } else if (price < 1000) {
+            return price + "";
+        } else {
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < price.toString().length(); i += 3) {
                 try {
-                    stringBuilder.insert(0, price.toString().substring(price.toString().length() - 2 - i, price.toString().length() - i) + ",");
-                } catch (Exception e1) {
-                    stringBuilder.insert(0, price.toString().substring(price.toString().length() - 1 - i, price.toString().length() - i) + ",");
+                    if (i == 0)
+                        stringBuilder.insert(0, price.toString().substring(price.toString().length() - 3 - i, price.toString().length() - i));
+                    else
+                        stringBuilder.insert(0, price.toString().substring(price.toString().length() - 3 - i, price.toString().length() - i) + ",");
+                } catch (Exception e) {
+                    try {
+                        stringBuilder.insert(0, price.toString().substring(price.toString().length() - 2 - i, price.toString().length() - i) + ",");
+                    } catch (Exception e1) {
+                        stringBuilder.insert(0, price.toString().substring(price.toString().length() - 1 - i, price.toString().length() - i) + ",");
+                    }
                 }
+
             }
-
+            return stringBuilder.toString();
         }
-        return stringBuilder.toString();
     }
 
-  @Override
-  public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 //    new ComparingContactWithDatabase().execute();
-      new fillContact().execute("[]");
-    if (adapter != null) {
-      adapter.notifyDataSetChanged();
+        new fillContact().execute("[]");
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
+        super.onViewCreated(view, savedInstanceState);
     }
-    super.onViewCreated(view, savedInstanceState);
-  }
 
-  @Override
-  public void onAttach(Context context) {
+    @Override
+    public void onAttach(Context context) {
 //    new ComparingContactWithDatabase().execute();
-      new fillContact().execute("[]");
-    if (adapter != null) {
-      adapter.notifyDataSetChanged();
+        new fillContact().execute("[]");
+
+        super.onAttach(context);
     }
-    super.onAttach(context);
-  }
 
-  @Override
-  public void onCreate(@Nullable Bundle savedInstanceState) {
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
 //    new ComparingContactWithDatabase().execute();
-      new fillContact().execute("[]");
-    if (adapter != null) {
-      adapter.notifyDataSetChanged();
+        new fillContact().execute("[]");
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
+        super.onCreate(savedInstanceState);
     }
-    super.onCreate(savedInstanceState);
-  }
 
-  @Override
-  public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 //    new ComparingContactWithDatabase().execute();
-      new fillContact().execute("[]");
-    if (adapter != null) {
-      adapter.notifyDataSetChanged();
+        new fillContact().execute("[]");
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
+        super.onActivityCreated(savedInstanceState);
     }
-    super.onActivityCreated(savedInstanceState);
-  }
 
-  @Override
-  public void onResume() {
+    @Override
+    public void onResume() {
 //    new ComparingContactWithDatabase().execute();
-      new fillContact().execute("[]");
-    adapter.notifyDataSetChanged();
-    super.onResume();
-  }
-
+        new fillContact().execute("[]");
+        adapter.notifyDataSetChanged();
+        super.onResume();
+    }
 
     public String newContact(JSONArray jsonArray) {
         return jsonArray.toString();
@@ -391,8 +382,8 @@ public class FriendsListFragment extends Fragment implements OnClickHandler,Mess
             database = new ContactDatabase(getActivity());
             GetContact getContact = new GetContact();
 
-            RSSFeed databaseContact = database.getAllData();
-            RSSFeed phoneContact = getContact.getNewContact(getActivity());
+            Feed databaseContact = database.getAllData();
+            Feed phoneContact = getContact.getNewContact(getActivity());
             for (int i = 0; i < phoneContact.getItemCount(); i++) {
 //        Log.e("(((", "doInBackground i: " + i);
                 for (int j = 0; j < databaseContact.getItemCount(); j++) {
@@ -427,7 +418,7 @@ public class FriendsListFragment extends Fragment implements OnClickHandler,Mess
         }
     }
 
-    public class fillContact extends AsyncTask<String, Void, RSSFeed> {
+    public class fillContact extends AsyncTask<String, Void, Feed> {
 
         @Override
         protected void onPreExecute() {
@@ -435,16 +426,18 @@ public class FriendsListFragment extends Fragment implements OnClickHandler,Mess
         }
 
         @Override
-        protected RSSFeed doInBackground(String... params) {
-            DOMParser domParser = new DOMParser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
-            return domParser.checkContactListWithGroup(params[0]);
+        protected Feed doInBackground(String... params) {
+            Parser parser = new Parser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
+            return parser.checkContactListWithGroup(params[0]);
         }
 
         @Override
-        protected void onPostExecute(RSSFeed result) {
+        protected void onPostExecute(Feed result) {
             if (result != null) {
                 _feed = result;
-                adapter.notifyDataSetChanged();
+                if (adapter != null) {
+                    adapter.notifyDataSetChanged();
+                }
             } else {
                 Toast.makeText(getActivity(), "problem in connection!", Toast.LENGTH_SHORT).show();
             }
@@ -453,7 +446,7 @@ public class FriendsListFragment extends Fragment implements OnClickHandler,Mess
 
     }
 
-    public class getAccount extends AsyncTask<Void, Void, RSSItem> {
+    public class getAccount extends AsyncTask<Void, Void, Item> {
 
         @Override
         protected void onPreExecute() {
@@ -461,13 +454,13 @@ public class FriendsListFragment extends Fragment implements OnClickHandler,Mess
         }
 
         @Override
-        protected RSSItem doInBackground(Void... params) {
-            DOMParser domParser = new DOMParser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
-            return domParser.getAccount();
+        protected Item doInBackground(Void... params) {
+            Parser parser = new Parser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
+            return parser.getAccount();
         }
 
         @Override
-        protected void onPostExecute(RSSItem result) {
+        protected void onPostExecute(Item result) {
             Log.e("jsons", String.valueOf(result));
 
             if (result != null) {
@@ -476,7 +469,7 @@ public class FriendsListFragment extends Fragment implements OnClickHandler,Mess
                 Toast.makeText(getActivity(), "Json Is Null!", Toast.LENGTH_SHORT).show();
             }
 
-
         }
     }
+
 }

@@ -6,12 +6,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import magia.af.ezpay.fragments.ActivationCodeFragment;
-import magia.af.ezpay.fragments.LoginFragment;
+import magia.af.ezpay.fragments.ActivationCode;
+import magia.af.ezpay.fragments.Login;
 
 /**
  * Created by Saeid Yazdany on 10/25/2016.
@@ -23,7 +22,7 @@ public class LoginActivity extends BaseActivity {
     public RelativeLayout waitingDialog;
     public ImageView imageView;
     public int fragment_status = 0;
-    public ActivationCodeFragment activationCodeFragment;
+    public ActivationCode activationCode;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,10 +40,10 @@ public class LoginActivity extends BaseActivity {
 
     //Load The Login Fragment
     public void loadFragment() {
-        LoginFragment loginFragment = LoginFragment.getInstance();
+        Login login = Login.getInstance();
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.container, loginFragment)
+                .add(R.id.container, login)
                 .commit();
     }
 
@@ -54,11 +53,11 @@ public class LoginActivity extends BaseActivity {
         bundle.putString("number", phone);
 
         Log.i("Input phone", phone);
-        activationCodeFragment = ActivationCodeFragment.getInstance();
-        activationCodeFragment.setArguments(bundle);
+        activationCode = ActivationCode.getInstance();
+        activationCode.setArguments(bundle);
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.container, activationCodeFragment)
+                .replace(R.id.container, activationCode)
                 .commit();
     }
 
@@ -73,7 +72,7 @@ public class LoginActivity extends BaseActivity {
         Log.e("onBackPressed: ", fragment_status + "");
         if (fragment_status == 3) {
             Log.e("backkkk", "onBackPressed: ");
-            activationCodeFragment.cancelling();
+            activationCode.cancelling();
 
 
         } else if (fragment_status == 2) {

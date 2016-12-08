@@ -34,14 +34,12 @@ import org.json.JSONObject;
 
 import magia.af.ezpay.LoginActivity;
 import magia.af.ezpay.MainActivity;
-import magia.af.ezpay.Parser.DOMParser;
-import magia.af.ezpay.Parser.RSSFeed;
-import magia.af.ezpay.Parser.RSSItem;
+import magia.af.ezpay.Parser.Parser;
+import magia.af.ezpay.Parser.Feed;
+import magia.af.ezpay.Parser.Item;
 import magia.af.ezpay.R;
-import magia.af.ezpay.Splash;
 import magia.af.ezpay.Utilities.LocalPersistence;
 import magia.af.ezpay.helper.ContactDatabase;
-import magia.af.ezpay.helper.GetContact;
 import magia.af.ezpay.interfaces.EventCallbackHandler;
 
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
@@ -50,7 +48,7 @@ import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
  * Created by Saeid Yazdany on 10/26/2016.
  */
 
-public class ActivationCodeFragment extends Fragment implements View.OnClickListener, EventCallbackHandler {
+public class ActivationCode extends Fragment implements View.OnClickListener, EventCallbackHandler {
     private Button btn_send_activation_code_again;
     private ImageButton btn_send_activation_code;
     private EditText edtInputPhoneNumber, nameEditText;
@@ -58,18 +56,18 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
     private String phone;
     private String activationCode;
     private String newName;
-    private RSSFeed feed;
+    private Feed feed;
     private JSONArray jsonArray;
-    private RSSItem rssItem;
+    private Item item;
     public volatile boolean running = true;
     public fillContact ffillContact;
     String contact;
     private ArrayMap<String, Boolean> stringArrayMap = new ArrayMap<>();
 
 
-    public static ActivationCodeFragment getInstance() {
+    public static ActivationCode getInstance() {
 
-        return new ActivationCodeFragment();
+        return new ActivationCode();
     }
 
     @Nullable
@@ -207,14 +205,14 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
 
         @Override
         protected String[] doInBackground(String... params) {
-            DOMParser domParser = new DOMParser();
+            Parser parser = new Parser();
             /*while (running) {
                 if (isCancelled()) {
                     return null;
 
                 }
             }*/
-            return domParser.Verify_Login_Activation_Code(params[0], params[1], params[2]);
+            return parser.Verify_Login_Activation_Code(params[0], params[1], params[2]);
         }
 
         @Override
@@ -261,7 +259,7 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
 
         @Override
         protected String doInBackground(Void... params) {
-            feed = new RSSFeed();
+            feed = new Feed();
             ContentResolver cr = context.getContentResolver();
             Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
               null, null, null, null);
@@ -290,10 +288,10 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
                             if (phoneNo.contains("+989")) {
                                 phoneNo = phoneNo.replace("+98", "0");
                             }
-                            rssItem = new RSSItem();
-                            rssItem.setTelNo(phoneNo);
-                            rssItem.setContactName(name);
-                            feed.addItem(rssItem);
+                            item = new Item();
+                            item.setTelNo(phoneNo);
+                            item.setContactName(name);
+                            feed.addItem(item);
                             if (phoneNo.startsWith("09")) {
 
                                 try {
@@ -348,7 +346,7 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
         return contact;
     }
 
-    private class fillContact extends AsyncTask<Void, Void, RSSFeed> {
+    private class fillContact extends AsyncTask<Void, Void, Feed> {
 
         @Override
         protected void onPreExecute() {
@@ -358,14 +356,14 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
         }
 
         @Override
-        protected RSSFeed doInBackground(Void... params) {
-            DOMParser domParser = new DOMParser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
-            return domParser.checkContactListWithGroup(getContacts());
+        protected Feed doInBackground(Void... params) {
+            Parser parser = new Parser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
+            return parser.checkContactListWithGroup(getContacts());
 
         }
 
         @Override
-        protected void onPostExecute(RSSFeed result) {
+        protected void onPostExecute(Feed result) {
             if (result != null) {
                 startActivity(new Intent(getActivity(), MainActivity.class).putExtra("contact", result));
                 getActivity().finish();
@@ -381,19 +379,19 @@ public class ActivationCodeFragment extends Fragment implements View.OnClickList
     }
 
     public void writeToFile(JSONArray json) {
-        RSSFeed rssFeed = new RSSFeed();
+        Feed feed = new Feed();
         for (int i = 0; i < json.length(); i++) {
             try {
                 JSONObject jsonObject = json.getJSONObject(i);
-                RSSItem rssItem = new RSSItem();
-                rssItem.setTelNo(jsonObject.getString("m"));
-                rssFeed.addItem(rssItem);
+                Item item = new Item();
+                item.setTelNo(jsonObject.getString("m"));
+                feed.addItem(item);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
         }
-        new LocalPersistence().writeObjectToFile(getActivity(), rssFeed, "All_Contact_List");
+        new LocalPersistence().writeObjectToFile(getActivity(), feed, "All_Contact_List");
     }
 
 

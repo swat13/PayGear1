@@ -4,28 +4,18 @@ package magia.af.ezpay.Firebase;
  * Created by Alif on 10/5/2016.
  */
 
-import android.os.AsyncTask;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
-
-import java.io.File;
-import java.io.IOException;
-
-import magia.af.ezpay.MainActivity;
-import magia.af.ezpay.Parser.DOMParser;
-import magia.af.ezpay.R;
 
 /**
  * Created by Belal on 5/27/2016.
  */
 
-
+/*
+* rt
+* */
 //Class extending FirebaseInstanceIdService
 public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
 
@@ -33,12 +23,9 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
 
     @Override
     public void onTokenRefresh() {
-
         //Getting registration token
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-
         Log.e(TAG, "Refreshed token: " + refreshedToken);
         getSharedPreferences("EZpay", 0).edit().putString("push", refreshedToken).apply();
-
     }
 }

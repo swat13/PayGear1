@@ -2,7 +2,7 @@ package magia.af.ezpay.Parser;
 
 import java.io.Serializable;
 
-public class PayLogItem implements Serializable {
+public class LogItem implements Serializable {
 
 /*ss*/
     private static final long serialVersionUID = 1L;

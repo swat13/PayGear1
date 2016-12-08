@@ -1,19 +1,14 @@
 package magia.af.ezpay.fragments;
 
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -26,15 +21,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -58,8 +50,8 @@ import java.io.IOException;
 
 import magia.af.ezpay.LoginActivity;
 import magia.af.ezpay.MainActivity;
-import magia.af.ezpay.Parser.DOMParser;
-import magia.af.ezpay.Parser.RSSItem;
+import magia.af.ezpay.Parser.Parser;
+import magia.af.ezpay.Parser.Item;
 import magia.af.ezpay.R;
 
 
@@ -67,7 +59,7 @@ import magia.af.ezpay.R;
  * Created by pc on 11/9/2016.
  */
 
-public class ProfileFragment extends Fragment {
+public class Profile extends Fragment {
     Toolbar toolbar;
     AppBarLayout appBarLayout;
     private ImageView userAvatar, imageBtn, imageSignOut;
@@ -267,9 +259,9 @@ public class ProfileFragment extends Fragment {
 
         @Override
         protected String doInBackground(File... params) {
-            DOMParser domParser = new DOMParser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
+            Parser parser = new Parser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
             try {
-                return domParser.changeUserImage(params[0]);
+                return parser.changeUserImage(params[0]);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -485,7 +477,7 @@ public class ProfileFragment extends Fragment {
         return inSampleSize;
     }
 
-    public class getAccount extends AsyncTask<Void, Void, RSSItem> {
+    public class getAccount extends AsyncTask<Void, Void, Item> {
 
         @Override
         protected void onPreExecute() {
@@ -497,13 +489,13 @@ public class ProfileFragment extends Fragment {
         }
 
         @Override
-        protected RSSItem doInBackground(Void... params) {
-            DOMParser domParser = new DOMParser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
-            return domParser.getAccount();
+        protected Item doInBackground(Void... params) {
+            Parser parser = new Parser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
+            return parser.getAccount();
         }
 
         @Override
-        protected void onPostExecute(RSSItem result) {
+        protected void onPostExecute(Item result) {
             Log.e("jsons", String.valueOf(result));
 
 

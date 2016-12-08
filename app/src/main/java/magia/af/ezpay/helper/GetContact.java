@@ -1,10 +1,8 @@
 package magia.af.ezpay.helper;
 
-import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.provider.ContactsContract;
 import android.util.ArrayMap;
 import android.util.Log;
@@ -15,9 +13,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import magia.af.ezpay.Parser.RSSFeed;
-import magia.af.ezpay.Parser.RSSItem;
-import magia.af.ezpay.Splash;
+import magia.af.ezpay.Parser.Feed;
+import magia.af.ezpay.Parser.Item;
 import magia.af.ezpay.Utilities.LocalPersistence;
 
 /**
@@ -29,13 +26,13 @@ public class GetContact {
     private static final String TAG = "TAG";
     private ArrayMap<String, Boolean> stringArrayMap = new ArrayMap<>();
     Context cx;
-    RSSItem rssItem;
-    RSSFeed feed;
+    Item item;
+    Feed feed;
     JSONArray jsonArray;
 
     public String getContact(Context context) {
         cx = context;
-        feed = new RSSFeed();
+        feed = new Feed();
         ContentResolver cr = cx.getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
           null, null, null, null);
@@ -64,10 +61,10 @@ public class GetContact {
                         if (phoneNo.contains("+989")) {
                             phoneNo = phoneNo.replace("+98", "0");
                         }
-                        rssItem = new RSSItem();
-                        rssItem.setTelNo(phoneNo);
-                        rssItem.setContactName(name);
-                        feed.addItem(rssItem);
+                        item = new Item();
+                        item.setTelNo(phoneNo);
+                        item.setContactName(name);
+                        feed.addItem(item);
                         if (phoneNo.startsWith("09")) {
 
                             try {
@@ -101,13 +98,13 @@ public class GetContact {
         return jsonArray != null ? jsonArray.toString() : null;
     }
 
-    public boolean isNewContact(RSSFeed rssFeed, String phoneNumber) {
+    public boolean isNewContact(Feed feed, String phoneNumber) {
 
-        if (rssFeed == null) {
+        if (feed == null) {
             return true;
         }
-        for (int i = 0; i < rssFeed.getItemCount(); i++) {
-            if (rssFeed.getItem(i).getTelNo().equals(phoneNumber)) {
+        for (int i = 0; i < feed.getItemCount(); i++) {
+            if (feed.getItem(i).getTelNo().equals(phoneNumber)) {
                 return false;
             }
 
@@ -117,19 +114,19 @@ public class GetContact {
     }
 
     public void writeToFile(JSONArray json) {
-        RSSFeed rssFeed = new RSSFeed();
+        Feed feed = new Feed();
         for (int i = 0; i < json.length(); i++) {
             try {
                 JSONObject jsonObject = json.getJSONObject(i);
-                RSSItem rssItem = new RSSItem();
-                rssItem.setTelNo(jsonObject.getString("m"));
-                rssFeed.addItem(rssItem);
+                Item item = new Item();
+                item.setTelNo(jsonObject.getString("m"));
+                feed.addItem(item);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
         }
-        new LocalPersistence().writeObjectToFile(cx, rssFeed, "All_Contact_List");
+        new LocalPersistence().writeObjectToFile(cx, feed, "All_Contact_List");
     }
 
     public ArrayList<String> allContacts(Context context) {
@@ -170,9 +167,9 @@ public class GetContact {
         return phones;
     }
 
-    public RSSFeed getNewContact(Context context) {
+    public Feed getNewContact(Context context) {
         cx = context;
-        RSSFeed rssFeed = new RSSFeed();
+        Feed feed = new Feed();
         ContentResolver cr = context.getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
                 null, null, null, null);
@@ -205,15 +202,15 @@ public class GetContact {
                             phoneNo = phoneNo.replace("+98", "0");
                         }
 //                        Log.e("GettingContacts",phoneNo);
-                        RSSItem rssItem = new RSSItem();
-                        rssItem.setTelNo(phoneNo);
-                        rssItem.setContactName(name);
-                        rssFeed.addItem(rssItem);
+                        Item item = new Item();
+                        item.setTelNo(phoneNo);
+                        item.setContactName(name);
+                        feed.addItem(item);
                     }
                     pCur.close();
                 }
             }
         }
-        return rssFeed;
+        return feed;
     }
 }

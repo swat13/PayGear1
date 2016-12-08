@@ -4,26 +4,25 @@ import android.app.FragmentTransaction;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.zxing.Result;
 
-import magia.af.ezpay.Parser.DOMParser;
-import magia.af.ezpay.Parser.RSSFeed;
-import magia.af.ezpay.Parser.RSSItem;
-import magia.af.ezpay.fragments.QRCodeDetailsFragment;
+import magia.af.ezpay.Parser.Parser;
+import magia.af.ezpay.Parser.Feed;
+import magia.af.ezpay.Parser.Item;
+import magia.af.ezpay.fragments.QRCodeDetails;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 public class SimpleScannerActivity extends BaseActivity implements ZXingScannerView.ResultHandler {
     private ZXingScannerView mScannerView;
-    RSSFeed rssFeed;
+    Feed feed;
     private String id;
     private boolean commit = false;
     int pos;
-    public QRCodeDetailsFragment qrCodeDetailsFragment;
+    public QRCodeDetails qrCodeDetails;
     static boolean isOpen = false;
 
     @Override
@@ -35,9 +34,9 @@ public class SimpleScannerActivity extends BaseActivity implements ZXingScannerV
         // Set the scanner view as the content view
 
 //        darkDialog = (RelativeLayout) findViewById(R.id.dark_dialog);
-        rssFeed = (RSSFeed) getIntent().getSerializableExtra("contact");
+        feed = (Feed) getIntent().getSerializableExtra("contact");
 
-        Log.e("Feeed", String.valueOf(rssFeed));
+        Log.e("Feeed", String.valueOf(feed));
 
 
     }
@@ -76,7 +75,7 @@ public class SimpleScannerActivity extends BaseActivity implements ZXingScannerV
     }
 
 
-    public class getAccountId extends AsyncTask<String, Void, RSSItem> {
+    public class getAccountId extends AsyncTask<String, Void, Item> {
 
         @Override
         protected void onPreExecute() {
@@ -89,24 +88,24 @@ public class SimpleScannerActivity extends BaseActivity implements ZXingScannerV
 
 
         @Override
-        protected RSSItem doInBackground(String... params) {
+        protected Item doInBackground(String... params) {
 
-            DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
-            return domParser.getAccountId(params[0]);
+            Parser parser = new Parser(getSharedPreferences("EZpay", 0).getString("token", ""));
+            return parser.getAccountId(params[0]);
 
         }
 
         @Override
-        protected void onPostExecute(RSSItem jsons) {
+        protected void onPostExecute(Item jsons) {
             Log.e("jsons", String.valueOf(jsons));
 
             if (jsons != null) {
                 commit = true;
 
-                Log.e("LastFeed", String.valueOf(rssFeed));
+                Log.e("LastFeed", String.valueOf(feed));
 
-                rssFeed.addItem(jsons);
-                pos = rssFeed.getItemCount() - 1;
+                feed.addItem(jsons);
+                pos = feed.getItemCount() - 1;
                 openDialog();
 //                finish();
             } else {
@@ -123,21 +122,21 @@ public class SimpleScannerActivity extends BaseActivity implements ZXingScannerV
             FragmentTransaction ft;
 //            darkDialog.setVisibility(View.VISIBLE);
             Bundle bundle = new Bundle();
-            Log.e("ssssssssssss", "openDialog: " + rssFeed.getItem(pos).getContactName());
-            bundle.putString("phone", rssFeed.getItem(pos).getTelNo());
-            bundle.putString("contactName", rssFeed.getItem(pos).getContactName());
-            bundle.putString("image", rssFeed.getItem(pos).getContactImg());
+            Log.e("ssssssssssss", "openDialog: " + feed.getItem(pos).getContactName());
+            bundle.putString("phone", feed.getItem(pos).getTelNo());
+            bundle.putString("contactName", feed.getItem(pos).getContactName());
+            bundle.putString("image", feed.getItem(pos).getContactImg());
             bundle.putInt("pos", pos);
-            qrCodeDetailsFragment = QRCodeDetailsFragment.newInstance();
-            qrCodeDetailsFragment.setArguments(bundle);
+            qrCodeDetails = QRCodeDetails.newInstance();
+            qrCodeDetails.setArguments(bundle);
             ft = getFragmentManager().beginTransaction();
             ft.setCustomAnimations(R.animator.enter_from_right, R.animator.exit_to_right);
-            ft.add(android.R.id.content, qrCodeDetailsFragment).commit();
+            ft.add(android.R.id.content, qrCodeDetails).commit();
             isOpen = true;
 //            Intent goToChatPageActivity = new Intent(this, ChatPageActivity.class);
-//            goToChatPageActivity.putExtra("phone", rssFeed.getItem(pos).getTelNo());
-//            goToChatPageActivity.putExtra("contactName", rssFeed.getItem(pos).getContactName());
-//            goToChatPageActivity.putExtra("image", rssFeed.getItem(pos).getContactImg());
+//            goToChatPageActivity.putExtra("phone", feed.getItem(pos).getTelNo());
+//            goToChatPageActivity.putExtra("contactName", feed.getItem(pos).getContactName());
+//            goToChatPageActivity.putExtra("image", feed.getItem(pos).getContactImg());
 //            goToChatPageActivity.putExtra("pos", pos);
 //            startActivityForResult(goToChatPageActivity, 10);
 
@@ -151,7 +150,7 @@ public class SimpleScannerActivity extends BaseActivity implements ZXingScannerV
         super.onResume();
         mScannerView.setResultHandler(this); // Register ourselves as a handler for scan results.
         mScannerView.startCamera();          // Start camera on resume
-//        rssFeed= (RSSFeed) getIntent().getSerializableExtra("contact");
+//        feed= (Feed) getIntent().getSerializableExtra("contact");
     }
 
     public boolean isDestroyed(boolean destroy) {
@@ -165,15 +164,15 @@ public class SimpleScannerActivity extends BaseActivity implements ZXingScannerV
 //        if (commit) {
 //            FragmentTransaction ft;
 ////            darkDialog.setVisibility(View.VISIBLE);
-//            qrCodeDetailsFragment = QRCodeDetailsFragment.newInstance();
+//            qrCodeDetails = QRCodeDetails.newInstance();
 //            ft = getFragmentManager().beginTransaction();
 //            ft.setCustomAnimations(R.animator.enter_from_right, R.animator.exit_to_right);
-//            ft.add(android.R.id.content, qrCodeDetailsFragment).commit();
+//            ft.add(android.R.id.content, qrCodeDetails).commit();
 //            isOpen = false;
 ////            Intent goToChatPageActivity = new Intent(this, ChatPageActivity.class);
-////            goToChatPageActivity.putExtra("phone", rssFeed.getItem(pos).getTelNo());
-////            goToChatPageActivity.putExtra("contactName", rssFeed.getItem(pos).getContactName());
-////            goToChatPageActivity.putExtra("image", rssFeed.getItem(pos).getContactImg());
+////            goToChatPageActivity.putExtra("phone", feed.getItem(pos).getTelNo());
+////            goToChatPageActivity.putExtra("contactName", feed.getItem(pos).getContactName());
+////            goToChatPageActivity.putExtra("image", feed.getItem(pos).getContactImg());
 ////            goToChatPageActivity.putExtra("pos", pos);
 ////            startActivityForResult(goToChatPageActivity, 10);
 //

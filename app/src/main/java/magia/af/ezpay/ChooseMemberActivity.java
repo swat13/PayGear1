@@ -28,13 +28,12 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
-import magia.af.ezpay.Parser.RSSFeed;
-import magia.af.ezpay.Parser.RSSItem;
+import magia.af.ezpay.Parser.Item;
 import magia.af.ezpay.helper.ContactDatabase;
 
-public class ChooseFriendsActivity extends BaseActivity {
-    ArrayList<RSSItem> rssFeed2 = new ArrayList<>();
-    ArrayList<RSSItem> rssFeed = new ArrayList<>();
+public class ChooseMemberActivity extends BaseActivity {
+    ArrayList<Item> rssFeed2 = new ArrayList<>();
+    ArrayList<Item> rssFeed = new ArrayList<>();
     EditText groupTitle;
     RecyclerView recyclerView;
     ImageView imageView;
@@ -47,7 +46,7 @@ public class ChooseFriendsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_friends);
 //    database = new ContactDatabase(this);
-        rssFeed2 = (ArrayList<RSSItem>) getIntent().getSerializableExtra("contact");
+        rssFeed2 = (ArrayList<Item>) getIntent().getSerializableExtra("contact");
 
         rssFeed = rssFeed2;
         groupTitle = (EditText) findViewById(R.id.edt_group_title);
@@ -71,8 +70,8 @@ public class ChooseFriendsActivity extends BaseActivity {
                     rssFeed = rssFeed2;
                     adapter.notifyDataSetChanged();
                 } else {
-//          rssFeed = database.search(s.toString());
-//          rssFeed = (ArrayList<RSSItem>) getIntent().getSerializableExtra("contact");
+//          feed = database.search(s.toString());
+//          feed = (ArrayList<Item>) getIntent().getSerializableExtra("contact");
                     adapter.getFilter().filter(s);
                     adapter.notifyDataSetChanged();
 
@@ -100,14 +99,14 @@ public class ChooseFriendsActivity extends BaseActivity {
                     }
                 }
                 if (jsonArray.length() > 0) {
-                    Intent intent = new Intent(ChooseFriendsActivity.this, CreateGroupActivity.class);
+                    Intent intent = new Intent(ChooseMemberActivity.this, CreateGroupActivity.class);
                     intent.putExtra("contact", rssFeed);
                     intent.putExtra("contact2", rssFeed2);
                     intent.putExtra("json", jsonArray.toString());
                     startActivity(intent);
                     finish();
                 } else {
-                    Toast.makeText(ChooseFriendsActivity.this, "حداقل یک نفر را انتخاب کنید", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChooseMemberActivity.this, "حداقل یک نفر را انتخاب کنید", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -132,7 +131,7 @@ public class ChooseFriendsActivity extends BaseActivity {
             }
             holder.txt_contact_item_phone.setText(rssFeed.get(position).getTelNo());
             String imageUrl = "http://new.opaybot.ir";
-            Glide.with(ChooseFriendsActivity.this)
+            Glide.with(ChooseMemberActivity.this)
                     .load(imageUrl + rssFeed.get(position).getContactImg())
                     .asBitmap()
                     .centerCrop()
@@ -145,6 +144,14 @@ public class ChooseFriendsActivity extends BaseActivity {
                             holder.contact_item_image.setImageDrawable(circularBitmapDrawable);
                         }
                     });
+            /*
+            master's way
+            * */
+            if (phone.contains(rssFeed.get(position).getTelNo()))
+                holder.status_circle.setVisibility(View.VISIBLE);
+            else
+                holder.status_circle.setVisibility(View.GONE);
+
         }
 
         @Override
@@ -160,7 +167,7 @@ public class ChooseFriendsActivity extends BaseActivity {
                 @SuppressWarnings("unchecked")
                 @Override
                 protected void publishResults(CharSequence constraint, FilterResults results) {
-                    rssFeed = (ArrayList<RSSItem>) results.values;
+                    rssFeed = (ArrayList<Item>) results.values;
                     notifyDataSetChanged();
                 }
 
@@ -169,17 +176,17 @@ public class ChooseFriendsActivity extends BaseActivity {
                     rssFeed = rssFeed2;
 
                     FilterResults results = new FilterResults();
-                    ArrayList<RSSItem> FilteredArrayNames = new ArrayList<>();
+                    ArrayList<Item> FilteredArrayNames = new ArrayList<>();
 
                     constraint = constraint.toString().toLowerCase();
                     for (int i = 0; i < rssFeed.size(); i++) {
-//            String dataNames = rssFeed.getItem(i).getContactName();
-                        RSSItem rssItem = new RSSItem();
+//            String dataNames = feed.getItem(i).getContactName();
+                        Item item = new Item();
                         if (rssFeed.get(i).getTitle().toLowerCase().startsWith(constraint.toString())) {
-                            rssItem.setTitle(rssFeed.get(i).getTitle());
-                            rssItem.setTelNo(rssFeed.get(i).getTelNo());
-                            rssItem.setContactImg(rssFeed.get(i).getContactImg());
-                            FilteredArrayNames.add(rssItem);
+                            item.setTitle(rssFeed.get(i).getTitle());
+                            item.setTelNo(rssFeed.get(i).getTelNo());
+                            item.setContactImg(rssFeed.get(i).getContactImg());
+                            FilteredArrayNames.add(item);
                         }
                     }
 
@@ -221,57 +228,5 @@ public class ChooseFriendsActivity extends BaseActivity {
         }
     }
 
-//  public class CreateGroup extends AsyncTask<String, Void, Boolean> {
-//    String title;
-//    JSONArray jsonArray;
-//
-//    public CreateGroup(String title, JSONArray jsonArray) {
-//      this.title = title;
-//      this.jsonArray = jsonArray;
-//    }
-//
-//    @Override
-//    protected Boolean doInBackground(String... params) {
-//      DOMParser parser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
-//      return parser.group(title, jsonArray);
-//    }
-//
-//    @Override
-//    protected void onPostExecute(Boolean b) {
-//      if (b) {
-////        Intent intent = new Intent(ChooseFriendsActivity.this, CreateGroupActivity.class);
-////        intent.putExtra("contacts" , rssFeed);
-////        startActivity(intent);
-//        new fillContact().execute();
-//      }
-//      super.onPostExecute(b);
-//    }
-//  }
 
-//  private class fillContact extends AsyncTask<Void, Void, RSSFeed> {
-//
-//    @Override
-//    protected void onPreExecute() {
-//      super.onPreExecute();
-//    }
-//
-//    @Override
-//    protected RSSFeed doInBackground(Void... params) {
-//      DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
-//      return domParser.checkContactListWithGroup(new GetContact().getContact(ChooseFriendsActivity.this));
-//
-//    }
-//
-//    @Override
-//    protected void onPostExecute(RSSFeed result) {
-//      if (result != null) {
-//        ChooseFriendsActivity.this.finish();
-//        startActivity(new Intent(ChooseFriendsActivity.this, CreateGroupActivity.class).putExtra("contact", result));
-//        finish();
-//      } else
-//        Toast.makeText(ChooseFriendsActivity.this, "problem in connection!", Toast.LENGTH_SHORT).show();
-//    }
-//
-//
-//  }
 }

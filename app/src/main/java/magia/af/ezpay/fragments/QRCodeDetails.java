@@ -28,7 +28,7 @@ import magia.af.ezpay.helper.ContactDatabase;
  */
 /*ddd
 * */
-public class QRCodeDetailsFragment extends Fragment {
+public class QRCodeDetails extends Fragment {
 
     Typeface typeface;
     static boolean type_m = false;
@@ -51,10 +51,10 @@ public class QRCodeDetailsFragment extends Fragment {
     ChatPageActivity chatPageActivity;
 
 
-    public static QRCodeDetailsFragment newInstance() {
+    public static QRCodeDetails newInstance() {
 
 
-        QRCodeDetailsFragment fragmentDemo = new QRCodeDetailsFragment();
+        QRCodeDetails fragmentDemo = new QRCodeDetails();
         return fragmentDemo;
     }
 
@@ -80,7 +80,7 @@ public class QRCodeDetailsFragment extends Fragment {
                 intent.putExtra("contactName", contactName2);
                 intent.putExtra("image", contactImage2);
                 startActivity(intent);
-                getActivity().getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(QRCodeDetailsFragment.this).commit();
+                getActivity().getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(QRCodeDetails.this).commit();
                 getActivity().finish();
             }
         });
@@ -102,7 +102,7 @@ public class QRCodeDetailsFragment extends Fragment {
         view.findViewById(R.id.edge).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(QRCodeDetailsFragment.this).commit();
+                getActivity().getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(QRCodeDetails.this).commit();
                 getActivity().finish();
             }
         });

@@ -1,35 +1,22 @@
 package magia.af.ezpay.fragments;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Typeface;
-import android.inputmethodservice.InputMethodService;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.NumberFormat;
-import java.util.Locale;
-
 import magia.af.ezpay.ChatPageActivity;
-import magia.af.ezpay.Parser.DOMParser;
-import magia.af.ezpay.Parser.PayLogFeed;
-import magia.af.ezpay.Parser.PayLogItem;
 import magia.af.ezpay.R;
 import magia.af.ezpay.helper.NumberTextWatcher;
 
@@ -38,7 +25,7 @@ import magia.af.ezpay.helper.NumberTextWatcher;
  */
 /*ddd
 * */
-public class PaymentFragment extends Fragment {
+public class Request extends Fragment {
 
     Typeface typeface;
     static boolean type_m = false;
@@ -46,27 +33,25 @@ public class PaymentFragment extends Fragment {
     boolean isCommit = false;
     public RelativeLayout waitingDialog;
     public ImageView imageView;
-    public TextView texx;
     private String payamount = "", comment = "";
 
     ChatPageActivity chatPageActivity;
 
 
-    public static PaymentFragment newInstance(boolean type) {
+    public static Request newInstance() {
 
 
-        PaymentFragment fragmentDemo = new PaymentFragment();
-        type_m = type;
+        Request fragmentDemo = new Request();
         return fragmentDemo;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.payment_layout, null);
+        View v = inflater.inflate(R.layout.request_payment_layout, null);
         getActivity().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
         show_dialog_get_phone(v);
-        ((ChatPageActivity) getActivity()).fragment_status = 1;
+        ((ChatPageActivity) getActivity()).fragment_status = 3;
         return v;
     }
 
@@ -74,11 +59,9 @@ public class PaymentFragment extends Fragment {
 
         waitingDialog = (RelativeLayout) view.findViewById(R.id.wait_layout);
         imageView = (ImageView) view.findViewById(R.id.image_view);
-        texx = (TextView) view.findViewById(R.id.texx);
         final EditText PayAmount = (EditText) view.findViewById(R.id.payAmount);
         final EditText Comments = (EditText) view.findViewById(R.id.comments);
-        Comments.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        texx.setText(new StringBuilder("پرداخت وجه به" + " " + ((ChatPageActivity) getActivity()).contactName));
+
 
         PayAmount.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -112,62 +95,19 @@ public class PaymentFragment extends Fragment {
         });
 
 
-        PayAmount.addTextChangedListener(new TextWatcher() {
-            private static final char space = ',';
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.length() == 0) {
-
-                    PayAmount.setGravity(Gravity.CENTER);
-                    PayAmount.setHint("مبلغ پرداختی");
-
-
-
-                } else {
-                    PayAmount.setGravity(Gravity.LEFT);
-                    if (s.length() > 0 && (s.length() % 4) == 0) {
-                        final char c = s.charAt(s.length() - 3);
-                        if (space == c) {
-                            s.delete(s.length() -3, s.length()-2);
-                        }
-                    }
-//                    && TextUtils.split(s.toString(), String.valueOf(space)).length <= 5
-
-                    if (s.length() > 0 && (s.length() % 4) == 0) {
-                        char c = s.charAt(s.length() - 3);
-                        // Only if its a digit where there should be a space we insert a space
-                        Log.e("iffffffffff", "afterTextChanged: ");
-                        if (Character.isDigit(c)) {
-                            s.insert(s.length() - 3, String.valueOf(space));
-                        }
-                    }
-
-
-                }
-            }
-        });
         PayAmount.addTextChangedListener(new NumberTextWatcher(PayAmount));
 
         view.findViewById(R.id.edge).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(PaymentFragment.this).commit();
+                getActivity().getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(Request.this).commit();
             }
         });
 
         view.findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(PaymentFragment.this).commit();
+                getActivity().getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(Request.this).commit();
 
             }
         });
@@ -186,11 +126,12 @@ public class PaymentFragment extends Fragment {
                 } else if (!validate_number(PayAmount.getText().toString())) {
                     Toast.makeText(getActivity(), "مبلغ وارد شده صحیح نمیباشد!", Toast.LENGTH_SHORT).show();
                 } else {
+                    isCommit = true;
                     payamount = PayAmount.getText().toString();
                     comment = Comments.getText().toString();
                     hideKey(view);
-//                    getActivity().getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(PaymentFragment.this).commit();
-                    ((ChatPageActivity) getActivity()).payBill(correctNum(payamount), comment);
+                    getActivity().getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(Request.this).commit();
+
 
                 }
 
@@ -217,13 +158,12 @@ public class PaymentFragment extends Fragment {
     }
 
     private int correctNum(String number) {
-//        String result = number;
-//        for (int i = 0; i < number.length(); i++) {
-//            if (number.charAt(i) == ',') {
-//                result = number.substring(0, i) + number.substring(i + 1);
-//            }
-//        }
-        return Integer.valueOf(number.replace("," , ""));
+        /*String result = number;
+            if (number.charAt(i) == ',') {
+                result = number.substring(0, i) + number.substring(i + 1);
+            }
+        }*/
+        return Integer.valueOf(number.replace(",", ""));
     }
 
 
@@ -239,6 +179,13 @@ public class PaymentFragment extends Fragment {
     public void onDestroy() {
         Log.e("((((((((111111111", "onDestroy: ");
         super.onDestroy();
+
+
+        if (isCommit) {
+
+            ((ChatPageActivity) getActivity()).sendReqPay(correctNum(payamount), comment);
+        }
+
 
         ((ChatPageActivity) getActivity()).fragment_status = 0;
         ((ChatPageActivity) getActivity()).darkDialog.setVisibility(View.GONE);

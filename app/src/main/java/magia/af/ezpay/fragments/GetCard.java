@@ -22,7 +22,7 @@ import magia.af.ezpay.ChatPageActivity;
 import magia.af.ezpay.R;
 
 
-public class GetCardFragment extends Fragment {
+public class GetCard extends Fragment {
 
     Typeface typeface;
     boolean isCommit = false;
@@ -32,16 +32,16 @@ public class GetCardFragment extends Fragment {
     static int amount;
     static int id;
 
-    public static GetCardFragment newInstance(int Amount, String Comment) {
-        GetCardFragment fragmentDemo = new GetCardFragment();
+    public static GetCard newInstance(int Amount, String Comment) {
+        GetCard fragmentDemo = new GetCard();
         type_m = false;
         amount = Amount;
         comment = Comment;
         return fragmentDemo;
     }
 
-    public static GetCardFragment newInstance(int Id) {
-        GetCardFragment fragmentDemo = new GetCardFragment();
+    public static GetCard newInstance(int Id) {
+        GetCard fragmentDemo = new GetCard();
         type_m = true;
         id = Id;
         return fragmentDemo;
@@ -171,7 +171,7 @@ public class GetCardFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 hideKey(view);
-                getActivity().getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(GetCardFragment.this).commit();
+                getActivity().getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(GetCard.this).commit();
 //                onDestroy();
             }
         });
@@ -180,7 +180,7 @@ public class GetCardFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 hideKey(view);
-                getActivity().getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(GetCardFragment.this).commit();
+                getActivity().getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(GetCard.this).commit();
 //                onDestroy();
             }
         });
@@ -195,7 +195,7 @@ public class GetCardFragment extends Fragment {
                     isCommit = true;
                     card = card_ed.getText().toString() + pin_ed.getText().toString();
                     hideKey(view);
-                    getActivity().getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(GetCardFragment.this).commit();
+                    getActivity().getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(GetCard.this).commit();
                 }
 //                onDestroy();
             }

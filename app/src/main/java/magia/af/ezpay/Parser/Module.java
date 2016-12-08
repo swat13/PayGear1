@@ -4,7 +4,7 @@ package magia.af.ezpay.Parser;
  * Created by pc on 11/2/2016.
  */
 
-public class ContactModule {
+public class Module {
   private String name;
   private String phone;
 

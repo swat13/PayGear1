@@ -7,8 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import magia.af.ezpay.Parser.RSSFeed;
-import magia.af.ezpay.Parser.RSSItem;
+import magia.af.ezpay.Parser.Feed;
+import magia.af.ezpay.Parser.Item;
 
 /**
  * Created by Saeid Yazdany on 11/2/2016.
@@ -52,22 +52,22 @@ public class ContactDatabase extends SQLiteOpenHelper {
     database.close();
   }
 
-  public RSSFeed getAllData() {
+  public Feed getAllData() {
 
-    RSSFeed rssFeed = new RSSFeed();
+    Feed feed = new Feed();
 
     //hp = new HashMap();
     SQLiteDatabase db = this.getReadableDatabase();
     Cursor res = db.rawQuery("select * from " + TABLE_NAME, null);
 //    res.moveToFirst();
     while (res.moveToNext()) {
-      RSSItem rssItem = new RSSItem();
-      rssItem.setTelNo(res.getString(res.getColumnIndex(CONTACT_NUMBER)));
-      rssItem.setContactName(res.getString(res.getColumnIndex(CONTACT_NAME)));
-      rssFeed.addItem(rssItem);
+      Item item = new Item();
+      item.setTelNo(res.getString(res.getColumnIndex(CONTACT_NUMBER)));
+      item.setContactName(res.getString(res.getColumnIndex(CONTACT_NAME)));
+      feed.addItem(item);
     }
     res.close();
-    return rssFeed;
+    return feed;
   }
 
   public String getNameFromNumber(String phone) {
@@ -94,33 +94,33 @@ public class ContactDatabase extends SQLiteOpenHelper {
     database.close();
   }
 
-  public RSSFeed getInNetworkUserName() {
-    RSSFeed rssFeed = new RSSFeed();
+  public Feed getInNetworkUserName() {
+    Feed feed = new Feed();
     SQLiteDatabase database = this.getReadableDatabase();
     Cursor cursor = database.rawQuery("select * from " + TABLE_NAME + " where " + CONTACT_IN_NETWORK + " = 'true' ", null);
     while (cursor.moveToNext()) {
-      RSSItem rssItem = new RSSItem();
-      rssItem.setContactName(cursor.getString(cursor.getColumnIndex(CONTACT_NAME)));
-      rssItem.setContactImg(cursor.getString(cursor.getColumnIndex(CONTACT_IMAGE)));
-      rssItem.setTelNo(cursor.getString(cursor.getColumnIndex(CONTACT_NUMBER)));
-      rssFeed.addItem(rssItem);
+      Item item = new Item();
+      item.setContactName(cursor.getString(cursor.getColumnIndex(CONTACT_NAME)));
+      item.setContactImg(cursor.getString(cursor.getColumnIndex(CONTACT_IMAGE)));
+      item.setTelNo(cursor.getString(cursor.getColumnIndex(CONTACT_NUMBER)));
+      feed.addItem(item);
     }
     cursor.close();
-    return rssFeed;
+    return feed;
   }
 
-  public RSSFeed search(String s) {
-    RSSFeed rssFeed = new RSSFeed();
+  public Feed search(String s) {
+    Feed feed = new Feed();
     SQLiteDatabase database = this.getReadableDatabase();
     Cursor cursor = database.rawQuery("select * from " + TABLE_NAME + " where " + CONTACT_NAME + " LIKE " + "'"+ s +"'", null);
     while (cursor.moveToNext()) {
-      RSSItem rssItem = new RSSItem();
-      rssItem.setContactName(cursor.getString(cursor.getColumnIndex(CONTACT_NAME)));
-      rssItem.setTelNo(cursor.getString(cursor.getColumnIndex(CONTACT_NUMBER)));
-      rssFeed.addItem(rssItem);
+      Item item = new Item();
+      item.setContactName(cursor.getString(cursor.getColumnIndex(CONTACT_NAME)));
+      item.setTelNo(cursor.getString(cursor.getColumnIndex(CONTACT_NUMBER)));
+      feed.addItem(item);
     }
     cursor.close();
-    return rssFeed;
+    return feed;
   }
 
 }

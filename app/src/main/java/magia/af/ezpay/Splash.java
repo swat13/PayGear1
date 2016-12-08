@@ -1,6 +1,5 @@
 package magia.af.ezpay;
 
-import android.*;
 import android.Manifest;
 import android.app.KeyguardManager;
 import android.content.Intent;
@@ -17,8 +16,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import magia.af.ezpay.Parser.DOMParser;
-import magia.af.ezpay.Parser.RSSFeed;
+import magia.af.ezpay.Parser.Parser;
+import magia.af.ezpay.Parser.Feed;
 import magia.af.ezpay.helper.ContactDatabase;
 import magia.af.ezpay.helper.GetContact;
 
@@ -96,8 +95,8 @@ public class Splash extends BaseActivity {
             database = new ContactDatabase(Splash.this);
             GetContact getContact = new GetContact();
 
-            RSSFeed databaseContact = database.getAllData();
-            RSSFeed phoneContact = getContact.getNewContact(Splash.this);
+            Feed databaseContact = database.getAllData();
+            Feed phoneContact = getContact.getNewContact(Splash.this);
             for (int i = 0; i < phoneContact.getItemCount(); i++) {
 //        Log.e("(((", "doInBackground i: " + i);
                 for (int j = 0; j < databaseContact.getItemCount(); j++) {
@@ -134,7 +133,7 @@ public class Splash extends BaseActivity {
         }
     }
 
-    private class fillContact extends AsyncTask<String, Void, RSSFeed> {
+    private class fillContact extends AsyncTask<String, Void, Feed> {
 
         @Override
         protected void onPreExecute() {
@@ -142,13 +141,13 @@ public class Splash extends BaseActivity {
         }
 
         @Override
-        protected RSSFeed doInBackground(String... params) {
-            DOMParser domParser = new DOMParser(getSharedPreferences("EZpay", 0).getString("token", ""));
-            return domParser.checkContactListWithGroup(params[0]);
+        protected Feed doInBackground(String... params) {
+            Parser parser = new Parser(getSharedPreferences("EZpay", 0).getString("token", ""));
+            return parser.checkContactListWithGroup(params[0]);
         }
 
         @Override
-        protected void onPostExecute(RSSFeed result) {
+        protected void onPostExecute(Feed result) {
             if (result != null) {
                 startActivity(new Intent(Splash.this, MainActivity.class).putExtra("contact", result));
                 finish();

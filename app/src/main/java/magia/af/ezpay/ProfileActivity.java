@@ -16,11 +16,11 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
-import magia.af.ezpay.Parser.RSSFeed;
+import magia.af.ezpay.Parser.Feed;
 
 public class ProfileActivity extends BaseActivity {
 
-    RSSFeed rssFeed;
+    Feed feed;
     private String phone;
     private int position;
     private String contactName;
@@ -87,7 +87,6 @@ public class ProfileActivity extends BaseActivity {
                     Uri selectedImage = imageReturnedIntent.getData();
                     userAvatar.setImageURI(selectedImage);
                 }
-
                 break;
             case 1:
                 if (resultCode == RESULT_OK) {

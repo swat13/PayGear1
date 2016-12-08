@@ -27,9 +27,9 @@ import java.net.URL;
 import magia.af.ezpay.ChatPageActivity;
 import magia.af.ezpay.GroupChatPageActivity;
 import magia.af.ezpay.MainActivity;
-import magia.af.ezpay.Parser.PayLogItem;
+import magia.af.ezpay.Parser.LogItem;
 import magia.af.ezpay.R;
-import magia.af.ezpay.fragments.FriendsListFragment;
+import magia.af.ezpay.fragments.FriendsList;
 import magia.af.ezpay.interfaces.MessageHandler;
 
 /**
@@ -58,16 +58,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     Log.e(TAG, "From: " + remoteMessage.getFrom());
     Log.e(TAG, "Notification Message Body: " + remoteMessage.getNotification().getBody());
 
-    PayLogItem payLogItem = getChatItem(remoteMessage.getNotification().getBody());
+    LogItem logItem = getChatItem(remoteMessage.getNotification().getBody());
     try {
       JSONObject jsonObject = new JSONObject(remoteMessage.getNotification().getBody());
-//      if (jsonObject.getString("param1").equals("Group")) {
+//      if (jsonObject.getString("param1").equals("GroupItem")) {
 //        groupMessageHandler = GroupChatPageActivity.informNotif();
-//        groupMessageHandler.handleMessage(payLogItem,true,"2");
+//        groupMessageHandler.handleMessage(logItem,true,"2");
 //      }
 //      if (jsonObject.getString("param1").equals("PV")) {
 //        chatMessageHandler = ChatPageActivity.informNotif();
-//        chatMessageHandler.handleMessage(payLogItem,true,"1");
+//        chatMessageHandler.handleMessage(logItem,true,"1");
 //      }
 //      if ((jsonObject.getString("param1").contains("0")||
 //        jsonObject.getString("param1").contains("1")||
@@ -80,36 +80,36 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 //        jsonObject.getString("param1").contains("8")||
 //        jsonObject.getString("param1").contains("9"))&&mode==2){
 //        groupMessageHandler = GroupChatPageActivity.informNotif();
-//        groupMessageHandler.handleMessage(payLogItem,true,"2");
+//        groupMessageHandler.handleMessage(logItem,true,"2");
 //      }
       if(mode==1) {
 
           chatMessageHandler = ChatPageActivity.informNotif();
-          chatMessageHandler.handleMessage(payLogItem,jsonObject.isNull("chatItem"),"1");
+          chatMessageHandler.handleMessage(logItem,jsonObject.isNull("chatItem"),"1");
 
       }else if(mode==2){
 
           groupMessageHandler = GroupChatPageActivity.informNotif();
-          groupMessageHandler.handleMessage(payLogItem,jsonObject.isNull("groupChatItem"),"2");
+          groupMessageHandler.handleMessage(logItem,jsonObject.isNull("groupChatItem"),"2");
 
       }
       else if (mode==3){
-        mainMessageHandler = FriendsListFragment.informNotif();
-        mainMessageHandler.handleMessage(payLogItem,false,"");
+        mainMessageHandler = FriendsList.informNotif();
+        mainMessageHandler.handleMessage(logItem,false,"");
       }
 
 
     } catch (JSONException e) {
       e.printStackTrace();
     }
-    Log.e(TAG, "onMessageReceived: " + payLogItem);
+    Log.e(TAG, "onMessageReceived: " + logItem);
 
 //    else {
 //      chatMessageHandler = ChatPageActivity.informNotif();
-//      chatMessageHandler.handleMessage(payLogItem);
+//      chatMessageHandler.handleMessage(logItem);
 //
 //    }
-//        informNotif(payLogItem);
+//        informNotif(logItem);
     //Calling method to generate notification
 //        sendNotification(getChatItem(remoteMessage.getNotification().getBody()));
 //        new
@@ -118,7 +118,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
   //This method is only generating push notification
   //It is same as we did in earlier posts
-  private void sendNotification(PayLogItem messageBody) {
+  private void sendNotification(LogItem messageBody) {
 
     Log.e(TAG, "sendNotification: " + messageBody.getNotifType());
     Log.e(TAG, "sendNotification: " + messageBody.getNotifBody());
@@ -205,8 +205,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
   }
 
-  private static PayLogItem getChatItem(String json) {
-    PayLogItem rssItem = new PayLogItem();
+  private static LogItem getChatItem(String json) {
+    LogItem rssItem = new LogItem();
     try {
       JSONObject jsonObject = new JSONObject(json);
       rssItem.setNotifBody(jsonObject.getString("body"));

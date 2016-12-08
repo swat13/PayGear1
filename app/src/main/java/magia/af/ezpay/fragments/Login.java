@@ -20,23 +20,22 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
 import magia.af.ezpay.LoginActivity;
-import magia.af.ezpay.Parser.DOMParser;
+import magia.af.ezpay.Parser.Parser;
 import magia.af.ezpay.R;
-import magia.af.ezpay.Splash;
 
 /**
  * Created by Saeid Yazdany on 10/26/2016.
  */
 
-public class LoginFragment extends Fragment implements View.OnClickListener {
+public class Login extends Fragment implements View.OnClickListener {
     private ImageButton btn_done;
     private String phone;
 
     private EditText edtInputPhoneNumber;
 //تت
 
-    public static LoginFragment getInstance() {
-        return new LoginFragment();
+    public static Login getInstance() {
+        return new Login();
     }
 
     @Nullable
@@ -102,8 +101,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
         @Override
         protected Boolean doInBackground(String... params) {
-            DOMParser domParser = new DOMParser();
-            return domParser.register(params[0]);
+            Parser parser = new Parser();
+            return parser.register(params[0]);
         }
 
         @Override
@@ -122,11 +121,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 //                Bundle bundle = new Bundle();
 //                bundle.putString("number", phone);
 //                Log.i("Input phone", phone);
-//                ActivationCodeFragment activationCodeFragment = ActivationCodeFragment.getInstance();
-//                activationCodeFragment.setArguments(bundle);
+//                ActivationCode activationCode = ActivationCode.getInstance();
+//                activationCode.setArguments(bundle);
 //                getActivity().getSupportFragmentManager()
 //                        .beginTransaction()
-//                        .replace(R.id.container, activationCodeFragment).addToBackStack(null)
+//                        .replace(R.id.container, activationCode).addToBackStack(null)
 //                        .commit();
 
                 ((LoginActivity)getActivity()).loadActiveFragment(phone);

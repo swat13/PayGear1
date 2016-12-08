@@ -3,7 +3,6 @@ package magia.af.ezpay.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 
 import magia.af.ezpay.MainActivity;
-import magia.af.ezpay.Parser.RSSFeed;
+import magia.af.ezpay.Parser.Feed;
 import magia.af.ezpay.R;
 import magia.af.ezpay.SimpleScannerActivity;
 
@@ -24,7 +23,7 @@ import magia.af.ezpay.SimpleScannerActivity;
 public class BarCodeGet extends Fragment {
 
     ImageView imageView;
-    RSSFeed _feed;
+    Feed _feed;
 
 
     public static BarCodeGet getInstance() {
@@ -35,7 +34,7 @@ public class BarCodeGet extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.barcode_scanner, container, false);
-        _feed = (RSSFeed) getArguments().getSerializable("contact");
+        _feed = (Feed) getArguments().getSerializable("contact");
         ((MainActivity) getActivity()).fragment_status = 4;
         imageView = (ImageView) v.findViewById(R.id.QrCode);
         Button btnScanOtherQRCode = (Button) v.findViewById(R.id.btn_scan_other_users);
@@ -66,7 +65,7 @@ public class BarCodeGet extends Fragment {
 //        @Override
 //        protected String doInBackground(String... params) {
 //
-//            DOMParser domParser = new DOMParser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
+//            Parser domParser = new Parser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
 //            domParser.getQRid();
 //
 //        }

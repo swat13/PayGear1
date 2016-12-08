@@ -3,10 +3,9 @@ package magia.af.ezpay.location;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
-import magia.af.ezpay.Parser.DOMParser;
+import magia.af.ezpay.Parser.Parser;
 
 /**
  * Created by Android Developer on 11/17/2016.
@@ -21,7 +20,7 @@ public class PostLocation extends AsyncTask<Double,Void,Void> {
   protected Void doInBackground(Double... params) {
     SharedPreferences preferences =context.getSharedPreferences("EZpay", 0);
 
-    DOMParser parser = new DOMParser(preferences.getString("token", ""));
+    Parser parser = new Parser(preferences.getString("token", ""));
 
 
     float x = preferences.getFloat("Lat",0);

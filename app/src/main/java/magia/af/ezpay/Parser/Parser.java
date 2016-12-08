@@ -24,14 +24,14 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class DOMParser {
+public class Parser {
 
-    public DOMParser(String token) {
+    public Parser(String token) {
         this.token = token;
-        Log.e("TOKEN", "DOMParser: " + token);
+        Log.e("TOKEN", "Parser: " + token);
     }
 
-    public DOMParser() {
+    public Parser() {
     }
 
 
@@ -39,6 +39,7 @@ public class DOMParser {
     private String token = "";
 
 /*kkkkkk*/
+
     /**
      * @param phoneNumber
      * @return
@@ -203,8 +204,7 @@ public class DOMParser {
         return null;
     }
 
-
-    public RSSItem getAccountId(String id) {
+    public Item getAccountId(String id) {
 
         try {
 
@@ -246,19 +246,19 @@ public class DOMParser {
 
             Log.e("@@@@@@2222", sb.toString());
             JSONObject jsonObject = new JSONObject(sb.toString());
-            RSSItem rssItem = new RSSItem();
+            Item item = new Item();
 
             try {
-                rssItem.setContactImg(jsonObject.getString("photo"));
-                rssItem.setTelNo(jsonObject.getString("mobile"));
-                rssItem.setUserId(jsonObject.getString("id"));
-                rssItem.setContactName(jsonObject.getString("title"));
-                Log.e("Name", rssItem.getContactName());
+                item.setContactImg(jsonObject.getString("photo"));
+                item.setTelNo(jsonObject.getString("mobile"));
+                item.setUserId(jsonObject.getString("id"));
+                item.setContactName(jsonObject.getString("title"));
+                Log.e("Name", item.getContactName());
             } catch (Exception e) {
                 e.printStackTrace();
 
             }
-            return rssItem;
+            return item;
 
 
         } catch (ProtocolException e) {
@@ -271,7 +271,7 @@ public class DOMParser {
         return null;
     }
 
-    public RSSItem getAccount() {
+    public Item getAccount() {
 
         try {
 
@@ -312,20 +312,20 @@ public class DOMParser {
 
             Log.e("@@@@@@2222", sb.toString());
             JSONObject jsonObject = new JSONObject(sb.toString());
-            RSSItem rssItem = new RSSItem();
+            Item item = new Item();
 
             try {
-                rssItem.setContactImg(jsonObject.getString("photo"));
-                rssItem.setTelNo(jsonObject.getString("mobile"));
-                rssItem.setUserId(jsonObject.getString("id"));
-                rssItem.setContactName(jsonObject.getString("title"));
-                rssItem.setCredit(jsonObject.getInt("credit"));
-                Log.e("Name", rssItem.getContactName());
+                item.setContactImg(jsonObject.getString("photo"));
+                item.setTelNo(jsonObject.getString("mobile"));
+                item.setUserId(jsonObject.getString("id"));
+                item.setContactName(jsonObject.getString("title"));
+                item.setCredit(jsonObject.getInt("credit"));
+                Log.e("Name", item.getContactName());
             } catch (Exception e) {
                 e.printStackTrace();
 
             }
-            return rssItem;
+            return item;
 
         } catch (ProtocolException e) {
             e.printStackTrace();
@@ -336,7 +336,6 @@ public class DOMParser {
         }
         return null;
     }
-
 
     public JSONObject getQRid(String id) {
 
@@ -408,7 +407,6 @@ public class DOMParser {
         }
         return null;
     }
-
 
     /**
      * @param username
@@ -506,7 +504,7 @@ public class DOMParser {
     /**
      * @return
      **/
-    public RSSFeed getContact(String json) {
+    public Feed getContact(String json) {
 
         try {
 
@@ -558,35 +556,35 @@ public class DOMParser {
 
             Log.e("@@@@@@", sb.toString());
             JSONArray jsonArray = new JSONArray(sb.toString());
-            RSSFeed rssFeed = new RSSFeed();
+            Feed feed = new Feed();
 
 
             for (int i = 0; i < jsonArray.length(); i++) {
-                RSSItem rssItem = new RSSItem();
+                Item item = new Item();
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 try {
-                    rssItem.setContactStatus(true);
-                    rssItem.setTelNo(jsonObject.getString("mobile"));
-                    rssItem.setContactName(getContactName(jsonObject.getString("mobile"), json));
-                    rssItem.setContactImg(jsonObject.getString("photo"));
+                    item.setContactStatus(true);
+                    item.setTelNo(jsonObject.getString("mobile"));
+                    item.setContactName(getContactName(jsonObject.getString("mobile"), json));
+                    item.setContactImg(jsonObject.getString("photo"));
                     if (!jsonObject.isNull("lastchat")) {
                         JSONObject object = jsonObject.getJSONObject("lastchat");
-                        rssItem.setLastChatId(object.getInt("id"));
-                        rssItem.setLastChatFrom(object.getString("f"));
-                        rssItem.setLastChatTo(object.getString("t"));
-                        rssItem.setLastChatAmount(object.getInt("a"));
-                        rssItem.setLastChatDate(object.getString("d"));
-                        rssItem.setLastChatOrderByFromOrTo(object.getBoolean("o"));
-                        rssItem.setComment(object.getString("c"));
+                        item.setLastChatId(object.getInt("id"));
+                        item.setLastChatFrom(object.getString("f"));
+                        item.setLastChatTo(object.getString("t"));
+                        item.setLastChatAmount(object.getInt("a"));
+                        item.setLastChatDate(object.getString("d"));
+                        item.setLastChatOrderByFromOrTo(object.getBoolean("o"));
+                        item.setComment(object.getString("c"));
                     }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                rssFeed.addItem(rssItem);
+                feed.addItem(item);
             }
 
-            return rssFeed;
+            return feed;
 
             /**
              * TODO: check if activated then return the token to Splash class
@@ -606,7 +604,7 @@ public class DOMParser {
     }
 
     /*sss*/
-    public RSSFeed checkContactListWithGroup(String json) {
+    public Feed checkContactListWithGroup(String json) {
 
         try {
 
@@ -658,127 +656,67 @@ public class DOMParser {
             Log.e("@@@@@@", sb.toString());
             JSONArray jsonArray = new JSONArray(sb.toString());
 
-            RSSFeed rssFeed = new RSSFeed();
-            RSSFeed rssFeed2 = new RSSFeed();
-            RSSFeed rssFeed3 = new RSSFeed();
-            RSSItem rssItem = null;
-            RSSItem rssItem2 = null;
+            Feed feed = new Feed();
+            Item rssItem;
+
             Log.e("Test0000", "checkContactListWithGroup: ");
-            ArrayList<RSSItem> contactMembers = new ArrayList<>();
-            ArrayList<RSSItem> gMembers = new ArrayList<>();
+            ArrayList<Item> contactMembers = new ArrayList<>();
             for (int i = 0; i < jsonArray.length(); i++) {
-                rssItem = new RSSItem();
+                rssItem = new Item();
                 JSONObject contactObject = jsonArray.getJSONObject(i);
                 if (contactObject.getString("$type").contains("FriendModel")) {
-
-                    Log.e("Test11111", "checkContactListWithGroup: " + contactObject.toString());
                     rssItem.setContactImg(contactObject.getString("photo"));
                     rssItem.setTelNo(contactObject.getString("mobile"));
                     rssItem.setUserId(contactObject.getString("id"));
                     rssItem.setTitle(contactObject.getString("title"));
                     rssItem.setContactCount(i);
                     contactMembers.add(rssItem);
-                    Log.e("Test123123", "checkContactListWithGroup: " + contactObject.toString());
-                    if (!contactObject.isNull("lastchat")) {
-                        JSONObject lastChatObject = contactObject.getJSONObject("lastchat");
-                        Log.e("Test2222", "checkContactListWithGroup: " + lastChatObject.toString());
-                        rssItem.setLastChatId(lastChatObject.getInt("id"));
-                        rssItem.setLastChatFrom(lastChatObject.getString("f"));
-                        rssItem.setLastChatTo(lastChatObject.getString("t"));
-                        rssItem.setLastChatAmount(lastChatObject.getInt("a"));
-                        rssItem.setLastChatDate(lastChatObject.getString("d"));
-                        rssItem.setLastChatOrderByFromOrTo(lastChatObject.getBoolean("o"));
-                        rssItem.setContactStatus(lastChatObject.getBoolean("s"));
-                        rssItem.setGroup(lastChatObject.getBoolean("g"));
-                        rssItem.setComment(lastChatObject.getString("c"));
-                    }
-                }
-                if (contactObject.getString("$type").contains("GroupModel")) {
-                    Log.e("%%%%%%%2", "checkContactListWithGroup: " + i);
-                    rssItem.setGroupId(contactObject.getInt("id"));
-                    rssItem.setGroupPhoto(contactObject.getString("photo"));
-                    rssItem.setGroupTitle(contactObject.getString("title"));
-                    rssItem.setGroup(true);
-                    rssItem.setGroupStatus(true);
+                } else if (contactObject.getString("$type").contains("GroupModel")) {
+                    GroupItem groupItem = new GroupItem();
+                    groupItem.setGroupId(contactObject.getInt("id"));
+                    groupItem.setGroupPhoto(contactObject.getString("photo"));
+                    Log.e("))))))))))))((((((((((", "checkContactListWithGroup: " + groupItem.getGroupPhoto());
+                    groupItem.setGroupTitle(contactObject.getString("title"));
+                    //Be Checked
                     if (!contactObject.isNull("members")) {
                         JSONArray groupsMemberObject = contactObject.getJSONArray("members");
-                        ArrayList<RSSItem> groupMembers = new ArrayList<>();
+                        MembersFeed membersFeed = new MembersFeed();
                         for (int j = 0; j < groupsMemberObject.length(); j++) {
-                            RSSItem item = new RSSItem();
+                            MembersItem membersItem = new MembersItem();
                             JSONObject memberGroupObject = groupsMemberObject.getJSONObject(j);
-                            Log.e("Test444444", "checkContactListWithGroup: " + memberGroupObject.toString());
-                            item.setGroupMemberId(memberGroupObject.getString("id"));
-                            item.setGroupMemberTitle(memberGroupObject.getString("title"));
-                            item.setGroupMemberPhoto(memberGroupObject.getString("photo"));
-                            item.setGroupMemberPhone(memberGroupObject.getString("mobile"));
-                            if (!memberGroupObject.isNull("lastchat")) {
-                                JSONObject groupsMembersLastChat = memberGroupObject.getJSONObject("lastchat");
-                                Log.e("Test55555", "checkContactListWithGroup: " + groupsMembersLastChat.toString());
-                                item.setGroupMemberLastChatId(groupsMembersLastChat.getInt("id"));
-                                item.setGroupMemberLastChatFrom(groupsMembersLastChat.getString("f"));
-                                item.setGroupMemberLastChatTo(groupsMembersLastChat.getString("t"));
-                                item.setGroupMemberLastChatAmount(groupsMembersLastChat.getInt("a"));
-                                item.setGroupMemberLastChatDate(groupsMembersLastChat.getString("d"));
-                                item.setGroupMemberLastChatOrderPay(groupsMembersLastChat.getBoolean("o"));
-                                item.setGroupMemberLastChatStatus(groupsMembersLastChat.getBoolean("s"));
-                                item.setGroupMemberLastChatFromGroup(groupsMembersLastChat.getBoolean("g"));
-                                item.setGroupMemberLastChatComment(groupsMembersLastChat.getString("c"));
-                            }
-                            groupMembers.add(item);
-                            rssItem.setGroupMembers(groupMembers);
+                            membersItem.setMemberId(memberGroupObject.getString("id"));
+                            membersItem.setMemberTitle(memberGroupObject.getString("title"));
+                            membersItem.setMemberPhoto(memberGroupObject.getString("photo"));
+                            membersItem.setMemberPhone(memberGroupObject.getString("mobile"));
+                            membersFeed.addMemberItem(membersItem);
                         }
                         if (!contactObject.isNull("lastChats")) {
-                            Log.e("THIS LINE 743", "checkContactListWithGroup: ");
                             JSONArray groupLastChatArray = contactObject.getJSONArray("lastChats");
                             for (int j = 0; j < groupLastChatArray.length(); j++) {
-                                Log.e("THIS LINE 745", "checkContactListWithGroup: ");
                                 JSONObject lastChatGroupObject = groupLastChatArray.getJSONObject(j);
-                                Log.e("Test6666666666", "checkContactListWithGroup: " + lastChatGroupObject.getInt("a"));
-                                rssItem.setGroupLastChatAmount(lastChatGroupObject.getInt("a"));
-                                rssItem.setGroupLastChatId(lastChatGroupObject.getInt("id"));
+                                groupItem.setGroupLastChatAmount(lastChatGroupObject.getInt("a"));
+                                groupItem.setGroupLastChatId(lastChatGroupObject.getInt("id"));
 //                rssItem.setGroupLastChatFrom(lastChatGroupObject.getString("f"));
 //                rssItem.setGroupLastChatTo(lastChatGroupObject.getString("t"));
-                                rssItem.setGroupLastChatDate(lastChatGroupObject.getString("d"));
-                                rssItem.setGroupLastChatOrderPay(lastChatGroupObject.getBoolean("o"));
-                                rssItem.setGroupLastChatStatus(lastChatGroupObject.getBoolean("s"));
-                                rssItem.setGroupLastChatFromGroup(lastChatGroupObject.getBoolean("g"));
-                                rssItem.setGroupLastChatComment(lastChatGroupObject.getString("c"));
+                                groupItem.setGroupLastChatDate(lastChatGroupObject.getString("d"));
+                                groupItem.setGroupLastChatOrderPay(lastChatGroupObject.getBoolean("o"));
+                                groupItem.setGroupLastChatStatus(lastChatGroupObject.getBoolean("s"));
+                                groupItem.setGroupLastChatFromGroup(lastChatGroupObject.getBoolean("g"));
+                                groupItem.setGroupLastChatComment(lastChatGroupObject.getString("c"));
                             }
+
                         }
+                        groupItem.setMembersFeed(membersFeed);
                     }
+                    rssItem.setGroupItem(groupItem);
                 }
+                //Come Back Here!!!
                 rssItem.setContactMembers(contactMembers);
-                rssFeed.addItem(rssItem);
+//                rssItem.setGroupFeed();
+                feed.addItem(rssItem);
             }
 
-//            for (int i = 0; i < jsonArray.length(); i++) {
-//                Log.e("%%%%%%%", "checkContactListWithGroup: " + i);
-//                rssItem2 = new RSSItem();
-//                JSONObject contactObject = jsonArray.getJSONObject(i);
-//                else {
-//                    continue;
-//                }
-//                gMembers.add(rssItem2);
-//                rssItem2.setGroupArray(gMembers);
-//                rssFeed2.addItem(rssItem2);
-//            }
-            Log.e("Rss 2", "checkContactListWithGroup: " + rssFeed2.getItemCount());
-            Log.e("gMember", "checkContactListWithGroup: " + gMembers.size());
-
-//      for (int i = 0; i < gMembers.size(); i++) {
-//        ArrayList<RSSItem> rssItems = gMembers.get(i).getGroupMembers();
-//        for (int j = 0; j < rssItems.size(); j++) {
-//          Log.e("gStar", "onCreateView: " + rssItems.get(j).getGroupLastChatAmount());
-//        }
-//      }
-
-//            for (int i = 0; i < rssFeed2.getItemCount(); i++) {
-//                Log.e("gStar", "onCreateView: " + rssFeed2.getItem(i).getGroupLastChatAmount());
-//            }
-//            rssFeed3.addAll(0, rssFeed);
-//            rssFeed3.addAll(1, rssFeed2);
-
-            return rssFeed;
+            return feed;
 
             /**
              * TODO: check if activated then return the token to Splash class
@@ -815,7 +753,7 @@ public class DOMParser {
 
     }
 
-    public PayLogFeed payLogWithAnother(String phone, String maxDate, String maxpage) {
+    public LogFeed payLogWithAnother(String phone, String maxDate, String maxpage) {
 
         try {
 
@@ -872,31 +810,31 @@ public class DOMParser {
             Log.e("getchatlog@@@@@@", sb.toString());
             JSONArray jsonArray = new JSONArray(sb.toString());
 
-            PayLogFeed payLogFeed = new PayLogFeed();
+            LogFeed logFeed = new LogFeed();
 
             for (int i = 0; i < jsonArray.length(); i++) {
-                PayLogItem payLogItem1 = new PayLogItem();
+                LogItem logItem1 = new LogItem();
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 //kk
                 try {
-                    payLogItem1.setId(jsonObject.getInt("id"));
-                    payLogItem1.setfMobile(jsonObject.getString("f"));
-                    payLogItem1.settMobile(jsonObject.getString("t"));
-                    payLogItem1.setAmount(jsonObject.getInt("a"));
-                    payLogItem1.setDate(jsonObject.getString("d"));
-                    payLogItem1.setPaideBool(jsonObject.getBoolean("o"));
-                    payLogItem1.setStatus(jsonObject.getBoolean("s"));
-                    payLogItem1.setComment(jsonObject.getString("c"));
+                    logItem1.setId(jsonObject.getInt("id"));
+                    logItem1.setfMobile(jsonObject.getString("f"));
+                    logItem1.settMobile(jsonObject.getString("t"));
+                    logItem1.setAmount(jsonObject.getInt("a"));
+                    logItem1.setDate(jsonObject.getString("d"));
+                    logItem1.setPaideBool(jsonObject.getBoolean("o"));
+                    logItem1.setStatus(jsonObject.getBoolean("s"));
+                    logItem1.setComment(jsonObject.getString("c"));
                     Log.e("++++++++++++", "payLogWithAnother: " + jsonObject.getInt("id"));
                     Log.e("++++++++++++", "payLogWithAnother: " + i);
-                    payLogFeed.getHash().put(jsonObject.getInt("id"), i);
+                    logFeed.getHash().put(jsonObject.getInt("id"), i);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                payLogFeed.addItem(payLogItem1);
+                logFeed.addItem(logItem1);
             }
 
-            return payLogFeed;
+            return logFeed;
 
             /**
              * TODO: check if activated then return the token to Splash class
@@ -915,7 +853,7 @@ public class DOMParser {
 
     }
 
-    public PayLogItem RequestFromAnother(String phone, String Amount, String cm) {
+    public LogItem RequestFromAnother(String phone, String Amount, String cm) {
 
         try {
 
@@ -978,21 +916,21 @@ public class DOMParser {
             Log.e("R@@@@@@", sb.toString());
 
 
-            PayLogItem payLogItem = new PayLogItem();
+            LogItem logItem = new LogItem();
             JSONObject jsonObject1 = new JSONObject(sb.toString());
             try {
-                payLogItem.setId(jsonObject1.getInt("id"));
-                payLogItem.setfMobile(jsonObject1.getString("f"));
-                payLogItem.settMobile(jsonObject1.getString("t"));
-                payLogItem.setAmount(jsonObject1.getInt("a"));
-                payLogItem.setDate(jsonObject1.getString("d"));
-                payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
-                payLogItem.setComment(jsonObject1.getString("c"));
+                logItem.setId(jsonObject1.getInt("id"));
+                logItem.setfMobile(jsonObject1.getString("f"));
+                logItem.settMobile(jsonObject1.getString("t"));
+                logItem.setAmount(jsonObject1.getInt("a"));
+                logItem.setDate(jsonObject1.getString("d"));
+                logItem.setPaideBool(jsonObject1.getBoolean("o"));
+                logItem.setComment(jsonObject1.getString("c"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            return payLogItem;
+            return logItem;
 
         } catch (ProtocolException e) {
             e.printStackTrace();
@@ -1005,7 +943,7 @@ public class DOMParser {
 
     }
 
-    public PayLogItem groupRequestFromAnother(String phone, String Amount, String cm, int groupId) {
+    public LogItem groupRequestFromAnother(String phone, String Amount, String cm, int groupId) {
 
         try {
 
@@ -1069,26 +1007,26 @@ public class DOMParser {
             Log.e("R@@@@@@", sb.toString());
 
 
-            PayLogItem payLogItem = new PayLogItem();
+            LogItem logItem = new LogItem();
             JSONObject jsonObject1 = new JSONObject(sb.toString());
             try {
                 JSONObject object = jsonObject1.getJSONObject("f");
-                payLogItem.setfPhoto("http://new.opaybot.ir" + object.getString("photo"));
-                payLogItem.setfMobile(object.getString("mobile"));
-                payLogItem.setfId(object.getString("id"));
-                payLogItem.setfTitle(object.getString("title"));
-                payLogItem.setId(jsonObject1.getInt("id"));
-                payLogItem.setAmount(jsonObject1.getInt("a"));
-                payLogItem.setDate(jsonObject1.getString("d"));
-                payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
-                payLogItem.setStatus(jsonObject1.getBoolean("s"));
-                payLogItem.setGroup(jsonObject1.getBoolean("g"));
-                payLogItem.setComment(jsonObject1.getString("c"));
+                logItem.setfPhoto("http://new.opaybot.ir" + object.getString("photo"));
+                logItem.setfMobile(object.getString("mobile"));
+                logItem.setfId(object.getString("id"));
+                logItem.setfTitle(object.getString("title"));
+                logItem.setId(jsonObject1.getInt("id"));
+                logItem.setAmount(jsonObject1.getInt("a"));
+                logItem.setDate(jsonObject1.getString("d"));
+                logItem.setPaideBool(jsonObject1.getBoolean("o"));
+                logItem.setStatus(jsonObject1.getBoolean("s"));
+                logItem.setGroup(jsonObject1.getBoolean("g"));
+                logItem.setComment(jsonObject1.getString("c"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            return payLogItem;
+            return logItem;
 
         } catch (ProtocolException e) {
             e.printStackTrace();
@@ -1101,7 +1039,7 @@ public class DOMParser {
 
     }
 
-    public PayLogItem accPaymentRequest(String id, String detail) {
+    public LogItem accPaymentRequest(String id, String detail) {
 
         try {
 
@@ -1157,24 +1095,24 @@ public class DOMParser {
 
             Log.e("accpay111111", sb.toString());
 
-            PayLogItem payLogItem = new PayLogItem();
+            LogItem logItem = new LogItem();
             JSONObject jsonObject1 = new JSONObject(sb.toString());
             try {
-                payLogItem.setId(jsonObject1.getInt("id"));
-                payLogItem.setfMobile(jsonObject1.getString("f"));
-                payLogItem.settMobile(jsonObject1.getString("t"));
-                payLogItem.setAmount(jsonObject1.getInt("a"));
-                payLogItem.setDate(jsonObject1.getString("d"));
-                payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
-                payLogItem.setComment(jsonObject1.getString("c"));
-                payLogItem.setStatus(jsonObject1.getBoolean("s"));
+                logItem.setId(jsonObject1.getInt("id"));
+                logItem.setfMobile(jsonObject1.getString("f"));
+                logItem.settMobile(jsonObject1.getString("t"));
+                logItem.setAmount(jsonObject1.getInt("a"));
+                logItem.setDate(jsonObject1.getString("d"));
+                logItem.setPaideBool(jsonObject1.getBoolean("o"));
+                logItem.setComment(jsonObject1.getString("c"));
+                logItem.setStatus(jsonObject1.getBoolean("s"));
 
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            return payLogItem;
+            return logItem;
 
         } catch (ProtocolException e) {
             e.printStackTrace();
@@ -1289,7 +1227,7 @@ public class DOMParser {
         return state;
     }
 
-    public PayLogItem sendPaymentRequest(String phone, String detail, String comment, String amount) {
+    public LogItem sendPaymentRequest(String phone, String detail, String comment, String amount) {
 
         try {
 
@@ -1350,25 +1288,25 @@ public class DOMParser {
 
             Log.e("@@@@@@", sb.toString());
 
-            PayLogItem payLogItem = new PayLogItem();
+            LogItem logItem = new LogItem();
             JSONObject jsonObject1 = new JSONObject(sb.toString());
             try {
-                payLogItem.setId(jsonObject1.getInt("id"));
-                payLogItem.setfMobile(jsonObject1.getString("f"));
-                payLogItem.settMobile(jsonObject1.getString("t"));
-                payLogItem.setAmount(jsonObject1.getInt("a"));
-                payLogItem.setDate(jsonObject1.getString("d"));
-                payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
-                payLogItem.setStatus(jsonObject1.getBoolean("s"));
+                logItem.setId(jsonObject1.getInt("id"));
+                logItem.setfMobile(jsonObject1.getString("f"));
+                logItem.settMobile(jsonObject1.getString("t"));
+                logItem.setAmount(jsonObject1.getInt("a"));
+                logItem.setDate(jsonObject1.getString("d"));
+                logItem.setPaideBool(jsonObject1.getBoolean("o"));
+                logItem.setStatus(jsonObject1.getBoolean("s"));
 
-                payLogItem.setComment(jsonObject1.getString("c"));
+                logItem.setComment(jsonObject1.getString("c"));
 
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            return payLogItem;
+            return logItem;
 
         } catch (ProtocolException e) {
             e.printStackTrace();
@@ -1469,7 +1407,7 @@ public class DOMParser {
         String base64 = Base64.encodeToString(bytes, Base64.NO_WRAP);
 
 
-        URL url = new URL(mainUrl + "api/Group/" + id + "/SetPhotoBase64");
+        URL url = new URL(mainUrl + "api/GroupItem/" + id + "/SetPhotoBase64");
         Log.e("1111111", "doInBackground: " + url);
         HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
         httpConn.setDoInput(true);
@@ -1521,7 +1459,7 @@ public class DOMParser {
 
     }
 
-    public RSSFeed getLocation() {
+    public Feed getLocation() {
 
         try {
 
@@ -1561,26 +1499,26 @@ public class DOMParser {
                 }
             }
 
-            RSSFeed rssFeed = new RSSFeed();
+            Feed feed = new Feed();
             Log.e("@@@@@@2222", sb.toString());
             JSONArray jsonArray = new JSONArray(sb.toString());
             for (int i = 0; i < jsonArray.length(); i++) {
-                RSSItem rssItem = new RSSItem();
+                Item item = new Item();
                 try {
-                    rssItem.setContactImg(jsonArray.getJSONObject(i).getString("photo"));
-                    Log.e("CIMage", rssItem.getContactImg());
-                    rssItem.setTelNo(jsonArray.getJSONObject(i).getString("mobile"));
-                    rssItem.setUserId(jsonArray.getJSONObject(i).getString("id"));
-                    rssItem.setContactName(jsonArray.getJSONObject(i).getString("title"));
-                    Log.e("Name", rssItem.getContactName());
+                    item.setContactImg(jsonArray.getJSONObject(i).getString("photo"));
+                    Log.e("CIMage", item.getContactImg());
+                    item.setTelNo(jsonArray.getJSONObject(i).getString("mobile"));
+                    item.setUserId(jsonArray.getJSONObject(i).getString("id"));
+                    item.setContactName(jsonArray.getJSONObject(i).getString("title"));
+                    Log.e("Name", item.getContactName());
                 } catch (Exception e) {
                     e.printStackTrace();
 
                 }
-                rssFeed.addItem(rssItem);
+                feed.addItem(item);
             }
 
-            return rssFeed;
+            return feed;
 
 
         } catch (JSONException | IOException e) {
@@ -1673,10 +1611,10 @@ public class DOMParser {
 
     }
 
-    public RSSFeed group(String title, JSONArray jsonMemberPhone) {
+    public GroupItem group(String title, JSONArray jsonMemberPhone) {
 /*ddd*/
         boolean state = false;
-        RSSFeed rssFeed = null;
+        GroupItem groupItem = null;
         try {
 
             URL url = new URL(mainUrl + "api/Group");
@@ -1735,63 +1673,50 @@ public class DOMParser {
                 }
             }
 
-            rssFeed = new RSSFeed();
+
             Log.e("@@@@@@2222", sb.toString());
             JSONObject object = new JSONObject(sb.toString());
-            RSSItem rssItem = new RSSItem();
-            rssItem.setGroupId(object.getInt("id"));
-            rssItem.setGroupTitle(object.getString("title"));
-            rssItem.setGroupPhoto(object.getString("photo"));
+            groupItem = new GroupItem();
+            groupItem.setGroupId(object.getInt("id"));
+            groupItem.setGroupTitle(object.getString("title"));
+            groupItem.setGroupPhoto(object.getString("photo"));
             if (!object.isNull("members")) {
                 JSONArray jsonArray = object.getJSONArray("members");
-                ArrayList<RSSItem> rssItems = new ArrayList<>();
+                MembersFeed membersFeed = new MembersFeed();
                 for (int i = 0; i < jsonArray.length(); i++) {
-                    RSSItem item = new RSSItem();
+                    MembersItem membersItem = new MembersItem();
                     JSONObject object1 = jsonArray.getJSONObject(i);
-                    item.setGroupMemberTitle(object1.getString("photo"));
-                    item.setGroupMemberPhoto(object1.getString("photo"));
-                    item.setGroupMemberPhone(object1.getString("mobile"));
-                    item.setGroupMemberId(object1.getString("id"));
-                    if (!object1.isNull("lastchat")) {
-                        JSONObject groupsMembersLastChat = object1.getJSONObject("lastchat");
-                        Log.e("Test55555", "checkContactListWithGroup: " + groupsMembersLastChat.toString());
-                        item.setGroupMemberLastChatId(groupsMembersLastChat.getInt("id"));
-                        item.setGroupMemberLastChatFrom(groupsMembersLastChat.getString("f"));
-                        item.setGroupMemberLastChatTo(groupsMembersLastChat.getString("t"));
-                        item.setGroupMemberLastChatAmount(groupsMembersLastChat.getInt("a"));
-                        item.setGroupMemberLastChatDate(groupsMembersLastChat.getString("d"));
-                        item.setGroupMemberLastChatOrderPay(groupsMembersLastChat.getBoolean("o"));
-                        item.setGroupMemberLastChatStatus(groupsMembersLastChat.getBoolean("s"));
-                        item.setGroupMemberLastChatFromGroup(groupsMembersLastChat.getBoolean("g"));
-                        item.setGroupMemberLastChatComment(groupsMembersLastChat.getString("c"));
-                    }
-                    rssItems.add(item);
+                    membersItem.setMemberTitle(object1.getString("title"));
+                    membersItem.setMemberPhoto(object1.getString("photo"));
+                    membersItem.setMemberPhone(object1.getString("mobile"));
+                    membersItem.setMemberId(object1.getString("id"));
+                    membersFeed.addMemberItem(membersItem);
                 }
-                rssItem.setGroupMembers(rssItems);
+                groupItem.setMembersFeed(membersFeed);
             }
             if (object.isNull("lastChats")) {
                 JSONObject groupsLastChat = object.getJSONObject("lastchat");
-                rssItem.setGroupLastChatId(groupsLastChat.getInt("id"));
-                rssItem.setGroupLastChatFrom(groupsLastChat.getString("f"));
-                rssItem.setGroupLastChatTo(groupsLastChat.getString("t"));
-                rssItem.setGroupLastChatAmount(groupsLastChat.getInt("a"));
-                rssItem.setGroupLastChatDate(groupsLastChat.getString("d"));
-                rssItem.setGroupLastChatOrderPay(groupsLastChat.getBoolean("o"));
-                rssItem.setGroupLastChatStatus(groupsLastChat.getBoolean("s"));
-                rssItem.setGroupLastChatFromGroup(groupsLastChat.getBoolean("g"));
-                rssItem.setGroupLastChatComment(groupsLastChat.getString("c"));
+                groupItem.setGroupLastChatId(groupsLastChat.getInt("id"));
+                groupItem.setGroupLastChatFrom(groupsLastChat.getString("f"));
+                groupItem.setGroupLastChatTo(groupsLastChat.getString("t"));
+                groupItem.setGroupLastChatAmount(groupsLastChat.getInt("a"));
+                groupItem.setGroupLastChatDate(groupsLastChat.getString("d"));
+                groupItem.setGroupLastChatOrderPay(groupsLastChat.getBoolean("o"));
+                groupItem.setGroupLastChatStatus(groupsLastChat.getBoolean("s"));
+                groupItem.setGroupLastChatFromGroup(groupsLastChat.getBoolean("g"));
+                groupItem.setGroupLastChatComment(groupsLastChat.getString("c"));
             }
 
-            rssFeed.addItem(rssItem);
+            return groupItem;
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return rssFeed;
+        return null;
     }
 
-    public PayLogItem groupChat(int id, int pageSize, String maxDate, ArrayList<String> memberPhone) {
+    public LogItem groupChat(int id, int pageSize, String maxDate, ArrayList<String> memberPhone) {
 /*ddd*/
         try {
 
@@ -1834,18 +1759,18 @@ public class DOMParser {
 
             Log.e("@@@@@@", sb.toString());
 
-            PayLogItem payLogItem = new PayLogItem();
+            LogItem logItem = new LogItem();
             JSONObject jsonObject1 = new JSONObject(sb.toString());
             try {
-                payLogItem.setId(jsonObject1.getInt("id"));
-                payLogItem.setfMobile(jsonObject1.getString("f"));
-                payLogItem.settMobile(jsonObject1.getString("t"));
-                payLogItem.setAmount(jsonObject1.getInt("a"));
-                payLogItem.setDate(jsonObject1.getString("d"));
-                payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
-                payLogItem.setStatus(jsonObject1.getBoolean("s"));
+                logItem.setId(jsonObject1.getInt("id"));
+                logItem.setfMobile(jsonObject1.getString("f"));
+                logItem.settMobile(jsonObject1.getString("t"));
+                logItem.setAmount(jsonObject1.getInt("a"));
+                logItem.setDate(jsonObject1.getString("d"));
+                logItem.setPaideBool(jsonObject1.getBoolean("o"));
+                logItem.setStatus(jsonObject1.getBoolean("s"));
 
-                payLogItem.setComment(jsonObject1.getString("c"));
+                logItem.setComment(jsonObject1.getString("c"));
 
 
             } catch (JSONException e) {
@@ -1859,7 +1784,7 @@ public class DOMParser {
 
     }
 
-    public PayLogItem payToAnotherWithTF(String anotherMobile, String paymentDetails, String Amount, String cm, int groupId) {
+    public LogItem payToAnotherWithTF(String anotherMobile, String paymentDetails, String Amount, String cm, int groupId) {
 
         try {
 
@@ -1924,21 +1849,21 @@ public class DOMParser {
             Log.e("R@@@@@@", sb.toString());
 
 
-            PayLogItem payLogItem = new PayLogItem();
+            LogItem logItem = new LogItem();
             JSONObject jsonObject1 = new JSONObject(sb.toString());
             try {
-                payLogItem.setId(jsonObject1.getInt("id"));
-                payLogItem.setfMobile(jsonObject1.getString("f"));
-                payLogItem.settMobile(jsonObject1.getString("t"));
-                payLogItem.setAmount(jsonObject1.getInt("a"));
-                payLogItem.setDate(jsonObject1.getString("d"));
-                payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
-                payLogItem.setComment(jsonObject1.getString("c"));
+                logItem.setId(jsonObject1.getInt("id"));
+                logItem.setfMobile(jsonObject1.getString("f"));
+                logItem.settMobile(jsonObject1.getString("t"));
+                logItem.setAmount(jsonObject1.getInt("a"));
+                logItem.setDate(jsonObject1.getString("d"));
+                logItem.setPaideBool(jsonObject1.getBoolean("o"));
+                logItem.setComment(jsonObject1.getString("c"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            return payLogItem;
+            return logItem;
 
         } catch (ProtocolException e) {
             e.printStackTrace();
@@ -1951,7 +1876,7 @@ public class DOMParser {
 
     }
 
-    public PayLogFeed getGroupChat(int id, int page, String date) {
+    public LogFeed getGroupChat(int id, int page, String date) {
 
         try {
 
@@ -1964,7 +1889,6 @@ public class DOMParser {
             httpConn.setRequestMethod("GET");
             httpConn.setConnectTimeout(20000);
             httpConn.setReadTimeout(20000);
-            httpConn.setRequestProperty("Content-Type", "application/json");
             httpConn.setRequestProperty("Authorization", "bearer " + token);
 
             int resCode = httpConn.getResponseCode();
@@ -1995,35 +1919,35 @@ public class DOMParser {
             Log.e("R@@@@@@", sb.toString());
 
             JSONArray jsonArray = new JSONArray(sb.toString());
-            PayLogFeed feed = new PayLogFeed();
+            LogFeed feed = new LogFeed();
 
             for (int i = 0; i < jsonArray.length(); i++) {
-                PayLogItem payLogItem = null;
+                LogItem logItem = null;
                 try {
-                    payLogItem = new PayLogItem();
+                    logItem = new LogItem();
                     JSONObject object = jsonArray.getJSONObject(i);
                     JSONObject jsonObjectf = object.getJSONObject("f");
                     JSONObject jsonObjectt = object.getJSONObject("t");
-                    payLogItem.setfPhoto("http://new.opaybot.ir" + jsonObjectf.getString("photo"));
-                    payLogItem.setfMobile(jsonObjectf.getString("mobile"));
-                    payLogItem.setfId(jsonObjectf.getString("id"));
-                    payLogItem.setfTitle(jsonObjectf.getString("title"));
-                    payLogItem.settPhoto("http://new.opaybot.ir" + jsonObjectt.getString("photo"));
-                    payLogItem.settMobile(jsonObjectt.getString("mobile"));
-                    payLogItem.settId(jsonObjectt.getString("id"));
-                    payLogItem.settTitle(jsonObjectt.getString("title"));
-                    payLogItem.setId(object.getInt("id"));
-                    payLogItem.setAmount(object.getInt("a"));
-                    payLogItem.setDate(object.getString("d"));
-                    payLogItem.setPaideBool(object.getBoolean("o"));
-                    payLogItem.setStatus(object.getBoolean("s"));
-                    payLogItem.setGroup(object.getBoolean("g"));
-                    payLogItem.setComment(object.getString("c"));
+                    logItem.setfPhoto("http://new.opaybot.ir" + jsonObjectf.getString("photo"));
+                    logItem.setfMobile(jsonObjectf.getString("mobile"));
+                    logItem.setfId(jsonObjectf.getString("id"));
+                    logItem.setfTitle(jsonObjectf.getString("title"));
+                    logItem.settPhoto("http://new.opaybot.ir" + jsonObjectt.getString("photo"));
+                    logItem.settMobile(jsonObjectt.getString("mobile"));
+                    logItem.settId(jsonObjectt.getString("id"));
+                    logItem.settTitle(jsonObjectt.getString("title"));
+                    logItem.setId(object.getInt("id"));
+                    logItem.setAmount(object.getInt("a"));
+                    logItem.setDate(object.getString("d"));
+                    logItem.setPaideBool(object.getBoolean("o"));
+                    logItem.setStatus(object.getBoolean("s"));
+                    logItem.setGroup(object.getBoolean("g"));
+                    logItem.setComment(object.getString("c"));
                     feed.getHash().put(object.getInt("id"), i);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                feed.addItem(payLogItem);
+                feed.addItem(logItem);
             }
             return feed;
 
@@ -2038,7 +1962,7 @@ public class DOMParser {
 
     }
 
-    public PayLogItem sendGroupPaymentRequest(String phone, String detail, String comment, String amount, String id) {
+    public LogItem sendGroupPaymentRequest(String phone, String detail, String comment, String amount, String id) {
 
         try {
 
@@ -2100,33 +2024,33 @@ public class DOMParser {
 
             Log.e("@@@@@@", sb.toString());
 
-            PayLogItem payLogItem = new PayLogItem();
+            LogItem logItem = new LogItem();
             JSONObject jsonObject1 = new JSONObject(sb.toString());
             try {
                 JSONObject jsonObjectf = jsonObject1.getJSONObject("f");
                 JSONObject jsonObjectt = jsonObject1.getJSONObject("t");
-                payLogItem.setfPhoto("http://new.opaybot.ir" + jsonObjectf.getString("photo"));
-                payLogItem.setfMobile(jsonObjectf.getString("mobile"));
-                payLogItem.setfId(jsonObjectf.getString("id"));
-                payLogItem.setfTitle(jsonObjectf.getString("title"));
-                payLogItem.settPhoto("http://new.opaybot.ir" + jsonObjectt.getString("photo"));
-                payLogItem.settMobile(jsonObjectt.getString("mobile"));
-                payLogItem.settId(jsonObjectt.getString("id"));
-                payLogItem.settTitle(jsonObjectt.getString("title"));
-                payLogItem.setId(jsonObject1.getInt("id"));
-                payLogItem.setAmount(jsonObject1.getInt("a"));
-                payLogItem.setDate(jsonObject1.getString("d"));
-                payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
-                payLogItem.setStatus(jsonObject1.getBoolean("s"));
-                payLogItem.setGroup(jsonObject1.getBoolean("g"));
-                payLogItem.setComment(jsonObject1.getString("c"));
+                logItem.setfPhoto("http://new.opaybot.ir" + jsonObjectf.getString("photo"));
+                logItem.setfMobile(jsonObjectf.getString("mobile"));
+                logItem.setfId(jsonObjectf.getString("id"));
+                logItem.setfTitle(jsonObjectf.getString("title"));
+                logItem.settPhoto("http://new.opaybot.ir" + jsonObjectt.getString("photo"));
+                logItem.settMobile(jsonObjectt.getString("mobile"));
+                logItem.settId(jsonObjectt.getString("id"));
+                logItem.settTitle(jsonObjectt.getString("title"));
+                logItem.setId(jsonObject1.getInt("id"));
+                logItem.setAmount(jsonObject1.getInt("a"));
+                logItem.setDate(jsonObject1.getString("d"));
+                logItem.setPaideBool(jsonObject1.getBoolean("o"));
+                logItem.setStatus(jsonObject1.getBoolean("s"));
+                logItem.setGroup(jsonObject1.getBoolean("g"));
+                logItem.setComment(jsonObject1.getString("c"));
 
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            return payLogItem;
+            return logItem;
 
         } catch (ProtocolException e) {
             e.printStackTrace();

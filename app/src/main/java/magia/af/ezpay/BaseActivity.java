@@ -6,8 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-import magia.af.ezpay.Firebase.MyFirebaseMessagingService;
-import magia.af.ezpay.Parser.PayLogItem;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**

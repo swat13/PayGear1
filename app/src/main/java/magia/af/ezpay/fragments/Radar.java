@@ -17,29 +17,22 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-import magia.af.ezpay.MainActivity;
-import magia.af.ezpay.Parser.DOMParser;
-import magia.af.ezpay.Parser.RSSFeed;
-import magia.af.ezpay.Parser.RSSItem;
+import magia.af.ezpay.Parser.Parser;
+import magia.af.ezpay.Parser.Feed;
+import magia.af.ezpay.Parser.Item;
 import magia.af.ezpay.R;
 
 
-public class RadarFragment extends Fragment {
+public class Radar extends Fragment {
   private RelativeLayout relativeLayout;
   private ArrayList<ImageView> circleImageView = new ArrayList<ImageView>();
   ArrayList<RelativeLayout.LayoutParams> params = new ArrayList<RelativeLayout.LayoutParams>();
@@ -48,7 +41,7 @@ public class RadarFragment extends Fragment {
   public ImageView userAvatar;
   final int userAvatarWidth = 0;
   final int userAvatarHeight = 0;
-  private RSSFeed rssFeed;
+  private Feed feed;
   public int i;
   public int k;
   private String imageUrl = "http://new.opaybot.ir";
@@ -57,8 +50,8 @@ public class RadarFragment extends Fragment {
   String Ipath;
 
 
-  public static RadarFragment getInstance() {
-    return new RadarFragment();
+  public static Radar getInstance() {
+    return new Radar();
   }
 
 
@@ -70,7 +63,7 @@ public class RadarFragment extends Fragment {
     Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.rotate);
     imageView.setAnimation(animation);
     animation.start();
-    rssFeed = new RSSFeed();
+    feed = new Feed();
     handler = new Handler(Looper.getMainLooper());
     timer = new Timer();
     timer.scheduleAtFixedRate(new TimerTask() {
@@ -101,33 +94,33 @@ public class RadarFragment extends Fragment {
     return v;
   }
 
-  public class GetPeopleFromTheirLocation extends AsyncTask<RSSFeed, Void, RSSFeed> {
+  public class GetPeopleFromTheirLocation extends AsyncTask<Feed, Void, Feed> {
 
     @Override
-    protected RSSFeed doInBackground(RSSFeed... params) {
-      DOMParser domParser = new DOMParser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
-      return domParser.getLocation();
+    protected Feed doInBackground(Feed... params) {
+      Parser parser = new Parser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
+      return parser.getLocation();
     }
 
     @Override
-    protected void onPostExecute(RSSFeed result) {
+    protected void onPostExecute(Feed result) {
       if (result != null) {
-        rssFeed = result;
+        feed = result;
         generateImageViews();
       }
-      super.onPostExecute(rssFeed);
+      super.onPostExecute(feed);
     }
   }
 
   public void generateImageViews() {
-   // params = new RelativeLayout.LayoutParams[rssFeed.getItemCount()];
+   // params = new RelativeLayout.LayoutParams[feed.getItemCount()];
     if(circleImageView==null)
     circleImageView = new ArrayList<ImageView>();
 
     for (int j = 0; j < circleImageView.size(); j++) {
       boolean isDuplicate = false;
-      for (i = 0; i < rssFeed.getItemCount(); i++) {
-        if (((RSSItem) circleImageView.get(j).getTag(R.string.Amir)).getUserId().equals( rssFeed.getItem(i).getUserId()) ){
+      for (i = 0; i < feed.getItemCount(); i++) {
+        if (((Item) circleImageView.get(j).getTag(R.string.Amir)).getUserId().equals( feed.getItem(i).getUserId()) ){
           isDuplicate = true;
           break;
         }
@@ -139,11 +132,11 @@ public class RadarFragment extends Fragment {
 
     }
 
-    for (i = 0; i < rssFeed.getItemCount(); i++) {
+    for (i = 0; i < feed.getItemCount(); i++) {
 
       boolean isDuplicate = false;
       for (int j = 0; j < circleImageView.size(); j++) {
-        if (((RSSItem) circleImageView.get(j).getTag(R.string.Amir)).getUserId().equals( rssFeed.getItem(i).getUserId())) {
+        if (((Item) circleImageView.get(j).getTag(R.string.Amir)).getUserId().equals( feed.getItem(i).getUserId())) {
           isDuplicate = true;
           break;
         }
@@ -157,8 +150,8 @@ public class RadarFragment extends Fragment {
 
       ImageView newView = new ImageView(getActivity());
       RelativeLayout.LayoutParams newParam=new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-Log.e("Amir",rssFeed.getItem(i).getContactImg());
-      newView.setTag(R.string.Amir,rssFeed.getItem(i));
+Log.e("Amir", feed.getItem(i).getContactImg());
+      newView.setTag(R.string.Amir, feed.getItem(i));
       int random = ((int) (Math.random() + 0.5) * ((display.getWidth() / 2) + 100)) + (int) (Math.random() * ((display.getWidth() / 2) - 200));
       int randomH = ((int) (Math.random() + 0.5) * ((display.getHeight() / 2) + 100)) + (int) (Math.random() * ((display.getHeight() / 2) - 200));
       double randomHH = Math.random() * 360;
@@ -178,12 +171,12 @@ Log.e("Amir",rssFeed.getItem(i).getContactImg());
       newView.setLayoutParams(newParam);
       newView.getLayoutParams().width = 100;
       newView.getLayoutParams().height = 100;
-      Log.e("image", "generateImageViews: " + imageUrl + rssFeed.getItem(i).getContactImg());
+      Log.e("image", "generateImageViews: " + imageUrl + feed.getItem(i).getContactImg());
 
-      Glide.with(this).load(imageUrl + rssFeed.getItem(i).getContactImg()).into(newView);
+      Glide.with(this).load(imageUrl + feed.getItem(i).getContactImg()).into(newView);
       Log.e("SSS", "generateImageViews: " + " " + i);
       Glide.with(this)
-        .load(imageUrl + rssFeed.getItem(i).getContactImg())
+        .load(imageUrl + feed.getItem(i).getContactImg())
         .asBitmap()
         .centerCrop()
         .placeholder(R.drawable.pic_profile)
@@ -226,7 +219,7 @@ Log.e("Amir",rssFeed.getItem(i).getContactImg());
         newView.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
-//            Toast.makeText(RadarFragment.this, "clicked" + v.getTag(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(Radar.this, "clicked" + v.getTag(), Toast.LENGTH_SHORT).show();
           }
         });
         params.add(newParam);
