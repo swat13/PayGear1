@@ -767,7 +767,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
                             public void onClick(View v) {
                                 cardDialog = new Dialog(GroupChatPageActivity.this, R.style.PauseDialog);
                                 cardDialog.setContentView(R.layout.group_payment_layout);
-                                edtCardNumber = (EditText) payDialog.findViewById(R.id.payAmount);
+                                edtCardNumber = (EditText) cardDialog.findViewById(R.id.payAmount);
                                 edtCardNumber.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                                     @Override
                                     public void onFocusChange(View v, boolean hasFocus) {
@@ -788,7 +788,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
                                         edtCardNumber.setSelection(edtCardNumber.getText().length());
                                     }
                                 });
-                                edtCardPassword = (EditText) payDialog.findViewById(R.id.comments);
+                                edtCardPassword = (EditText) cardDialog.findViewById(R.id.comments);
                                 edtCardPassword.setCursorVisible(false);
                                 edtCardPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                                     @Override
@@ -865,22 +865,22 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
                                         }
                                     }
                                 });
-                                Button btnCancel = (Button) payDialog.findViewById(R.id.cancel);
+                                Button btnCancel = (Button) cardDialog.findViewById(R.id.cancel);
                                 btnCancel.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        payDialog.dismiss();
+                                        cardDialog.dismiss();
                                     }
                                 });
-                                Button btnConfirm = (Button) payDialog.findViewById(R.id.confirm);
+                                Button btnConfirm = (Button) cardDialog.findViewById(R.id.confirm);
                                 btnConfirm.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
                                         new GroupChatPageActivity.accPaymentRequest(position).execute(feed.getItem(holder.getAdapterPosition()).getId() + "", edtCardNumber.getText().toString() + edtCardPassword.getText().toString());
-                                        payDialog.dismiss();
+                                        cardDialog.dismiss();
                                     }
                                 });
-                                payDialog.show();
+                                cardDialog.show();
                             }
                         });
 
