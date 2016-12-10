@@ -659,7 +659,6 @@ public class Parser {
             Feed feed = new Feed();
             Item rssItem;
 
-            Log.e("Test0000", "checkContactListWithGroup: ");
             ArrayList<Item> contactMembers = new ArrayList<>();
             for (int i = 0; i < jsonArray.length(); i++) {
                 rssItem = new Item();
@@ -675,7 +674,6 @@ public class Parser {
                     GroupItem groupItem = new GroupItem();
                     groupItem.setGroupId(contactObject.getInt("id"));
                     groupItem.setGroupPhoto(contactObject.getString("photo"));
-                    Log.e("))))))))))))((((((((((", "checkContactListWithGroup: " + groupItem.getGroupPhoto());
                     groupItem.setGroupTitle(contactObject.getString("title"));
                     //Be Checked
                     if (!contactObject.isNull("members")) {
@@ -696,15 +694,12 @@ public class Parser {
                                 JSONObject lastChatGroupObject = groupLastChatArray.getJSONObject(j);
                                 groupItem.setGroupLastChatAmount(lastChatGroupObject.getInt("a"));
                                 groupItem.setGroupLastChatId(lastChatGroupObject.getInt("id"));
-//                rssItem.setGroupLastChatFrom(lastChatGroupObject.getString("f"));
-//                rssItem.setGroupLastChatTo(lastChatGroupObject.getString("t"));
                                 groupItem.setGroupLastChatDate(lastChatGroupObject.getString("d"));
                                 groupItem.setGroupLastChatOrderPay(lastChatGroupObject.getBoolean("o"));
                                 groupItem.setGroupLastChatStatus(lastChatGroupObject.getBoolean("s"));
                                 groupItem.setGroupLastChatFromGroup(lastChatGroupObject.getBoolean("g"));
                                 groupItem.setGroupLastChatComment(lastChatGroupObject.getString("c"));
                             }
-
                         }
                         groupItem.setMembersFeed(membersFeed);
                     }
@@ -825,8 +820,6 @@ public class Parser {
                     logItem1.setPaideBool(jsonObject.getBoolean("o"));
                     logItem1.setStatus(jsonObject.getBoolean("s"));
                     logItem1.setComment(jsonObject.getString("c"));
-                    Log.e("++++++++++++", "payLogWithAnother: " + jsonObject.getInt("id"));
-                    Log.e("++++++++++++", "payLogWithAnother: " + i);
                     logFeed.getHash().put(jsonObject.getInt("id"), i);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -876,11 +869,6 @@ public class Parser {
             jsonObject.put("anotherMobile", phone);
             jsonObject.put("amount", Integer.parseInt(Amount.replace(",", "")));
             jsonObject.put("comment", cm);
-//            String request = "{\n" +
-//                    "\"anotherMobile\" : \"" + phone + "\",\n" +
-//                    "\"amount\" : " + Amount + ",\n" +
-//                    "\"comment\" : \"" + cm + "\"\n" +
-//                    "}";
 
             Log.e("RR999999999", "activateSong: " + jsonObject.toString());
             writer.write(jsonObject.toString());
@@ -967,11 +955,6 @@ public class Parser {
             jsonObject.put("amount", Integer.parseInt(Amount.replace(",", "")));
             jsonObject.put("comment", cm);
             jsonObject.put("groupId", groupId);
-//            String request = "{\n" +
-//                    "\"anotherMobile\" : \"" + phone + "\",\n" +
-//                    "\"amount\" : " + Amount + ",\n" +
-//                    "\"comment\" : \"" + cm + "\"\n" +
-//                    "}";
 
             Log.e("RR999999999", "activateSong: " + jsonObject.toString());
             writer.write(jsonObject.toString());
@@ -1259,18 +1242,14 @@ public class Parser {
             os.close();
 
             int resCode = httpConn.getResponseCode();
-            Log.e("44444444444", "doInBackground: " + resCode);
             if (resCode == 400) {
-                Log.e("55555555", "doInBackground: " + resCode);
                 return null;
             }
 
-            Log.e("@@@@@@222222", "sfgsdfg");
             InputStream in = httpConn.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             StringBuilder sb = new StringBuilder();
 
-            Log.e("@@@@@@333", "sfgsdfg");
             String line = null;
             try {
                 while ((line = reader.readLine()) != null) {
@@ -1506,11 +1485,9 @@ public class Parser {
                 Item item = new Item();
                 try {
                     item.setContactImg(jsonArray.getJSONObject(i).getString("photo"));
-                    Log.e("CIMage", item.getContactImg());
                     item.setTelNo(jsonArray.getJSONObject(i).getString("mobile"));
                     item.setUserId(jsonArray.getJSONObject(i).getString("id"));
                     item.setContactName(jsonArray.getJSONObject(i).getString("title"));
-                    Log.e("Name", item.getContactName());
                 } catch (Exception e) {
                     e.printStackTrace();
 
@@ -1563,7 +1540,6 @@ public class Parser {
     }
 
     public String addMemberToGroup(int id, ArrayList<String> memberPhone) {
-/*ddd*/
         try {
 
             URL url = new URL(mainUrl + "AddMember");
@@ -1612,7 +1588,6 @@ public class Parser {
     }
 
     public GroupItem group(String title, JSONArray jsonMemberPhone) {
-/*ddd*/
         boolean state = false;
         GroupItem groupItem = null;
         try {
@@ -1651,7 +1626,6 @@ public class Parser {
                 state = true;
             } else {
                 state = false;
-                Log.e("ERROR", "group: " + "Error Happened");
             }
 
             InputStream in = httpConn.getInputStream();
@@ -1717,7 +1691,6 @@ public class Parser {
     }
 
     public LogItem groupChat(int id, int pageSize, String maxDate, ArrayList<String> memberPhone) {
-/*ddd*/
         try {
 
             URL url = new URL(mainUrl + "Chat?id=" + id + "&pagesize=" + pageSize + "&maxDate=" + maxDate);
@@ -1809,11 +1782,6 @@ public class Parser {
             jsonObject.put("amount", Amount);
             jsonObject.put("comment", cm);
             jsonObject.put("groupId", groupId);
-//            String request = "{\n" +
-//                    "\"anotherMobile\" : \"" + phone + "\",\n" +
-//                    "\"amount\" : " + Amount + ",\n" +
-//                    "\"comment\" : \"" + cm + "\"\n" +
-//                    "}";
 
             Log.e("RR999999999", "activateSong: " + jsonObject.toString());
             writer.write(jsonObject.toString());
@@ -1997,16 +1965,13 @@ public class Parser {
             int resCode = httpConn.getResponseCode();
             Log.e("44444444444", "doInBackground: " + resCode);
             if (resCode == 400) {
-                Log.e("55555555", "doInBackground: " + resCode);
                 return null;
             }
 
-            Log.e("@@@@@@222222", "sfgsdfg");
             InputStream in = httpConn.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             StringBuilder sb = new StringBuilder();
 
-            Log.e("@@@@@@333", "sfgsdfg");
             String line = null;
             try {
                 while ((line = reader.readLine()) != null) {

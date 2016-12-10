@@ -35,7 +35,7 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
 import org.json.JSONArray;
 
-import magia.af.ezpay.Firebase.MyFirebaseMessagingService;
+import magia.af.ezpay.Firebase.MessagingService;
 import magia.af.ezpay.Parser.LogFeed;
 import magia.af.ezpay.Parser.LogItem;
 import magia.af.ezpay.Parser.Parser;
@@ -50,21 +50,21 @@ import magia.af.ezpay.interfaces.MessageHandler;
 
 /*dd*/
 public class ChatPageActivity extends BaseActivity implements MessageHandler {
-  private String phone;
-  public String contactName;
-  private String imageUrl = "http://new.opaybot.ir";
-  RecyclerView recyclerView;
-  LogFeed feed;
-  Feed _feed;
-  LogItem item;
-  ChatPageAdapter adapter;
-  static boolean isOpen = false;
-  public RelativeLayout darkDialog;
-  public GetCard getCard;
-  public Payment payment;
-  public Request request;
-  public int fragment_status = 0;
-  int newPos;
+    private String phone;
+    public String contactName;
+    private String imageUrl = "http://new.opaybot.ir";
+    RecyclerView recyclerView;
+    LogFeed feed;
+    Feed _feed;
+    LogItem item;
+    ChatPageAdapter adapter;
+    static boolean isOpen = false;
+    public RelativeLayout darkDialog;
+    public GetCard getCard;
+    public Payment payment;
+    public Request request;
+    public int fragment_status = 0;
+    int newPos;
 
     public String description;
     public int amount;
@@ -105,11 +105,11 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
     }
 
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.chat_page_activity);
-    MyFirebaseMessagingService.mode = 1;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.chat_page_activity);
+        MessagingService.mode = 1;
 //    _feed = new Feed();
 //        service.setMessageHandler(this);
         mHandler = this;
@@ -118,14 +118,14 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
             phone = bundle.getString("phone");
 //      date = bundle.getString("date");
 //      Log.e("bundle date", date);
-      position = bundle.getInt("pos");
-      Log.i("Current Phone", phone);
-      contactName = bundle.getString("contactName");
-      Log.e("ContactName", "contactName" + contactName);
-      imageUrl = imageUrl + bundle.getString("image");
-      Log.e("image", "image" + imageUrl);
-      _feed = (Feed) bundle.getSerializable("contact");
-    }
+            position = bundle.getInt("pos");
+            Log.i("Current Phone", phone);
+            contactName = bundle.getString("contactName");
+            Log.e("ContactName", "contactName" + contactName);
+            imageUrl = imageUrl + bundle.getString("image");
+            Log.e("image", "image" + imageUrl);
+            _feed = (Feed) bundle.getSerializable("contact");
+        }
 
         date = "2050-01-01T00:00:00.000";
 
@@ -547,11 +547,11 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
         protected void onPostExecute(LogItem result) {
             if (result != null) {
 //        feed.removeItem(pos);
-        JSONArray array = new JSONArray();
-        new fillContact().execute(array.toString());
-        Log.e("POS", pos + "");
-        feed.addItem(result, 0);
-        feed.getHash().put(result.getId(), 0);
+                JSONArray array = new JSONArray();
+                new fillContact().execute(array.toString());
+                Log.e("POS", pos + "");
+                feed.addItem(result, 0);
+                feed.getHash().put(result.getId(), 0);
 //        adapter.notifyItemRangeChanged(pos,feed.getItemCount());
                 new LocalPersistence().writeObjectToFile(ChatPageActivity.this, feed, "Payment_Chat_List");
                 adapter.notifyDataSetChanged();
@@ -580,12 +580,12 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
         protected void onPostExecute(LogItem result) {
             if (result != null) {
 //        feed.removeItem(pos);
-        Log.e("POS", pos + "");
-        feed.addItem(result, 0);
-        Log.e("********", "onPostExecute: " + result.getId());
-        feed.getHash().put(result.getId(), 0);
-        JSONArray array = new JSONArray();
-        new fillContact().execute(array.toString());
+                Log.e("POS", pos + "");
+                feed.addItem(result, 0);
+                Log.e("********", "onPostExecute: " + result.getId());
+                feed.getHash().put(result.getId(), 0);
+                JSONArray array = new JSONArray();
+                new fillContact().execute(array.toString());
 //        adapter.notifyItemRangeChanged(pos,feed.getItemCount());
                 new LocalPersistence().writeObjectToFile(ChatPageActivity.this, feed, "Payment_Chat_List");
                 adapter.notifyDataSetChanged();
@@ -670,22 +670,22 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
 
         }
 
-    @Override
-    protected void onPostExecute(Boolean result) {
-      if (result != null) {
-        Log.e("TEst", "onClick: " + result);
-        JSONArray array = new JSONArray();
-        new fillContact().execute(array.toString());
-        if (result) {
-          Log.e("TEst", "onClick: " + pos);
-          feed.getItem(pos).setStatus(true);
-          adapter.notifyDataSetChanged();
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (result != null) {
+                Log.e("TEst", "onClick: " + result);
+                JSONArray array = new JSONArray();
+                new fillContact().execute(array.toString());
+                if (result) {
+                    Log.e("TEst", "onClick: " + pos);
+                    feed.getItem(pos).setStatus(true);
+                    adapter.notifyDataSetChanged();
+                }
+            } else {
+                Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
+            }
         }
-      } else {
-        Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
-      }
     }
-  }
 
     private class DeletePaymentRequestWithID extends AsyncTask<Integer, Boolean, Boolean> {
         int pos;
@@ -708,22 +708,22 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
 
         }
 
-    @Override
-    protected void onPostExecute(Boolean result) {
-      if (result != null) {
-        Log.e("TEst", "onClick: " + result);
-        JSONArray array = new JSONArray();
-        new fillContact().execute(array.toString());
-        if (result) {
-          Log.e("TEst", "onClick: " + pos);
-          feed.getItem(pos).setStatus(true);
-          adapter.notifyDataSetChanged();
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (result != null) {
+                Log.e("TEst", "onClick: " + result);
+                JSONArray array = new JSONArray();
+                new fillContact().execute(array.toString());
+                if (result) {
+                    Log.e("TEst", "onClick: " + pos);
+                    feed.getItem(pos).setStatus(true);
+                    adapter.notifyDataSetChanged();
+                }
+            } else {
+                Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
+            }
         }
-      } else {
-        Toast.makeText(ChatPageActivity.this, "مشکل در برقراری ارتباط", Toast.LENGTH_SHORT).show();
-      }
     }
-  }
 
     private class getChatLog extends AsyncTask<String, Void, LogFeed> {
 
@@ -1171,20 +1171,20 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
 //  }
 
 
-  @Override
-  public void onBackPressed() {
+    @Override
+    public void onBackPressed() {
 //    new fillContact().execute("[]");
-    Intent intent = new Intent(ChatPageActivity.this, MainActivity.class);
-    intent.putExtra("contact", _feed);
-    startActivity(intent);
-    finish();
-    super.onBackPressed();
-  }
+        Intent intent = new Intent(ChatPageActivity.this, MainActivity.class);
+        intent.putExtra("contact", _feed);
+        startActivity(intent);
+        finish();
+        super.onBackPressed();
+    }
 
     private String getDividedToman(Long price) {
         if (price == 0) {
             return price + "";
-        }else if (price < 1000) {
+        } else if (price < 1000) {
             return price + "";
         }
         StringBuilder stringBuilder = new StringBuilder();
@@ -1219,31 +1219,27 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
                 if (deleteState) {
                     Log.e("EQ2", "run: " + logItem.getCancelId());
                     Log.e("EQ2", "run: " + feed.getHash());
-                    for (int i = 0; i < feed.getHash().size(); i++) {
-//            Log.e("++++++++++", "run: " + feed.getItem(i).getId());
-//            Log.e("***********", "run: " + feed.getHash().get(feed.getItem(i).getId()));
-          }
-          try {
-            newPos = feed.getHash().get(logItem.getCancelId());
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
-          new DeletePaymentRequestWithID(newPos).execute(logItem.getCancelId());
-          adapter.notifyDataSetChanged();
-        } else {
-          Log.e("chatMemberMobile", "run: " + chatMemberMobile);
-          Log.e("phone", "run: " + phone);
-          Log.e("TTTT", "handleMessage pv: ");
-          feed.getHash().put(logItem.getId(), 0);
-          feed.addItem(logItem, 0);
-          JSONArray array = new JSONArray();
-          new fillContact().execute(array.toString());
-          //Update
-          adapter.notifyDataSetChanged();
-        }
-      }
-    });
-  }
+                    try {
+                        newPos = feed.getHash().get(logItem.getCancelId());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    new DeletePaymentRequestWithID(newPos).execute(logItem.getCancelId());
+                    adapter.notifyDataSetChanged();
+                } else {
+                    Log.e("chatMemberMobile", "run: " + chatMemberMobile);
+                    Log.e("phone", "run: " + phone);
+                    Log.e("TTTT", "handleMessage pv: ");
+                    feed.getHash().put(logItem.getId(), 0);
+                    feed.addItem(logItem, 0);
+                    JSONArray array = new JSONArray();
+                    new fillContact().execute(array.toString());
+                    //Update
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        });
+    }
 
     public void hideKey(View view) {
         if (view != null) {
@@ -1252,39 +1248,39 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
         }
     }
 
-  private boolean validate_number(String number) {
-    for (int i = 0; i < number.length(); i++) {
-      if (number.charAt(i) != '0' && number.charAt(i) != '1' && number.charAt(i) != '2' && number.charAt(i) != '3'
-        && number.charAt(i) != '4' && number.charAt(i) != '5' && number.charAt(i) != '6' && number.charAt(i) != '7'
-        && number.charAt(i) != '8' && number.charAt(i) != '9' && number.charAt(i) != '-') {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  public class fillContact extends AsyncTask<String, Void, Feed> {
-
-    @Override
-    protected void onPreExecute() {
-      super.onPreExecute();
+    private boolean validate_number(String number) {
+        for (int i = 0; i < number.length(); i++) {
+            if (number.charAt(i) != '0' && number.charAt(i) != '1' && number.charAt(i) != '2' && number.charAt(i) != '3'
+                    && number.charAt(i) != '4' && number.charAt(i) != '5' && number.charAt(i) != '6' && number.charAt(i) != '7'
+                    && number.charAt(i) != '8' && number.charAt(i) != '9' && number.charAt(i) != '-') {
+                return false;
+            }
+        }
+        return true;
     }
 
-    @Override
-    protected Feed doInBackground(String... params) {
-      Parser parser = new Parser(getSharedPreferences("EZpay", 0).getString("token", ""));
-      return parser.checkContactListWithGroup(params[0]);
-    }
+    public class fillContact extends AsyncTask<String, Void, Feed> {
 
-    @Override
-    protected void onPostExecute(Feed result) {
-      if (result != null) {
-        _feed = result;
-      } else {
-        Toast.makeText(ChatPageActivity.this, "problem in connection!", Toast.LENGTH_SHORT).show();
-      }
-      super.onPostExecute(result);
-    }
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
 
-  }
+        @Override
+        protected Feed doInBackground(String... params) {
+            Parser parser = new Parser(getSharedPreferences("EZpay", 0).getString("token", ""));
+            return parser.checkContactListWithGroup(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Feed result) {
+            if (result != null) {
+                _feed = result;
+            } else {
+                Toast.makeText(ChatPageActivity.this, "problem in connection!", Toast.LENGTH_SHORT).show();
+            }
+            super.onPostExecute(result);
+        }
+
+    }
 }

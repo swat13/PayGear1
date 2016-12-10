@@ -30,16 +30,13 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
-import java.util.ArrayList;
-
-import magia.af.ezpay.Firebase.MyFirebaseMessagingService;
+import magia.af.ezpay.Firebase.MessagingService;
 import magia.af.ezpay.Parser.LogItem;
 import magia.af.ezpay.Parser.MembersFeed;
 import magia.af.ezpay.Parser.MembersItem;
 import magia.af.ezpay.Parser.Parser;
 import magia.af.ezpay.Parser.Feed;
 import magia.af.ezpay.Parser.LogFeed;
-import magia.af.ezpay.Parser.Item;
 import magia.af.ezpay.Utilities.LocalPersistence;
 import magia.af.ezpay.helper.CalendarConversion;
 import magia.af.ezpay.helper.NumberTextWatcher;
@@ -90,12 +87,11 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
     private boolean cancelState;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_chat_page);
-        MyFirebaseMessagingService.mode = 2;
+        MessagingService.mode = 2;
         feed = new LogFeed();
         mHandler = this;
         Bundle bundle = getIntent().getExtras();
@@ -1216,8 +1212,6 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
                 if (deleteState) {
                     Log.e("EQ2", "run: " + logItem.getCancelId());
                     Log.e("EQ2", "run: " + feed.getHash());
-                    for (int i = 0; i < feed.getHash().size(); i++) {
-                    }
                     try {
                         newPos = feed.getHash().get(logItem.getCancelId());
                     } catch (Exception e) {
@@ -1225,7 +1219,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
                     }
                     new GroupChatPageActivity.DeletePaymentRequestWithID(newPos).execute(logItem.getCancelId());
                     adapter.notifyDataSetChanged();
-                } else if (chatMemberMobile.equals(phone) || logItem.getfMobile().equals(phone)) {
+                } else {
                     Log.e("chatMemberMobile", "run: " + chatMemberMobile);
                     Log.e("phone", "run: " + phone);
                     Log.e("TTTT", "handleMessage pv: ");
@@ -1234,7 +1228,6 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
                     feed.getHash().put(logItem.getId(), 0);
                     feed.addItem(logItem, 0);
                     adapter.notifyDataSetChanged();
-
                 }
             }
         });
@@ -1243,17 +1236,11 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
 
     @Override
     public void onBackPressed() {
-
-//    new fillContact().execute("[]");
         Intent intent = new Intent(GroupChatPageActivity.this, MainActivity.class);
         intent.putExtra("contact", _feed);
         startActivity(intent);
         finish();
         super.onBackPressed();
-//    Intent intent = new Intent(GroupChatPageActivity.this , MainActivity.class);
-//    startActivity(intent);
-//    super.onBackPressed();
-//    finish();
     }
 
     public class fillContact extends AsyncTask<String, Void, Feed> {

@@ -34,7 +34,7 @@ import java.util.ArrayList;
 
 import magia.af.ezpay.ChatPageActivity;
 import magia.af.ezpay.ChooseMemberActivity;
-import magia.af.ezpay.Firebase.MyFirebaseMessagingService;
+import magia.af.ezpay.Firebase.MessagingService;
 import magia.af.ezpay.GroupChatPageActivity;
 import magia.af.ezpay.MainActivity;
 import magia.af.ezpay.Parser.GroupItem;
@@ -74,18 +74,13 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
         return new FriendsList();
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-    }
-
     public static MessageHandler informNotif() {
         return mHandler;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        MyFirebaseMessagingService.mode = 3;
+        MessagingService.mode = 3;
         mHandler = this;
         View v = inflater.inflate(R.layout.activity_friend_list, container, false);
         ((MainActivity) getActivity()).fragment_status = 2;
@@ -135,12 +130,10 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
         return v;
     }
 
-
     @Override
     public void onClick(Item item) {
 
         if (item.getGroupItem() != null) {
-            Log.e("In GP", "000000");
             Intent goToChatPageActivity = new Intent(getActivity(), GroupChatPageActivity.class);
             GroupItem groupItem = item.getGroupItem();
             MembersFeed membersFeed = groupItem.getMembersFeed();
@@ -151,7 +144,6 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
             goToChatPageActivity.putExtra("contact", _feed);
             startActivityForResult(goToChatPageActivity, 10);
         } else {
-            Log.e("In PV", "1111111");
             Intent goToChatPageActivity = new Intent(getActivity(), ChatPageActivity.class);
             goToChatPageActivity.putExtra("phone", item.getTelNo());
             goToChatPageActivity.putExtra("contactName", item.getTitle());
@@ -161,8 +153,6 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
             goToChatPageActivity.putExtra("contact", _feed);
             startActivityForResult(goToChatPageActivity, 10);
         }
-
-
     }
 
     @Override
@@ -298,7 +288,6 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
 
     }
 
-
     private String getDividedToman(Long price) {
         if (price == 0) {
             return price + "";
@@ -326,49 +315,16 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-//    new ComparingContactWithDatabase().execute();
+    public void onResume() {
+        super.onResume();
         new fillContact().execute("[]");
-        if (adapter != null) {
-            adapter.notifyDataSetChanged();
-        }
-        super.onViewCreated(view, savedInstanceState);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
     public void onAttach(Context context) {
-//    new ComparingContactWithDatabase().execute();
-        new fillContact().execute("[]");
-
         super.onAttach(context);
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-//    new ComparingContactWithDatabase().execute();
-        new fillContact().execute("[]");
-        if (adapter != null) {
-            adapter.notifyDataSetChanged();
-        }
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-//    new ComparingContactWithDatabase().execute();
-        new fillContact().execute("[]");
-        if (adapter != null) {
-            adapter.notifyDataSetChanged();
-        }
-        super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
-    public void onResume() {
-//    new ComparingContactWithDatabase().execute();
-        new fillContact().execute("[]");
-        adapter.notifyDataSetChanged();
-        super.onResume();
+        Log.e("$$$$$$$$$", "onResume: 0000000");
     }
 
     public String newContact(JSONArray jsonArray) {
