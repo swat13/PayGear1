@@ -35,7 +35,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
 
     public RelativeLayout darkDialog, waitingDialog;
-    public FriendsList friendsList;
+    FriendsList friendsList;
     public BarCodeGet barCodeGet;
     public LinearLayout friendsLayout, barcodeReader, profileLayout, radarLayout;
     public int fragment_status = 0;
@@ -61,13 +61,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         imageView = (ImageView) findViewById(R.id.image_view);
 
 
-//    ContactDatabase database = new ContactDatabase(this);
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
+            Log.e("Ok","In Bundle");
             _ChatList_feed = (ChatListFeed) bundle.getSerializable("contact");//not null at this line
 
             FragmentManager fm = getSupportFragmentManager();
             if (fm != null) {
+                Log.e("Ok","In Fm");
+
                 friendsList = new FriendsList().getInstance(_ChatList_feed);
                 fm.beginTransaction().replace(R.id.detail_fragment, friendsList).addToBackStack(null).commit();
             }
@@ -75,60 +77,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             JSONArray array = new JSONArray();
             new fillContact().execute(array.toString());
         }
-//    for (int i = 0; i < _ChatList_feed.getItemCount(); i++) {
-//      Log.e("MAin", "onCreate: " + _ChatList_feed.getItem(i).getTitle());
-//    }
-//    Log.e("Main", "Before calling locationservice");
         startService(new Intent(this, LocationService.class));
-
-
-//    manager = (LocationManager) getSystemService(LOCATION_SERVICE);
-//    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//      // TODO: Consider calling
-//      //    ActivityCompat#requestPermissions
-//      // here to request the missing permissions, and then overriding
-//      //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//      //                                          int[] grantResults)
-//      // to handle the case where the user grants the permission. See the documentation
-//      // for ActivityCompat#requestPermissions for more details.
-//      return;
-//    }
-//    Location location = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//    if (location == null) {
-//      location = manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-//      Log.e("TestNN", "showMyLocation: ");
-//    }
-////
-//    if (location != null) {
-//      Log.e("TestN", "showMyLocation: ");
-//      showMyLocation(location);
-//    } else {
-//      Log.e("TestN2", "showMyLocation: ");
-//    }
-//    LocationListener locationListener = new LocationListener() {
-//      @Override
-//      public void onLocationChanged(Location location) {
-//        Log.e("TestLL", "showMyLocation: ");
-//        showMyLocation(location);
-//        Log.e("TestDD", "showMyLocation: ");
-//      }
-//
-//      @Override
-//      public void onStatusChanged(String provider, int status, Bundle extras) {
-//
-//      }
-//
-//      @Override
-//      public void onProviderEnabled(String provider) {
-//
-//      }
-//
-//      @Override
-//      public void onProviderDisabled(String provider) {
-//
-//      }
-//    };
-//    manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
 
         if (getSharedPreferences("EZpay", 0).contains("push"))
             new AsyncPushToken().execute(getSharedPreferences("EZpay", 0).getString("push", ""));
@@ -140,20 +89,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
 
     }
-
-//  private void showMyLocation(final Location location) {
-//    Log.e("Test", "showMyLocation: ");
-//    Timer timer = new Timer();
-//    timer.scheduleAtFixedRate(new TimerTask() {
-//      @Override
-//      public void run() {
-//        new PostLocation(MainActivity.this).execute(location.getLatitude(), location.getLongitude());
-//      }
-//    }, 0L, 10000);
-//  }
-
-
-
 
     @Override
     protected void onDestroy() {

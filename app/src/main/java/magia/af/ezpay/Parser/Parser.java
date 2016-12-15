@@ -1306,23 +1306,7 @@ public class Parser {
 
     }
 
-    public String changeUserImage(File uploadFile1) throws IOException {
-
-        int size = (int) uploadFile1.length();
-        byte[] bytes = new byte[size];
-        try {
-            BufferedInputStream buf = new BufferedInputStream(new FileInputStream(uploadFile1));
-            buf.read(bytes, 0, bytes.length);
-            buf.close();
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        String base64 = Base64.encodeToString(bytes, Base64.NO_WRAP);
-
+    public String changeUserImage(String uploadFile1) throws IOException {
 
         URL url = new URL(mainUrl + "api/account/setPhotoBase64");
         Log.e("Parser", "Url: " + url);
@@ -1340,7 +1324,7 @@ public class Parser {
 
 
         //writer.write(base64);
-        writer.write("{\"data\":\"" + base64 + "\"}");
+        writer.write("{\"data\":\"" + uploadFile1 + "\"}");
         writer.flush();
         writer.close();
         os.close();
@@ -1376,22 +1360,9 @@ public class Parser {
 
     }
 
-    public String changeGroupImage(File uploadFile1, int id) throws IOException {
+    public String changeGroupImage(String uploadFile1, String id) throws IOException {
 
-        int size = (int) uploadFile1.length();
-        byte[] bytes = new byte[size];
-        try {
-            BufferedInputStream buf = new BufferedInputStream(new FileInputStream(uploadFile1));
-            buf.read(bytes, 0, bytes.length);
-            buf.close();
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        String base64 = Base64.encodeToString(bytes, Base64.NO_WRAP);
+
 
 
         URL url = new URL(mainUrl + "api/Group/" + id + "/SetPhotoBase64");
@@ -1410,7 +1381,7 @@ public class Parser {
 
 
         //writer.write(base64);
-        writer.write("{\"data\":\"" + base64 + "\"}");
+        writer.write("{\"data\":\"" + uploadFile1 + "\"}");
         writer.flush();
         writer.close();
         os.close();

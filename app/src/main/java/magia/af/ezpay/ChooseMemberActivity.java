@@ -92,7 +92,6 @@ public class ChooseMemberActivity extends BaseActivity {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("Phones", phone.toString());
                 JSONArray jsonArray = new JSONArray();
                 for (int i = 0; i < phone.size(); i++) {
                     try {

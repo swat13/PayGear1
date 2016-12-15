@@ -1,18 +1,24 @@
 package magia.af.ezpay;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -30,6 +36,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
+import java.io.ByteArrayOutputStream;
+
 import magia.af.ezpay.Firebase.MessagingService;
 import magia.af.ezpay.Parser.PayLogItem;
 import magia.af.ezpay.Parser.MembersFeed;
@@ -39,6 +47,7 @@ import magia.af.ezpay.Parser.ChatListFeed;
 import magia.af.ezpay.Parser.PayLogFeed;
 import magia.af.ezpay.Utilities.LocalPersistence;
 import magia.af.ezpay.helper.CalendarConversion;
+import magia.af.ezpay.helper.ImageMaker;
 import magia.af.ezpay.helper.NumberTextWatcher;
 import magia.af.ezpay.interfaces.MessageHandler;
 
@@ -127,6 +136,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         setGroupPhoto();
         txtGroupTitle = (TextView) findViewById(R.id.groupTitle);
         txtGroupTitle.setText(groupTitle);
+
 
         ImageButton btnBack = (ImageButton) findViewById(R.id.btn_back);
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -1279,7 +1289,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
                     }
                     new GroupChatPageActivity.DeletePaymentRequestWithID(newPos).execute(payLogItem.getCancelId());
                     adapter.notifyDataSetChanged();
-                } else if (payLogItem.getId() == groupId){
+                } else if (payLogItem.getId() == groupId) {
 
                     new fillContact().execute("[]");
                     feed.getHash().put(payLogItem.getId(), 0);
@@ -1298,11 +1308,11 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         Intent intent = new Intent(GroupChatPageActivity.this, MainActivity.class);
         intent.putExtra("contact", _ChatList_feed);
         startActivity(intent);
         finish();
-        super.onBackPressed();
     }
 
     public class fillContact extends AsyncTask<String, Void, ChatListFeed> {

@@ -1,22 +1,17 @@
 package magia.af.ezpay;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Rect;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
@@ -24,6 +19,7 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,8 +37,6 @@ import org.json.JSONException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -52,6 +46,8 @@ import magia.af.ezpay.Parser.GroupItem;
 import magia.af.ezpay.Parser.MembersItem;
 import magia.af.ezpay.Parser.Parser;
 import magia.af.ezpay.helper.ContactDatabase;
+import magia.af.ezpay.helper.ExifUtils;
+import magia.af.ezpay.helper.ImageMaker;
 
 public class CreateGroupActivity extends BaseActivity {
 
@@ -85,8 +81,8 @@ public class CreateGroupActivity extends BaseActivity {
             checkPermissions();
         }
         rssFeed = (ArrayList<ChatListItem>) getIntent().getSerializableExtra("contact");
-        rssFeed2= (ArrayList<ChatListItem>) getIntent().getSerializableExtra("contact2");
-        _ChatList_Feed= (ChatListFeed) getIntent().getSerializableExtra("contact3");
+        rssFeed2 = (ArrayList<ChatListItem>) getIntent().getSerializableExtra("contact2");
+        _ChatList_Feed = (ChatListFeed) getIntent().getSerializableExtra("contact3");
         for (int i = 0; i < rssFeed.size(); i++) {
             Log.e(TAG, "onCreate: " + rssFeed.get(i).getTitle());
             Log.e(TAG, "onCreate: " + rssFeed.get(i).getTelNo());
@@ -99,7 +95,7 @@ public class CreateGroupActivity extends BaseActivity {
 //    database = new ContactDatabase(this);
 //    databaseChatListFeed = database.getInNetworkUserName();
         groupMember = new ChatListFeed();
-        membersItem=new MembersItem();
+        membersItem = new MembersItem();
         try {
             jsonArray = new JSONArray(json);
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -164,71 +160,49 @@ public class CreateGroupActivity extends BaseActivity {
                 if (groupTitle.getText().toString().length() < 1) {
                     Toast.makeText(CreateGroupActivity.this, "لطفا عنوان گروه را وارد کنید", Toast.LENGTH_SHORT).show();
                 } else {
-                    Log.e("JSONArray", "onClick: " + jsonArray.toString());
+                    imageView.setEnabled(false);
                     new CreateGroup(groupTitle.getText().toString(), jsonArray).execute();
                 }
             }
         });
     }
 
-    private File onCaptureImageResult(Intent data) {
-        thumbnail = (Bitmap) data.getExtras().get("data");
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        File destination = new File(Environment.getExternalStorageDirectory(),
-                System.currentTimeMillis() + ".jpg");
-        FileOutputStream fo;
-        try {
-            destination.createNewFile();
-            fo = new FileOutputStream(destination);
-            fo.write(bytes.toByteArray());
-            fo.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+    private String onCaptureImageResult(Intent data) {
+        if (data != null) {
+
+            thumbnail = (Bitmap) data.getExtras().get("data");
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+
+
+            byte[] byteArray = bytes.toByteArray();
+            String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+            return encoded;
+
         }
-        return destination;
+        return null;
+
     }
 
 
+
     @SuppressWarnings("deprecation")
-    private File onSelectFromGalleryResult(Intent data) {
+    private String onSelectFromGalleryResult(Intent data) {
         thumbnail = null;
         if (data != null) {
-            try {
-                thumbnail = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
-                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
-                File destination = new File(Environment.getExternalStorageDirectory(),
-                        System.currentTimeMillis() + ".jpg");
-                FileOutputStream fo;
-                try {
-                    destination.createNewFile();
-                    fo = new FileOutputStream(destination);
-                    fo.write(bytes.toByteArray());
-                    fo.close();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return destination;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
+            ImageMaker imageMaker=new ImageMaker(getApplicationContext(),data);
+            return imageMaker.onSelectFromGalleryResult();
         }
         return null;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
         Log.e("11111111", "onActivityResult: 0000" + resultCode);
         Log.e("22222222", "onActivityResult: 1111" + requestCode);
         if (resultCode == Activity.RESULT_OK) {
-//            Log.e(TAG, "onActivityResult: "+imageReturnedIntent.getData() );
-//            Uri tempUri = getImageUri(getActivity(), bitmap);
+
             switch (requestCode) {
                 case 0:
                     this.mData = data;
@@ -246,14 +220,10 @@ public class CreateGroupActivity extends BaseActivity {
                                 }
                             });
                     flag = 0;
-//          new AsyncInsertUserImage().execute(onCaptureImageResult(data));
-//          new CreateGroup(groupTitle.getText().toString(),jsonArray).execute();
                     break;
                 case 1:
                     this.mData = data;
                     flag = 1;
-//          new CreateGroup(groupTitle.getText().toString(),jsonArray).execute();
-//          new AsyncInsertUserImage().execute(onSelectFromGalleryResult(data));
                     Glide.with(CreateGroupActivity.this)
                             .load(onSelectFromGalleryResult(data))
                             .asBitmap()
@@ -278,7 +248,7 @@ public class CreateGroupActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Intent intent = new Intent(this, ChooseMemberActivity.class);
-        intent.putExtra("contact",rssFeed2);
+        intent.putExtra("contact", rssFeed2);
         startActivity(intent);
         finish();
     }
@@ -351,11 +321,10 @@ public class CreateGroupActivity extends BaseActivity {
         @Override
         protected void onPostExecute(GroupItem result) {
             if (result != null) {
-                Log.e(TAG, "onPostExecute: " + result.getGroupTitle());
                 groupItem = result;
                 if (flag == 0) {
                     if (mData != null) {
-                        new AsyncInsertUserImage(onCaptureImageResult(mData), result.getGroupId()).execute();
+                        new AsyncInsertGpImage().execute(onCaptureImageResult(mData), result.getGroupId()+"");
                     } else {
                         Intent intent = new Intent(CreateGroupActivity.this, GroupChatPageActivity.class);
                         intent.putExtra("title", groupItem.getGroupTitle());
@@ -368,7 +337,7 @@ public class CreateGroupActivity extends BaseActivity {
                     }
                 } else if (flag == 1) {
                     if (mData != null) {
-                        new AsyncInsertUserImage(onSelectFromGalleryResult(mData), result.getGroupId()).execute();
+                        new AsyncInsertGpImage().execute(onSelectFromGalleryResult(mData), result.getGroupId()+"");
                     } else {
                         Intent intent = new Intent(CreateGroupActivity.this, GroupChatPageActivity.class);
                         intent.putExtra("title", groupItem.getGroupTitle());
@@ -380,51 +349,16 @@ public class CreateGroupActivity extends BaseActivity {
                         finish();
                     }
                 }
-            } else
+            } else {
+                imageView.setEnabled(true);
                 Toast.makeText(CreateGroupActivity.this, "problem in connection!", Toast.LENGTH_SHORT).show();
+
+            }
             super.onPostExecute(result);
         }
     }
 
-//    private class fillContact extends AsyncTask<Void, Void, ChatListFeed> {
-//
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//        }
-//
-//        @Override
-//        protected ChatListFeed doInBackground(Void... params) {
-//            Parser parser = new Parser(getSharedPreferences("EZpay", 0).getString("token", ""));
-//            return parser.checkContactListWithGroup(new GetContact().getContact(CreateGroupActivity.this));
-//
-//        }
-//
-//        @Override
-//        protected void onPostExecute(ChatListFeed result) {
-//            if (result != null) {
-//                if (flag == 0) {
-//                    new AsyncInsertUserImage(onCaptureImageResult(mData), result.getItem(result.getItemCount() - 1).getGroupId()).execute();
-//                } else if (flag == 1) {
-//                    new AsyncInsertUserImage(onSelectFromGalleryResult(mData), result.getItem(result.getItemCount() - 1).getGroupId()).execute();
-//                }
-//                startActivity(new Intent(CreateGroupActivity.this, CreateGroupActivity.class).putExtra("contact", result));
-//                finish();
-//            } else
-//                Toast.makeText(CreateGroupActivity.this, "problem in connection!", Toast.LENGTH_SHORT).show();
-//        }
-//
-//    }
-
-    public class AsyncInsertUserImage extends AsyncTask<File, Void, String> {
-
-        File file;
-        int id;
-
-        public AsyncInsertUserImage(File file, int id) {
-            this.file = file;
-            this.id = id;
-        }
+    public class AsyncInsertGpImage extends AsyncTask<String, Void, String> {
 
         @Override
         protected void onPreExecute() {
@@ -432,10 +366,10 @@ public class CreateGroupActivity extends BaseActivity {
         }
 
         @Override
-        protected String doInBackground(File... params) {
+        protected String doInBackground(String... params) {
             Parser parser = new Parser(getSharedPreferences("EZpay", 0).getString("token", ""));
             try {
-                return parser.changeGroupImage(file, id);
+                return parser.changeGroupImage(params[0], params[1]);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -474,190 +408,8 @@ public class CreateGroupActivity extends BaseActivity {
         }
     }
 
-    public Bitmap getRoundedShape(Bitmap scaleBitmapImage) {
-        int targetWidth = 300;
-        int targetHeight = 300;
-        Bitmap targetBitmap = Bitmap.createBitmap(targetWidth,
-                targetHeight, Bitmap.Config.ARGB_8888);
-
-        Canvas canvas = new Canvas(targetBitmap);
-        Path path = new Path();
-        path.addCircle(((float) targetWidth - 1) / 2,
-                ((float) targetHeight - 1) / 2,
-                (Math.min(((float) targetWidth),
-                        ((float) targetHeight)) / 2),
-                Path.Direction.CCW);
-
-        canvas.clipPath(path);
-        Bitmap sourceBitmap = scaleBitmapImage;
-        canvas.drawBitmap(sourceBitmap,
-                new Rect(0, 0, sourceBitmap.getWidth(),
-                        sourceBitmap.getHeight()),
-                new Rect(0, 0, targetWidth, targetHeight), null);
-        return targetBitmap;
-    }
-
-    public String compressImage(String imageUri) {
-
-        String filePath = getRealPathFromURI(imageUri);
-        Bitmap scaledBitmap = null;
-
-        BitmapFactory.Options options = new BitmapFactory.Options();
-
-//      by setting this field as true, the actual bitmap pixels are not loaded in the memory. Just the bounds are loaded. If
-//      you try the use the bitmap here, you will get null.
-        options.inJustDecodeBounds = true;
-        Bitmap bmp = BitmapFactory.decodeFile(filePath, options);
-
-        int actualHeight = options.outHeight;
-        int actualWidth = options.outWidth;
-
-//      max Height and width values of the compressed image is taken as 816x612
-
-        float maxHeight = 816.0f;
-        float maxWidth = 612.0f;
-        float imgRatio = actualWidth / actualHeight;
-        float maxRatio = maxWidth / maxHeight;
-
-//      width and height values are set maintaining the aspect ratio of the image
-
-        if (actualHeight > maxHeight || actualWidth > maxWidth) {
-            if (imgRatio < maxRatio) {
-                imgRatio = maxHeight / actualHeight;
-                actualWidth = (int) (imgRatio * actualWidth);
-                actualHeight = (int) maxHeight;
-            } else if (imgRatio > maxRatio) {
-                imgRatio = maxWidth / actualWidth;
-                actualHeight = (int) (imgRatio * actualHeight);
-                actualWidth = (int) maxWidth;
-            } else {
-                actualHeight = (int) maxHeight;
-                actualWidth = (int) maxWidth;
-
-            }
-        }
-
-//      setting inSampleSize value allows to load a scaled down version of the original image
-
-        options.inSampleSize = calculateInSampleSize(options, actualWidth, actualHeight);
-
-//      inJustDecodeBounds set to false to load the actual bitmap
-        options.inJustDecodeBounds = false;
-
-//      this options allow android to claim the bitmap memory if it runs low on memory
-        options.inPurgeable = true;
-        options.inInputShareable = true;
-        options.inTempStorage = new byte[16 * 1024];
-
-        try {
-//          load the bitmap from its path
-            bmp = BitmapFactory.decodeFile(filePath, options);
-        } catch (OutOfMemoryError exception) {
-            exception.printStackTrace();
-
-        }
-        try {
-            scaledBitmap = Bitmap.createBitmap(actualWidth, actualHeight, Bitmap.Config.ARGB_8888);
-        } catch (OutOfMemoryError exception) {
-            exception.printStackTrace();
-        }
-
-        float ratioX = actualWidth / (float) options.outWidth;
-        float ratioY = actualHeight / (float) options.outHeight;
-        float middleX = actualWidth / 2.0f;
-        float middleY = actualHeight / 2.0f;
-
-        Matrix scaleMatrix = new Matrix();
-        scaleMatrix.setScale(ratioX, ratioY, middleX, middleY);
-
-        Canvas canvas = new Canvas(scaledBitmap);
-        canvas.setMatrix(scaleMatrix);
-        canvas.drawBitmap(bmp, middleX - bmp.getWidth() / 2, middleY - bmp.getHeight() / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
-
-//      check the rotation of the image and display it properly
-        ExifInterface exif;
-        try {
-            exif = new ExifInterface(filePath);
-
-            int orientation = exif.getAttributeInt(
-                    ExifInterface.TAG_ORIENTATION, 0);
-            Log.d("EXIF", "Exif: " + orientation);
-            Matrix matrix = new Matrix();
-            if (orientation == 6) {
-                matrix.postRotate(90);
-                Log.d("EXIF", "Exif: " + orientation);
-            } else if (orientation == 3) {
-                matrix.postRotate(180);
-                Log.d("EXIF", "Exif: " + orientation);
-            } else if (orientation == 8) {
-                matrix.postRotate(270);
-                Log.d("EXIF", "Exif: " + orientation);
-            }
-            scaledBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0,
-                    scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix,
-                    true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        FileOutputStream out = null;
-        String filename = getFilename();
-        try {
-            out = new FileOutputStream(filename);
-
-//          write the compressed bitmap at the destination specified by filename.
-            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return filename;
-
-    }
-
     public void checkPermissions() {
         ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, 0);
     }
 
-    public String getFilename() {
-        File file = new File(Environment.getExternalStorageDirectory().getPath(), "MyFolder/Images");
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-        String uriSting = (file.getAbsolutePath() + "/" + System.currentTimeMillis() + ".jpg");
-        return uriSting;
-
-    }
-
-    private String getRealPathFromURI(String contentURI) {
-        Uri contentUri = Uri.parse(contentURI);
-        Cursor cursor = getContentResolver().query(contentUri, null, null, null, null);
-        if (cursor == null) {
-            return contentUri.getPath();
-        } else {
-            cursor.moveToFirst();
-            int index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-            return cursor.getString(index);
-        }
-    }
-
-    public int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-            final int heightRatio = Math.round((float) height / (float) reqHeight);
-            final int widthRatio = Math.round((float) width / (float) reqWidth);
-            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
-        }
-        final float totalPixels = width * height;
-        final float totalReqPixelsCap = reqWidth * reqHeight * 2;
-        while (totalPixels / (inSampleSize * inSampleSize) > totalReqPixelsCap) {
-            inSampleSize++;
-        }
-
-        return inSampleSize;
-    }
 }
