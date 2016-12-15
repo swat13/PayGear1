@@ -1,4 +1,4 @@
-package magia.af.ezpay.fragments;
+package magia.af.ezpay.Fragments;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -177,7 +177,6 @@ public class Request extends Fragment {
 
     @Override
     public void onDestroy() {
-        Log.e("((((((((111111111", "onDestroy: ");
         super.onDestroy();
 
 

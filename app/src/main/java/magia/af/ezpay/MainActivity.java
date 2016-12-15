@@ -19,12 +19,12 @@ import org.json.JSONArray;
 
 import java.io.File;
 
+import magia.af.ezpay.Parser.ChatListFeed;
 import magia.af.ezpay.Parser.Parser;
-import magia.af.ezpay.Parser.Feed;
-import magia.af.ezpay.fragments.BarCodeGet;
-import magia.af.ezpay.fragments.FriendsList;
-import magia.af.ezpay.fragments.Profile;
-import magia.af.ezpay.fragments.Radar;
+import magia.af.ezpay.Fragments.BarCodeGet;
+import magia.af.ezpay.Fragments.FriendsList;
+import magia.af.ezpay.Fragments.Profile;
+import magia.af.ezpay.Fragments.Radar;
 import magia.af.ezpay.location.LocationService;
 
 /**
@@ -39,7 +39,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public BarCodeGet barCodeGet;
     public LinearLayout friendsLayout, barcodeReader, profileLayout, radarLayout;
     public int fragment_status = 0;
-    Feed _feed;
+    ChatListFeed _ChatList_feed;
     public String description;
     public Radar radar;
     public int amount;
@@ -64,22 +64,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //    ContactDatabase database = new ContactDatabase(this);
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            _feed = (Feed) bundle.getSerializable("contact");
+            _ChatList_feed = (ChatListFeed) bundle.getSerializable("contact");//not null at this line
 
             FragmentManager fm = getSupportFragmentManager();
             if (fm != null) {
-                friendsList = new FriendsList().getInstance(_feed);
+                friendsList = new FriendsList().getInstance(_ChatList_feed);
                 fm.beginTransaction().replace(R.id.detail_fragment, friendsList).addToBackStack(null).commit();
             }
         } else {
             JSONArray array = new JSONArray();
             new fillContact().execute(array.toString());
         }
-//    for (int i = 0; i < _feed.getItemCount(); i++) {
-//      Log.e("MAin", "onCreate: " + _feed.getItem(i).getTitle());
+//    for (int i = 0; i < _ChatList_feed.getItemCount(); i++) {
+//      Log.e("MAin", "onCreate: " + _ChatList_feed.getItem(i).getTitle());
 //    }
 //    Log.e("Main", "Before calling locationservice");
-//        startService(new Intent(this, LocationService.class));
+        startService(new Intent(this, LocationService.class));
 
 
 //    manager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -135,7 +135,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         FragmentManager fm = getSupportFragmentManager();
         if (fm != null) {
-            friendsList = new FriendsList().getInstance(_feed);
+            friendsList = new FriendsList().getInstance(_ChatList_feed);
             fm.beginTransaction().replace(R.id.detail_fragment, friendsList).addToBackStack(null).commit();
         }
 
@@ -153,6 +153,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //  }
 
 
+
+
     @Override
     protected void onDestroy() {
         startService(new Intent(this, LocationService.class));
@@ -167,7 +169,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.friends_layout:
-                friendsList = FriendsList.getInstance(_feed);
+                friendsList = FriendsList.getInstance(_ChatList_feed);
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.detail_fragment, friendsList)
@@ -181,7 +183,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.barcode_reader:
                 barCodeGet = BarCodeGet.getInstance();
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("contact", _feed);
+                bundle.putSerializable("contact", _ChatList_feed);
                 BarCodeGet barCodeGet = new BarCodeGet();
                 barCodeGet.setArguments(bundle);
                 getSupportFragmentManager()
@@ -241,7 +243,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 description = data.getStringExtra("description");
                 amount = data.getIntExtra("amount", 0);
                 int position = data.getIntExtra("pos", 0);
-                friendsList = FriendsList.getInstance(_feed);
+                friendsList = FriendsList.getInstance(_ChatList_feed);
                 Bundle bundle = new Bundle();
                 bundle.putString("description", description);
                 bundle.putInt("amount", amount);
@@ -271,7 +273,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     public void onBackPressed() {
-        Log.e("Finish", "onBackPressed: ");
         finish();
 
     }
@@ -299,7 +300,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    private class fillContact extends AsyncTask<String, Void, Feed> {
+    private class fillContact extends AsyncTask<String, Void, ChatListFeed> {
 
         @Override
         protected void onPreExecute() {
@@ -307,13 +308,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
 
         @Override
-        protected Feed doInBackground(String... params) {
+        protected ChatListFeed doInBackground(String... params) {
             Parser parser = new Parser(getSharedPreferences("EZpay", 0).getString("token", ""));
             return parser.checkContactListWithGroup(params[0]);
         }
 
         @Override
-        protected void onPostExecute(Feed result) {
+        protected void onPostExecute(ChatListFeed result) {
             if (result != null) {
                 FragmentManager fm = getSupportFragmentManager();
                 if (fm != null) {

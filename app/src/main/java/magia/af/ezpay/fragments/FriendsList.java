@@ -1,6 +1,6 @@
-package magia.af.ezpay.fragments;
+package magia.af.ezpay.Fragments;
 
-import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -8,8 +8,8 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.CardView;
@@ -37,12 +37,12 @@ import magia.af.ezpay.ChooseMemberActivity;
 import magia.af.ezpay.Firebase.MessagingService;
 import magia.af.ezpay.GroupChatPageActivity;
 import magia.af.ezpay.MainActivity;
+import magia.af.ezpay.Parser.ChatListFeed;
+import magia.af.ezpay.Parser.ChatListItem;
 import magia.af.ezpay.Parser.GroupItem;
-import magia.af.ezpay.Parser.LogItem;
+import magia.af.ezpay.Parser.PayLogItem;
 import magia.af.ezpay.Parser.MembersFeed;
 import magia.af.ezpay.Parser.Parser;
-import magia.af.ezpay.Parser.Item;
-import magia.af.ezpay.Parser.Feed;
 import magia.af.ezpay.R;
 import magia.af.ezpay.helper.ContactDatabase;
 import magia.af.ezpay.helper.GetContact;
@@ -55,10 +55,10 @@ import magia.af.ezpay.interfaces.OnClickHandler;
 
 public class FriendsList extends Fragment implements OnClickHandler, MessageHandler {
 
-    static Feed _feed;
+    static ChatListFeed _ChatList_feed;
     static GroupItem groups;
     static MembersFeed membersFeed;
-    ArrayList<Item> contacts;
+    ArrayList<ChatListItem> contacts;
     RecyclerView recBills;
     FriendsList.ListAdapter adapter;
     public String comment;
@@ -69,8 +69,8 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
     static Handler handler = new Handler();
     public static MessageHandler mHandler;
 
-    public static FriendsList getInstance(Feed feed) {
-        _feed = feed;
+    public static FriendsList getInstance(ChatListFeed chatListFeed) {
+        _ChatList_feed = chatListFeed;
         return new FriendsList();
     }
 
@@ -85,12 +85,12 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
         View v = inflater.inflate(R.layout.activity_friend_list, container, false);
         ((MainActivity) getActivity()).fragment_status = 2;
         recBills = (RecyclerView) v.findViewById(R.id.contact_recycler);
-        _feed = (Feed) getActivity().getIntent().getSerializableExtra("contact");
-        for (int i = 0; i < _feed.getItemCount(); i++) {
-            if (_feed.getItem(i).getGroupItem() != null) {
-                groups = _feed.getItem(i).getGroupItem();
+//        _ChatList_feed = (ChatListFeed) getActivity().getIntent().getSerializableExtra("contact");
+        for (int i = 0; i < _ChatList_feed.getItemCount(); i++) {
+            if (_ChatList_feed.getItem(i).getGroupItem() != null) {
+                groups = _ChatList_feed.getItem(i).getGroupItem();
             } else {
-                contacts = _feed.getItem(i).getContactMembers();
+                contacts = _ChatList_feed.getItem(i).getContactMembers();
             }
 
 
@@ -104,6 +104,7 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), ChooseMemberActivity.class);
                 intent.putExtra("contact", contacts);
+                intent.putExtra("contact2", _ChatList_feed);
                 getActivity().startActivity(intent);
             }
         });
@@ -113,11 +114,11 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
             amount = getArguments().getInt("amount");
             position = getArguments().getInt("pos");
             if (comment.length() > 0 && amount > 0) {
-                _feed.getItem(position).setComment(comment);
-                _feed.getItem(position).setLastChatAmount(amount);
+                _ChatList_feed.getItem(position).setComment(comment);
+                _ChatList_feed.getItem(position).setLastChatAmount(amount);
             }
         }
-        if (_feed != null && _feed.getItemCount() != 0) {
+        if (_ChatList_feed != null && _ChatList_feed.getItemCount() != 0) {
             adapter = new FriendsList.ListAdapter(this);
             recBills.setAdapter(adapter);
             LinearLayoutManager llm = new LinearLayoutManager(getActivity());
@@ -131,33 +132,56 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
     }
 
     @Override
-    public void onClick(Item item) {
+    public void onClick(ChatListItem chatListItem) {
 
-        if (item.getGroupItem() != null) {
+        if (chatListItem.getGroupItem() != null) {
             Intent goToChatPageActivity = new Intent(getActivity(), GroupChatPageActivity.class);
-            GroupItem groupItem = item.getGroupItem();
+            GroupItem groupItem = chatListItem.getGroupItem();
             MembersFeed membersFeed = groupItem.getMembersFeed();
             goToChatPageActivity.putExtra("title", groupItem.getGroupTitle());
             goToChatPageActivity.putExtra("photo", "http://new.opaybot.ir" + groupItem.getGroupPhoto());
             goToChatPageActivity.putExtra("id", groupItem.getGroupId());
             goToChatPageActivity.putExtra("members", membersFeed);
-            goToChatPageActivity.putExtra("contact", _feed);
+            goToChatPageActivity.putExtra("contact", _ChatList_feed);
             startActivityForResult(goToChatPageActivity, 10);
         } else {
             Intent goToChatPageActivity = new Intent(getActivity(), ChatPageActivity.class);
-            goToChatPageActivity.putExtra("phone", item.getTelNo());
-            goToChatPageActivity.putExtra("contactName", item.getTitle());
-            goToChatPageActivity.putExtra("image", item.getContactImg());
-            goToChatPageActivity.putExtra("pos", item.getPosition());
-            goToChatPageActivity.putExtra("date", item.getLastChatDate());
-            goToChatPageActivity.putExtra("contact", _feed);
+            goToChatPageActivity.putExtra("phone", chatListItem.getTelNo());
+            goToChatPageActivity.putExtra("contactName", chatListItem.getTitle());
+            goToChatPageActivity.putExtra("image", chatListItem.getContactImg());
+            goToChatPageActivity.putExtra("pos", chatListItem.getPosition());
+            goToChatPageActivity.putExtra("date", chatListItem.getLastChatDate());
+            goToChatPageActivity.putExtra("contact", _ChatList_feed);
             startActivityForResult(goToChatPageActivity, 10);
         }
     }
 
     @Override
-    public void handleMessage(LogItem logItem, boolean deleteState, String chatMemberMobile) {
+    public void handleMessage(final PayLogItem payLogItem, final boolean deleteState, final String chatMemberMobile) {
+
+        Log.e("handleMessage", "In Pv");
         new fillContact().execute("[]");
+
+    }
+
+    @Override
+    public void handleMessageGp(final String body, final String chatMemberMobile) {
+
+
+        Log.e("handleMessage", "In Gp");
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                new fillContact().execute("[]");
+
+
+
+            }
+        });
+
+
     }
 
     public class FeedViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -182,8 +206,8 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
 
         @Override
         public void onClick(View v) {
-            Item item = _feed.getItem(getAdapterPosition());
-            onClickHandler.onClick(item);
+            ChatListItem chatListItem = _ChatList_feed.getItem(getAdapterPosition());
+            onClickHandler.onClick(chatListItem);
         }
     }
 
@@ -196,13 +220,13 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
 
         @Override
         public int getItemCount() {
-            return _feed.getItemCount();
+            return _ChatList_feed.getItemCount();
         }
 
         @Override
         public void onBindViewHolder(final FriendsList.FeedViewHolder FeedViewHolder, final int position) {
             String contactName = "";
-            Item fe = _feed.getItem(position);
+            ChatListItem fe = _ChatList_feed.getItem(position);
 //      ContactDatabase database = new ContactDatabase(getActivity());
 //      fe.setContactName(database.getNameFromNumber(fe.getTelNo()));
             if (fe.getGroupItem() != null) {
@@ -324,7 +348,6 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Log.e("$$$$$$$$$", "onResume: 0000000");
     }
 
     public String newContact(JSONArray jsonArray) {
@@ -338,12 +361,10 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
             database = new ContactDatabase(getActivity());
             GetContact getContact = new GetContact();
 
-            Feed databaseContact = database.getAllData();
-            Feed phoneContact = getContact.getNewContact(getActivity());
+            ChatListFeed databaseContact = database.getAllData();
+            ChatListFeed phoneContact = getContact.getNewContact(getActivity());
             for (int i = 0; i < phoneContact.getItemCount(); i++) {
-//        Log.e("(((", "doInBackground i: " + i);
                 for (int j = 0; j < databaseContact.getItemCount(); j++) {
-//          Log.e("(((", "doInBackground j: " + j);
                     if (phoneContact.getItem(i).getTelNo().equals(databaseContact.getItem(j).getTelNo())
                             && phoneContact.getItem(i).getContactName().equals(databaseContact.getItem(j).getContactName())) {
                         phoneContact.removeItem(i);
@@ -374,7 +395,7 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
         }
     }
 
-    public class fillContact extends AsyncTask<String, Void, Feed> {
+    public class fillContact extends AsyncTask<String, Void, ChatListFeed> {
 
         @Override
         protected void onPreExecute() {
@@ -382,18 +403,17 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
         }
 
         @Override
-        protected Feed doInBackground(String... params) {
+        protected ChatListFeed doInBackground(String... params) {
             Parser parser = new Parser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
             return parser.checkContactListWithGroup(params[0]);
         }
 
         @Override
-        protected void onPostExecute(Feed result) {
+        protected void onPostExecute(ChatListFeed result) {
             if (result != null) {
-                _feed = result;
-                if (adapter != null) {
-                    adapter.notifyDataSetChanged();
-                }
+                _ChatList_feed = result;
+                adapter.notifyDataSetChanged();
+
             } else {
                 Toast.makeText(getActivity(), "problem in connection!", Toast.LENGTH_SHORT).show();
             }
@@ -402,7 +422,7 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
 
     }
 
-    public class getAccount extends AsyncTask<Void, Void, Item> {
+    public class getAccount extends AsyncTask<Void, Void, ChatListItem> {
 
         @Override
         protected void onPreExecute() {
@@ -410,13 +430,13 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
         }
 
         @Override
-        protected Item doInBackground(Void... params) {
+        protected ChatListItem doInBackground(Void... params) {
             Parser parser = new Parser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
             return parser.getAccount();
         }
 
         @Override
-        protected void onPostExecute(Item result) {
+        protected void onPostExecute(ChatListItem result) {
             Log.e("jsons", String.valueOf(result));
 
             if (result != null) {
@@ -428,4 +448,45 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
         }
     }
 
+
+    public class GetGpWithMsg extends AsyncTask<String, Void, GroupItem> {
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+        @Override
+        protected GroupItem doInBackground(String... params) {
+            Parser parser = new Parser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
+
+            return parser.groupWithChat(params[0], 10);
+
+
+        }
+
+        @Override
+        protected void onPostExecute(GroupItem gp) {
+
+
+            if (gp!=null) {
+
+                ChatListItem chatListItem =new ChatListItem();
+                chatListItem.setGroupItem(gp);
+                _ChatList_feed.addItem(chatListItem);
+                adapter.notifyDataSetChanged();
+
+            }
+
+
+
+
+
+
+        }
+    }
+
 }
+

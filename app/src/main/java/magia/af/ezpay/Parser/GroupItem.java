@@ -12,6 +12,16 @@ public class GroupItem implements Serializable {
 
     private MembersFeed membersFeed;
 
+    private String notifBody;
+
+    public String getNotifBody() {
+        return notifBody;
+    }
+
+    public void setNotifBody(String notifBody) {
+        this.notifBody = notifBody;
+    }
+
     private int groupId;
     private String groupTitle;
     private String groupPhoto;

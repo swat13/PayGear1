@@ -13,8 +13,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import magia.af.ezpay.Parser.Feed;
-import magia.af.ezpay.Parser.Item;
+import magia.af.ezpay.Parser.ChatListFeed;
+import magia.af.ezpay.Parser.ChatListItem;
 import magia.af.ezpay.Utilities.LocalPersistence;
 
 /**
@@ -26,13 +26,13 @@ public class GetContact {
     private static final String TAG = "TAG";
     private ArrayMap<String, Boolean> stringArrayMap = new ArrayMap<>();
     Context cx;
-    Item item;
-    Feed feed;
+    ChatListItem chatListItem;
+    ChatListFeed chatListFeed;
     JSONArray jsonArray;
 
     public String getContact(Context context) {
         cx = context;
-        feed = new Feed();
+        chatListFeed = new ChatListFeed();
         ContentResolver cr = cx.getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
           null, null, null, null);
@@ -61,10 +61,10 @@ public class GetContact {
                         if (phoneNo.contains("+989")) {
                             phoneNo = phoneNo.replace("+98", "0");
                         }
-                        item = new Item();
-                        item.setTelNo(phoneNo);
-                        item.setContactName(name);
-                        feed.addItem(item);
+                        chatListItem = new ChatListItem();
+                        chatListItem.setTelNo(phoneNo);
+                        chatListItem.setContactName(name);
+                        chatListFeed.addItem(chatListItem);
                         if (phoneNo.startsWith("09")) {
 
                             try {
@@ -90,21 +90,21 @@ public class GetContact {
             }
         }
         ContactDatabase database = new ContactDatabase(cx);
-        for (int i = 0; i < feed.getItemCount(); i++) {
-            database.createData(feed.getItem(i).getTelNo(), feed.getItem(i).getContactName());
+        for (int i = 0; i < chatListFeed.getItemCount(); i++) {
+            database.createData(chatListFeed.getItem(i).getTelNo(), chatListFeed.getItem(i).getContactName());
         }
         Log.i("JSON CONTACT", jsonArray.toString());
         writeToFile(jsonArray);
         return jsonArray != null ? jsonArray.toString() : null;
     }
 
-    public boolean isNewContact(Feed feed, String phoneNumber) {
+    public boolean isNewContact(ChatListFeed chatListFeed, String phoneNumber) {
 
-        if (feed == null) {
+        if (chatListFeed == null) {
             return true;
         }
-        for (int i = 0; i < feed.getItemCount(); i++) {
-            if (feed.getItem(i).getTelNo().equals(phoneNumber)) {
+        for (int i = 0; i < chatListFeed.getItemCount(); i++) {
+            if (chatListFeed.getItem(i).getTelNo().equals(phoneNumber)) {
                 return false;
             }
 
@@ -114,19 +114,19 @@ public class GetContact {
     }
 
     public void writeToFile(JSONArray json) {
-        Feed feed = new Feed();
+        ChatListFeed chatListFeed = new ChatListFeed();
         for (int i = 0; i < json.length(); i++) {
             try {
                 JSONObject jsonObject = json.getJSONObject(i);
-                Item item = new Item();
-                item.setTelNo(jsonObject.getString("m"));
-                feed.addItem(item);
+                ChatListItem chatListItem = new ChatListItem();
+                chatListItem.setTelNo(jsonObject.getString("m"));
+                chatListFeed.addItem(chatListItem);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
         }
-        new LocalPersistence().writeObjectToFile(cx, feed, "All_Contact_List");
+        new LocalPersistence().writeObjectToFile(cx, chatListFeed, "All_Contact_List");
     }
 
     public ArrayList<String> allContacts(Context context) {
@@ -167,9 +167,9 @@ public class GetContact {
         return phones;
     }
 
-    public Feed getNewContact(Context context) {
+    public ChatListFeed getNewContact(Context context) {
         cx = context;
-        Feed feed = new Feed();
+        ChatListFeed chatListFeed = new ChatListFeed();
         ContentResolver cr = context.getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
                 null, null, null, null);
@@ -202,15 +202,15 @@ public class GetContact {
                             phoneNo = phoneNo.replace("+98", "0");
                         }
 //                        Log.e("GettingContacts",phoneNo);
-                        Item item = new Item();
-                        item.setTelNo(phoneNo);
-                        item.setContactName(name);
-                        feed.addItem(item);
+                        ChatListItem chatListItem = new ChatListItem();
+                        chatListItem.setTelNo(phoneNo);
+                        chatListItem.setContactName(name);
+                        chatListFeed.addItem(chatListItem);
                     }
                     pCur.close();
                 }
             }
         }
-        return feed;
+        return chatListFeed;
     }
 }

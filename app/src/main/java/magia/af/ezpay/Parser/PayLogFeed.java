@@ -5,20 +5,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
-public class LogFeed implements Serializable {
+public class PayLogFeed implements Serializable {
 
 
 	HashMap<Integer, Integer> hashMap;
 	private static final long serialVersionUID = 1L;
 	private int _itemcount = 0;
-	private List<LogItem> _itemlist;
+	private List<PayLogItem> _itemlist;
 
-	public LogFeed() {
-		_itemlist = new Vector<LogItem>(0);
+	public PayLogFeed() {
+		_itemlist = new Vector<PayLogItem>(0);
 		hashMap = new HashMap<>();
 	}
 
-	public void addItem(LogItem item) {
+	public void addItem(PayLogItem item) {
 		_itemlist.add(item);
 		_itemcount++;
 	}
@@ -31,11 +31,11 @@ public class LogFeed implements Serializable {
 		return hashMap;
 	}
 
-	public void addItem(LogItem item , int pos) {
+	public void addItem(PayLogItem item , int pos) {
 		_itemlist.add(pos,item);
 		_itemcount++;
 	}
-	public void addItemRange(LogFeed item) {
+	public void addItemRange(PayLogFeed item) {
 
 		_itemlist.addAll(0,item._itemlist);
 		_itemcount+=item._itemcount;
@@ -45,7 +45,7 @@ public class LogFeed implements Serializable {
 		_itemcount--;
 	}
 
-	public LogItem getItem(int location) {
+	public PayLogItem getItem(int location) {
 		return _itemlist.get(location);
 	}
 

@@ -16,11 +16,11 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
-import magia.af.ezpay.Parser.Feed;
+import magia.af.ezpay.Parser.ChatListFeed;
 
 public class ProfileActivity extends BaseActivity {
 
-    Feed feed;
+    ChatListFeed chatListFeed;
     private String phone;
     private int position;
     private String contactName;

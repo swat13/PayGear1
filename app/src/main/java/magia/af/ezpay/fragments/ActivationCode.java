@@ -1,4 +1,4 @@
-package magia.af.ezpay.fragments;
+package magia.af.ezpay.Fragments;
 
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
@@ -34,9 +34,9 @@ import org.json.JSONObject;
 
 import magia.af.ezpay.LoginActivity;
 import magia.af.ezpay.MainActivity;
+import magia.af.ezpay.Parser.ChatListFeed;
+import magia.af.ezpay.Parser.ChatListItem;
 import magia.af.ezpay.Parser.Parser;
-import magia.af.ezpay.Parser.Feed;
-import magia.af.ezpay.Parser.Item;
 import magia.af.ezpay.R;
 import magia.af.ezpay.Utilities.LocalPersistence;
 import magia.af.ezpay.helper.ContactDatabase;
@@ -56,9 +56,9 @@ public class ActivationCode extends Fragment implements View.OnClickListener, Ev
     private String phone;
     private String activationCode;
     private String newName;
-    private Feed feed;
+    private ChatListFeed chatListFeed;
     private JSONArray jsonArray;
-    private Item item;
+    private ChatListItem chatListItem;
     public volatile boolean running = true;
     public fillContact ffillContact;
     String contact;
@@ -259,7 +259,7 @@ public class ActivationCode extends Fragment implements View.OnClickListener, Ev
 
         @Override
         protected String doInBackground(Void... params) {
-            feed = new Feed();
+            chatListFeed = new ChatListFeed();
             ContentResolver cr = context.getContentResolver();
             Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
               null, null, null, null);
@@ -288,10 +288,10 @@ public class ActivationCode extends Fragment implements View.OnClickListener, Ev
                             if (phoneNo.contains("+989")) {
                                 phoneNo = phoneNo.replace("+98", "0");
                             }
-                            item = new Item();
-                            item.setTelNo(phoneNo);
-                            item.setContactName(name);
-                            feed.addItem(item);
+                            chatListItem = new ChatListItem();
+                            chatListItem.setTelNo(phoneNo);
+                            chatListItem.setContactName(name);
+                            chatListFeed.addItem(chatListItem);
                             if (phoneNo.startsWith("09")) {
 
                                 try {
@@ -317,8 +317,8 @@ public class ActivationCode extends Fragment implements View.OnClickListener, Ev
                 }
             }
             ContactDatabase database = new ContactDatabase(context);
-            for (int i = 0; i < feed.getItemCount(); i++) {
-                database.createData(feed.getItem(i).getTelNo(), feed.getItem(i).getContactName());
+            for (int i = 0; i < chatListFeed.getItemCount(); i++) {
+                database.createData(chatListFeed.getItem(i).getTelNo(), chatListFeed.getItem(i).getContactName());
             }
             Log.i("JSON CONTACT", jsonArray.toString());
             writeToFile(jsonArray);
@@ -346,7 +346,7 @@ public class ActivationCode extends Fragment implements View.OnClickListener, Ev
         return contact;
     }
 
-    private class fillContact extends AsyncTask<Void, Void, Feed> {
+    private class fillContact extends AsyncTask<Void, Void, ChatListFeed> {
 
         @Override
         protected void onPreExecute() {
@@ -356,14 +356,14 @@ public class ActivationCode extends Fragment implements View.OnClickListener, Ev
         }
 
         @Override
-        protected Feed doInBackground(Void... params) {
+        protected ChatListFeed doInBackground(Void... params) {
             Parser parser = new Parser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
             return parser.checkContactListWithGroup(getContacts());
 
         }
 
         @Override
-        protected void onPostExecute(Feed result) {
+        protected void onPostExecute(ChatListFeed result) {
             if (result != null) {
                 startActivity(new Intent(getActivity(), MainActivity.class).putExtra("contact", result));
                 getActivity().finish();
@@ -379,19 +379,19 @@ public class ActivationCode extends Fragment implements View.OnClickListener, Ev
     }
 
     public void writeToFile(JSONArray json) {
-        Feed feed = new Feed();
+        ChatListFeed chatListFeed = new ChatListFeed();
         for (int i = 0; i < json.length(); i++) {
             try {
                 JSONObject jsonObject = json.getJSONObject(i);
-                Item item = new Item();
-                item.setTelNo(jsonObject.getString("m"));
-                feed.addItem(item);
+                ChatListItem chatListItem = new ChatListItem();
+                chatListItem.setTelNo(jsonObject.getString("m"));
+                chatListFeed.addItem(chatListItem);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
         }
-        new LocalPersistence().writeObjectToFile(getActivity(), feed, "All_Contact_List");
+        new LocalPersistence().writeObjectToFile(getActivity(), chatListFeed, "All_Contact_List");
     }
 
 

@@ -10,14 +10,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import magia.af.ezpay.Parser.ChatListFeed;
 import magia.af.ezpay.Parser.Parser;
-import magia.af.ezpay.Parser.Feed;
 import magia.af.ezpay.helper.ContactDatabase;
 import magia.af.ezpay.helper.GetContact;
 
@@ -44,9 +45,9 @@ public class Splash extends BaseActivity {
 
         if (!keyguardManager.isKeyguardSecure()) {
 
-            Toast.makeText(this,
-              "Lock screen security not enabled in Settings",
-              Toast.LENGTH_LONG).show();
+//            Toast.makeText(this,
+//              "Lock screen security not enabled in Settings",
+//              Toast.LENGTH_LONG).show();
         }
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
@@ -95,8 +96,8 @@ public class Splash extends BaseActivity {
             database = new ContactDatabase(Splash.this);
             GetContact getContact = new GetContact();
 
-            Feed databaseContact = database.getAllData();
-            Feed phoneContact = getContact.getNewContact(Splash.this);
+            ChatListFeed databaseContact = database.getAllData();
+            ChatListFeed phoneContact = getContact.getNewContact(Splash.this);
             for (int i = 0; i < phoneContact.getItemCount(); i++) {
 //        Log.e("(((", "doInBackground i: " + i);
                 for (int j = 0; j < databaseContact.getItemCount(); j++) {
@@ -133,7 +134,7 @@ public class Splash extends BaseActivity {
         }
     }
 
-    private class fillContact extends AsyncTask<String, Void, Feed> {
+    private class fillContact extends AsyncTask<String, Void, ChatListFeed> {
 
         @Override
         protected void onPreExecute() {
@@ -141,17 +142,18 @@ public class Splash extends BaseActivity {
         }
 
         @Override
-        protected Feed doInBackground(String... params) {
+        protected ChatListFeed doInBackground(String... params) {
             Parser parser = new Parser(getSharedPreferences("EZpay", 0).getString("token", ""));
             return parser.checkContactListWithGroup(params[0]);
         }
 
         @Override
-        protected void onPostExecute(Feed result) {
+        protected void onPostExecute(ChatListFeed result) {
             if (result != null) {
                 startActivity(new Intent(Splash.this, MainActivity.class).putExtra("contact", result));
                 finish();
-            } else {
+            }
+            else {
                 Toast.makeText(Splash.this, "problem in connection!", Toast.LENGTH_SHORT).show();
             }
             super.onPostExecute(result);

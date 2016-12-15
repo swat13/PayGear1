@@ -3,7 +3,7 @@ package magia.af.ezpay.Parser;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Item implements Serializable {
+public class ChatListItem implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private boolean contactStatus = false;
@@ -23,7 +23,7 @@ public class Item implements Serializable {
     private int contactCount;
     private GroupItem groupItem;
 
-    private ArrayList<Item> contactMembers;
+    private ArrayList<ChatListItem> contactMembers;
 
     private boolean singleSelect;
     private boolean visible;
@@ -61,11 +61,11 @@ public class Item implements Serializable {
         this.singleSelect = singleSelect;
     }
 
-    public ArrayList<Item> getContactMembers() {
+    public ArrayList<ChatListItem> getContactMembers() {
         return contactMembers;
     }
 
-    public void setContactMembers(ArrayList<Item> contactMembers) {
+    public void setContactMembers(ArrayList<ChatListItem> contactMembers) {
         this.contactMembers = contactMembers;
     }
 

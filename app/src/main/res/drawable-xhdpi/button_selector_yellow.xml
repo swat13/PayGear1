@@ -1,13 +1,13 @@
 <selector
 	xmlns:android="http://schemas.android.com/apk/res/android">
 
-	<item
+	<chatListItem
 		android:state_pressed="true"
 		android:drawable="@drawable/layout_bg_sell" /> <!-- pressed -->
-	<item
+	<chatListItem
 		android:state_focused="true"
 		android:drawable="@drawable/layout_bg_sell" /> <!-- focused -->
 	
-	<item
+	<chatListItem
 		android:drawable="@drawable/layout_bg_yellow" /> <!-- default -->
 </selector>

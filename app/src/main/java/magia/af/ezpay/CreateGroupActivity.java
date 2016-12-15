@@ -46,19 +46,20 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import magia.af.ezpay.Parser.ChatListFeed;
+import magia.af.ezpay.Parser.ChatListItem;
 import magia.af.ezpay.Parser.GroupItem;
 import magia.af.ezpay.Parser.MembersItem;
 import magia.af.ezpay.Parser.Parser;
-import magia.af.ezpay.Parser.Feed;
-import magia.af.ezpay.Parser.Item;
 import magia.af.ezpay.helper.ContactDatabase;
 
 public class CreateGroupActivity extends BaseActivity {
 
-    ArrayList<Item> rssFeed;
-    ArrayList<Item> rssFeed2;
-    Feed databaseFeed;
+    ArrayList<ChatListItem> rssFeed;
+    ArrayList<ChatListItem> rssFeed2;
+    ChatListFeed databaseChatListFeed;
     EditText groupTitle;
+    ChatListFeed _ChatList_Feed;
     RecyclerView recyclerView;
     ImageView imageView;
     ArrayList<String> phone = new ArrayList<>();
@@ -67,7 +68,7 @@ public class CreateGroupActivity extends BaseActivity {
     RecyclerAdapter adapter;
     JSONArray jsonArray;
     String json;
-    Feed groupMember;
+    ChatListFeed groupMember;
     MembersItem membersItem;
     ImageView groupAvatar;
     String TAG = "TAG";
@@ -83,8 +84,9 @@ public class CreateGroupActivity extends BaseActivity {
         if (Build.VERSION.SDK_INT >= 23) {
             checkPermissions();
         }
-        rssFeed = (ArrayList<Item>) getIntent().getSerializableExtra("contact");
-        rssFeed2= (ArrayList<Item>) getIntent().getSerializableExtra("contact2");
+        rssFeed = (ArrayList<ChatListItem>) getIntent().getSerializableExtra("contact");
+        rssFeed2= (ArrayList<ChatListItem>) getIntent().getSerializableExtra("contact2");
+        _ChatList_Feed= (ChatListFeed) getIntent().getSerializableExtra("contact3");
         for (int i = 0; i < rssFeed.size(); i++) {
             Log.e(TAG, "onCreate: " + rssFeed.get(i).getTitle());
             Log.e(TAG, "onCreate: " + rssFeed.get(i).getTelNo());
@@ -95,23 +97,21 @@ public class CreateGroupActivity extends BaseActivity {
         }
         Log.e(TAG, "onCreate: " + json);
 //    database = new ContactDatabase(this);
-//    databaseFeed = database.getInNetworkUserName();
-        groupMember = new Feed();
+//    databaseChatListFeed = database.getInNetworkUserName();
+        groupMember = new ChatListFeed();
         membersItem=new MembersItem();
         try {
             jsonArray = new JSONArray(json);
-            Log.e(TAG, "onCreate: " + jsonArray.toString());
             for (int i = 0; i < jsonArray.length(); i++) {
-                Item item = new Item();
+                ChatListItem chatListItem = new ChatListItem();
                 for (int j = 0; j < rssFeed.size(); j++) {
                     if (jsonArray.getString(i).equals(rssFeed.get(j).getTelNo())) {
-                        Log.e(TAG, "onCreate: " + imageUrl + rssFeed.get(j).getContactImg());
-                        item.setContactName(rssFeed.get(j).getTitle());
-                        item.setTelNo(rssFeed.get(j).getTelNo());
-                        item.setContactImg(rssFeed.get(j).getContactImg());
+                        chatListItem.setContactName(rssFeed.get(j).getTitle());
+                        chatListItem.setTelNo(rssFeed.get(j).getTelNo());
+                        chatListItem.setContactImg(rssFeed.get(j).getContactImg());
                     }
                 }
-                groupMember.addItem(item);
+                groupMember.addItem(chatListItem);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -351,11 +351,8 @@ public class CreateGroupActivity extends BaseActivity {
         @Override
         protected void onPostExecute(GroupItem result) {
             if (result != null) {
+                Log.e(TAG, "onPostExecute: " + result.getGroupTitle());
                 groupItem = result;
-//                Log.e(TAG, "onPostExecute: " + groupFeed.getItemCount());
-//                Log.e(TAG, "onPostExecute: " + feed.getItem(0).getGroupId());
-//                Log.e(TAG, "onPostExecute: " + feed.getItem(0).getGroupTitle());
-//                Log.e(TAG, "onPostExecute: " + feed.getItem(0).getGroupPhoto());
                 if (flag == 0) {
                     if (mData != null) {
                         new AsyncInsertUserImage(onCaptureImageResult(mData), result.getGroupId()).execute();
@@ -365,6 +362,7 @@ public class CreateGroupActivity extends BaseActivity {
                         intent.putExtra("photo", "http://new.opaybot.ir" + groupItem.getGroupPhoto().replace("\"", ""));
                         intent.putExtra("id", groupItem.getGroupId());
                         intent.putExtra("members", groupItem.getMembersFeed());
+                        intent.putExtra("contact", _ChatList_Feed);
                         startActivity(intent);
                         finish();
                     }
@@ -377,6 +375,7 @@ public class CreateGroupActivity extends BaseActivity {
                         intent.putExtra("photo", "http://new.opaybot.ir" + groupItem.getGroupPhoto().replace("\"", ""));
                         intent.putExtra("id", groupItem.getGroupId());
                         intent.putExtra("members", groupItem.getMembersFeed());
+                        intent.putExtra("contact", _ChatList_Feed);
                         startActivity(intent);
                         finish();
                     }
@@ -387,7 +386,7 @@ public class CreateGroupActivity extends BaseActivity {
         }
     }
 
-//    private class fillContact extends AsyncTask<Void, Void, Feed> {
+//    private class fillContact extends AsyncTask<Void, Void, ChatListFeed> {
 //
 //        @Override
 //        protected void onPreExecute() {
@@ -395,14 +394,14 @@ public class CreateGroupActivity extends BaseActivity {
 //        }
 //
 //        @Override
-//        protected Feed doInBackground(Void... params) {
+//        protected ChatListFeed doInBackground(Void... params) {
 //            Parser parser = new Parser(getSharedPreferences("EZpay", 0).getString("token", ""));
 //            return parser.checkContactListWithGroup(new GetContact().getContact(CreateGroupActivity.this));
 //
 //        }
 //
 //        @Override
-//        protected void onPostExecute(Feed result) {
+//        protected void onPostExecute(ChatListFeed result) {
 //            if (result != null) {
 //                if (flag == 0) {
 //                    new AsyncInsertUserImage(onCaptureImageResult(mData), result.getItem(result.getItemCount() - 1).getGroupId()).execute();
@@ -466,6 +465,7 @@ public class CreateGroupActivity extends BaseActivity {
                 intent.putExtra("photo", "http://new.opaybot.ir" + result.replace("\"", ""));
                 intent.putExtra("id", groupItem.getGroupId());
                 intent.putExtra("members", groupItem.getMembersFeed());
+                intent.putExtra("contact", _ChatList_Feed);
                 startActivity(intent);
                 finish();
             } else {

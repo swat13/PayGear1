@@ -9,8 +9,8 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import magia.af.ezpay.fragments.ActivationCode;
-import magia.af.ezpay.fragments.Login;
+import magia.af.ezpay.Fragments.ActivationCode;
+import magia.af.ezpay.Fragments.Login;
 
 /**
  * Created by Saeid Yazdany on 10/25/2016.

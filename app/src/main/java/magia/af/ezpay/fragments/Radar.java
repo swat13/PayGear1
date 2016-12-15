@@ -1,4 +1,4 @@
-package magia.af.ezpay.fragments;
+package magia.af.ezpay.Fragments;
 
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -26,9 +26,9 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import magia.af.ezpay.Parser.ChatListFeed;
 import magia.af.ezpay.Parser.Parser;
-import magia.af.ezpay.Parser.Feed;
-import magia.af.ezpay.Parser.Item;
+import magia.af.ezpay.Parser.ChatListItem;
 import magia.af.ezpay.R;
 
 
@@ -41,7 +41,7 @@ public class Radar extends Fragment {
   public ImageView userAvatar;
   final int userAvatarWidth = 0;
   final int userAvatarHeight = 0;
-  private Feed feed;
+  private ChatListFeed chatListFeed;
   public int i;
   public int k;
   private String imageUrl = "http://new.opaybot.ir";
@@ -63,7 +63,7 @@ public class Radar extends Fragment {
     Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.rotate);
     imageView.setAnimation(animation);
     animation.start();
-    feed = new Feed();
+    chatListFeed = new ChatListFeed();
     handler = new Handler(Looper.getMainLooper());
     timer = new Timer();
     timer.scheduleAtFixedRate(new TimerTask() {
@@ -94,33 +94,33 @@ public class Radar extends Fragment {
     return v;
   }
 
-  public class GetPeopleFromTheirLocation extends AsyncTask<Feed, Void, Feed> {
+  public class GetPeopleFromTheirLocation extends AsyncTask<ChatListFeed, Void, ChatListFeed> {
 
     @Override
-    protected Feed doInBackground(Feed... params) {
+    protected ChatListFeed doInBackground(ChatListFeed... params) {
       Parser parser = new Parser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
       return parser.getLocation();
     }
 
     @Override
-    protected void onPostExecute(Feed result) {
+    protected void onPostExecute(ChatListFeed result) {
       if (result != null) {
-        feed = result;
+        chatListFeed = result;
         generateImageViews();
       }
-      super.onPostExecute(feed);
+      super.onPostExecute(chatListFeed);
     }
   }
 
   public void generateImageViews() {
-   // params = new RelativeLayout.LayoutParams[feed.getItemCount()];
+   // params = new RelativeLayout.LayoutParams[chatListFeed.getItemCount()];
     if(circleImageView==null)
     circleImageView = new ArrayList<ImageView>();
 
     for (int j = 0; j < circleImageView.size(); j++) {
       boolean isDuplicate = false;
-      for (i = 0; i < feed.getItemCount(); i++) {
-        if (((Item) circleImageView.get(j).getTag(R.string.Amir)).getUserId().equals( feed.getItem(i).getUserId()) ){
+      for (i = 0; i < chatListFeed.getItemCount(); i++) {
+        if (((ChatListItem) circleImageView.get(j).getTag(R.string.Amir)).getUserId().equals( chatListFeed.getItem(i).getUserId()) ){
           isDuplicate = true;
           break;
         }
@@ -132,11 +132,11 @@ public class Radar extends Fragment {
 
     }
 
-    for (i = 0; i < feed.getItemCount(); i++) {
+    for (i = 0; i < chatListFeed.getItemCount(); i++) {
 
       boolean isDuplicate = false;
       for (int j = 0; j < circleImageView.size(); j++) {
-        if (((Item) circleImageView.get(j).getTag(R.string.Amir)).getUserId().equals( feed.getItem(i).getUserId())) {
+        if (((ChatListItem) circleImageView.get(j).getTag(R.string.Amir)).getUserId().equals( chatListFeed.getItem(i).getUserId())) {
           isDuplicate = true;
           break;
         }
@@ -150,8 +150,8 @@ public class Radar extends Fragment {
 
       ImageView newView = new ImageView(getActivity());
       RelativeLayout.LayoutParams newParam=new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-Log.e("Amir", feed.getItem(i).getContactImg());
-      newView.setTag(R.string.Amir, feed.getItem(i));
+Log.e("Amir", chatListFeed.getItem(i).getContactImg());
+      newView.setTag(R.string.Amir, chatListFeed.getItem(i));
       int random = ((int) (Math.random() + 0.5) * ((display.getWidth() / 2) + 100)) + (int) (Math.random() * ((display.getWidth() / 2) - 200));
       int randomH = ((int) (Math.random() + 0.5) * ((display.getHeight() / 2) + 100)) + (int) (Math.random() * ((display.getHeight() / 2) - 200));
       double randomHH = Math.random() * 360;
@@ -171,12 +171,12 @@ Log.e("Amir", feed.getItem(i).getContactImg());
       newView.setLayoutParams(newParam);
       newView.getLayoutParams().width = 100;
       newView.getLayoutParams().height = 100;
-      Log.e("image", "generateImageViews: " + imageUrl + feed.getItem(i).getContactImg());
+      Log.e("image", "generateImageViews: " + imageUrl + chatListFeed.getItem(i).getContactImg());
 
-      Glide.with(this).load(imageUrl + feed.getItem(i).getContactImg()).into(newView);
+      Glide.with(this).load(imageUrl + chatListFeed.getItem(i).getContactImg()).into(newView);
       Log.e("SSS", "generateImageViews: " + " " + i);
       Glide.with(this)
-        .load(imageUrl + feed.getItem(i).getContactImg())
+        .load(imageUrl + chatListFeed.getItem(i).getContactImg())
         .asBitmap()
         .centerCrop()
         .placeholder(R.drawable.pic_profile)
@@ -213,7 +213,6 @@ Log.e("Amir", feed.getItem(i).getContactImg());
       }
 
       if (flag) {
-        Log.e("TTTTTTTT", "AAAAADDDDD:(((((((( " + i);
 
         relativeLayout.addView(newView);
         newView.setOnClickListener(new View.OnClickListener() {

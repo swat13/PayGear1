@@ -204,7 +204,7 @@ public class Parser {
         return null;
     }
 
-    public Item getAccountId(String id) {
+    public ChatListItem getAccountId(String id) {
 
         try {
 
@@ -246,19 +246,19 @@ public class Parser {
 
             Log.e("@@@@@@2222", sb.toString());
             JSONObject jsonObject = new JSONObject(sb.toString());
-            Item item = new Item();
+            ChatListItem chatListItem = new ChatListItem();
 
             try {
-                item.setContactImg(jsonObject.getString("photo"));
-                item.setTelNo(jsonObject.getString("mobile"));
-                item.setUserId(jsonObject.getString("id"));
-                item.setContactName(jsonObject.getString("title"));
-                Log.e("Name", item.getContactName());
+                chatListItem.setContactImg(jsonObject.getString("photo"));
+                chatListItem.setTelNo(jsonObject.getString("mobile"));
+                chatListItem.setUserId(jsonObject.getString("id"));
+                chatListItem.setContactName(jsonObject.getString("title"));
+                Log.e("Name", chatListItem.getContactName());
             } catch (Exception e) {
                 e.printStackTrace();
 
             }
-            return item;
+            return chatListItem;
 
 
         } catch (ProtocolException e) {
@@ -271,7 +271,7 @@ public class Parser {
         return null;
     }
 
-    public Item getAccount() {
+    public ChatListItem getAccount() {
 
         try {
 
@@ -312,20 +312,20 @@ public class Parser {
 
             Log.e("@@@@@@2222", sb.toString());
             JSONObject jsonObject = new JSONObject(sb.toString());
-            Item item = new Item();
+            ChatListItem chatListItem = new ChatListItem();
 
             try {
-                item.setContactImg(jsonObject.getString("photo"));
-                item.setTelNo(jsonObject.getString("mobile"));
-                item.setUserId(jsonObject.getString("id"));
-                item.setContactName(jsonObject.getString("title"));
-                item.setCredit(jsonObject.getInt("credit"));
-                Log.e("Name", item.getContactName());
+                chatListItem.setContactImg(jsonObject.getString("photo"));
+                chatListItem.setTelNo(jsonObject.getString("mobile"));
+                chatListItem.setUserId(jsonObject.getString("id"));
+                chatListItem.setContactName(jsonObject.getString("title"));
+                chatListItem.setCredit(jsonObject.getInt("credit"));
+                Log.e("Name", chatListItem.getContactName());
             } catch (Exception e) {
                 e.printStackTrace();
 
             }
-            return item;
+            return chatListItem;
 
         } catch (ProtocolException e) {
             e.printStackTrace();
@@ -504,7 +504,7 @@ public class Parser {
     /**
      * @return
      **/
-    public Feed getContact(String json) {
+    public ChatListFeed getContact(String json) {
 
         try {
 
@@ -556,35 +556,35 @@ public class Parser {
 
             Log.e("@@@@@@", sb.toString());
             JSONArray jsonArray = new JSONArray(sb.toString());
-            Feed feed = new Feed();
+            ChatListFeed chatListFeed = new ChatListFeed();
 
 
             for (int i = 0; i < jsonArray.length(); i++) {
-                Item item = new Item();
+                ChatListItem chatListItem = new ChatListItem();
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 try {
-                    item.setContactStatus(true);
-                    item.setTelNo(jsonObject.getString("mobile"));
-                    item.setContactName(getContactName(jsonObject.getString("mobile"), json));
-                    item.setContactImg(jsonObject.getString("photo"));
+                    chatListItem.setContactStatus(true);
+                    chatListItem.setTelNo(jsonObject.getString("mobile"));
+                    chatListItem.setContactName(getContactName(jsonObject.getString("mobile"), json));
+                    chatListItem.setContactImg(jsonObject.getString("photo"));
                     if (!jsonObject.isNull("lastchat")) {
                         JSONObject object = jsonObject.getJSONObject("lastchat");
-                        item.setLastChatId(object.getInt("id"));
-                        item.setLastChatFrom(object.getString("f"));
-                        item.setLastChatTo(object.getString("t"));
-                        item.setLastChatAmount(object.getInt("a"));
-                        item.setLastChatDate(object.getString("d"));
-                        item.setLastChatOrderByFromOrTo(object.getBoolean("o"));
-                        item.setComment(object.getString("c"));
+                        chatListItem.setLastChatId(object.getInt("id"));
+                        chatListItem.setLastChatFrom(object.getString("f"));
+                        chatListItem.setLastChatTo(object.getString("t"));
+                        chatListItem.setLastChatAmount(object.getInt("a"));
+                        chatListItem.setLastChatDate(object.getString("d"));
+                        chatListItem.setLastChatOrderByFromOrTo(object.getBoolean("o"));
+                        chatListItem.setComment(object.getString("c"));
                     }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                feed.addItem(item);
+                chatListFeed.addItem(chatListItem);
             }
 
-            return feed;
+            return chatListFeed;
 
             /**
              * TODO: check if activated then return the token to Splash class
@@ -604,12 +604,12 @@ public class Parser {
     }
 
     /*sss*/
-    public Feed checkContactListWithGroup(String json) {
+    public ChatListFeed checkContactListWithGroup(String json) {
 
         try {
 
             URL url = new URL(mainUrl + "api/Account/CheckContactListWithGroups");
-            Log.e("1111111", "doInBackground: " + url);
+            Log.e("Parser", "Url: " + url);
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
             httpConn.setDoOutput(true);
             httpConn.setDoInput(true);
@@ -623,14 +623,14 @@ public class Parser {
             OutputStream os = httpConn.getOutputStream();
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
 
-            Log.e("999999999", "activateSong: " + json);
+            Log.e("Parser", "Output: " + json);
             writer.write(json);
             writer.flush();
             writer.close();
             os.close();
 
             int resCode = httpConn.getResponseCode();
-            Log.e("0000000", "doInBackground: " + resCode);
+            Log.e("Parser", "ResCode: " + resCode);
             if (resCode == 400) {
                 return null;
             }
@@ -653,24 +653,33 @@ public class Parser {
                     e.printStackTrace();
                 }
             }
-            Log.e("@@@@@@", sb.toString());
+            Log.e("Parser In", sb.toString());
             JSONArray jsonArray = new JSONArray(sb.toString());
 
-            Feed feed = new Feed();
-            Item rssItem;
+            ChatListFeed chatListFeed = new ChatListFeed();
+            ChatListItem rssChatListItem;
 
-            ArrayList<Item> contactMembers = new ArrayList<>();
+            ArrayList<ChatListItem> contactMembers = new ArrayList<>();
             for (int i = 0; i < jsonArray.length(); i++) {
-                rssItem = new Item();
+                rssChatListItem = new ChatListItem();
                 JSONObject contactObject = jsonArray.getJSONObject(i);
                 if (contactObject.getString("$type").contains("FriendModel")) {
-                    rssItem.setContactImg(contactObject.getString("photo"));
-                    rssItem.setTelNo(contactObject.getString("mobile"));
-                    rssItem.setUserId(contactObject.getString("id"));
-                    rssItem.setTitle(contactObject.getString("title"));
-                    rssItem.setContactCount(i);
-                    contactMembers.add(rssItem);
-                } else if (contactObject.getString("$type").contains("GroupModel")) {
+                    rssChatListItem.setContactImg(contactObject.getString("photo"));
+                    rssChatListItem.setTelNo(contactObject.getString("mobile"));
+                    rssChatListItem.setUserId(contactObject.getString("id"));
+                    rssChatListItem.setTitle(contactObject.getString("title"));
+
+                    if (!contactObject.isNull("lastchat")) {
+                        JSONObject jsonObject = contactObject.getJSONObject("lastchat");
+                        rssChatListItem.setComment(jsonObject.getString("c"));
+                        rssChatListItem.setLastChatAmount(jsonObject.getInt("a"));
+                    }
+
+                    rssChatListItem.setContactCount(i);
+                    contactMembers.add(rssChatListItem);
+                }
+
+                else if (contactObject.getString("$type").contains("GroupModel")) {
                     GroupItem groupItem = new GroupItem();
                     groupItem.setGroupId(contactObject.getInt("id"));
                     groupItem.setGroupPhoto(contactObject.getString("photo"));
@@ -703,15 +712,15 @@ public class Parser {
                         }
                         groupItem.setMembersFeed(membersFeed);
                     }
-                    rssItem.setGroupItem(groupItem);
+                    rssChatListItem.setGroupItem(groupItem);
                 }
                 //Come Back Here!!!
-                rssItem.setContactMembers(contactMembers);
-//                rssItem.setGroupFeed();
-                feed.addItem(rssItem);
+                rssChatListItem.setContactMembers(contactMembers);
+//                rssChatListItem.setGroupFeed();
+                chatListFeed.addItem(rssChatListItem);
             }
 
-            return feed;
+            return chatListFeed;
 
             /**
              * TODO: check if activated then return the token to Splash class
@@ -748,7 +757,7 @@ public class Parser {
 
     }
 
-    public LogFeed payLogWithAnother(String phone, String maxDate, String maxpage) {
+    public PayLogFeed payLogWithAnother(String phone, String maxDate, String maxpage) {
 
         try {
 
@@ -771,14 +780,14 @@ public class Parser {
                     "\"anotherMobile\" : \"" + phone + "\"\n" +
                     "}";
 
-            Log.e("999999999", "activateSong: " + phone);
+            Log.e("Parser:", "Phone: " + phone);
             writer.write(request);
             writer.flush();
             writer.close();
             os.close();
 
             int resCode = httpConn.getResponseCode();
-            Log.e("0000000", "doInBackground: " + resCode);
+            Log.e("Parser", "ResCode: " + resCode);
             if (resCode == 400) {
                 return null;
             }
@@ -802,32 +811,32 @@ public class Parser {
                 }
             }
 
-            Log.e("getchatlog@@@@@@", sb.toString());
+            Log.e("GetChatLog:", sb.toString());
             JSONArray jsonArray = new JSONArray(sb.toString());
 
-            LogFeed logFeed = new LogFeed();
+            PayLogFeed payLogFeed = new PayLogFeed();
 
             for (int i = 0; i < jsonArray.length(); i++) {
-                LogItem logItem1 = new LogItem();
+                PayLogItem payLogItem1 = new PayLogItem();
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 //kk
                 try {
-                    logItem1.setId(jsonObject.getInt("id"));
-                    logItem1.setfMobile(jsonObject.getString("f"));
-                    logItem1.settMobile(jsonObject.getString("t"));
-                    logItem1.setAmount(jsonObject.getInt("a"));
-                    logItem1.setDate(jsonObject.getString("d"));
-                    logItem1.setPaideBool(jsonObject.getBoolean("o"));
-                    logItem1.setStatus(jsonObject.getBoolean("s"));
-                    logItem1.setComment(jsonObject.getString("c"));
-                    logFeed.getHash().put(jsonObject.getInt("id"), i);
+                    payLogItem1.setId(jsonObject.getInt("id"));
+                    payLogItem1.setfMobile(jsonObject.getString("f"));
+                    payLogItem1.settMobile(jsonObject.getString("t"));
+                    payLogItem1.setAmount(jsonObject.getInt("a"));
+                    payLogItem1.setDate(jsonObject.getString("d"));
+                    payLogItem1.setPaideBool(jsonObject.getBoolean("o"));
+                    payLogItem1.setStatus(jsonObject.getBoolean("s"));
+                    payLogItem1.setComment(jsonObject.getString("c"));
+                    payLogFeed.getHash().put(jsonObject.getInt("id"), i);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                logFeed.addItem(logItem1);
+                payLogFeed.addItem(payLogItem1);
             }
 
-            return logFeed;
+            return payLogFeed;
 
             /**
              * TODO: check if activated then return the token to Splash class
@@ -846,12 +855,12 @@ public class Parser {
 
     }
 
-    public LogItem RequestFromAnother(String phone, String Amount, String cm) {
+    public PayLogItem RequestFromAnother(String phone, String Amount, String cm) {
 
         try {
 
             URL url = new URL(mainUrl + "api/payment/RequestFromAnother");
-            Log.e("1111111", "doInBackground: " + url);
+            Log.e("Parser", "Url: " + url);
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
             httpConn.setDoOutput(true);
             httpConn.setDoInput(true);
@@ -870,14 +879,15 @@ public class Parser {
             jsonObject.put("amount", Integer.parseInt(Amount.replace(",", "")));
             jsonObject.put("comment", cm);
 
-            Log.e("RR999999999", "activateSong: " + jsonObject.toString());
+            Log.e("Parser", "Parser Out: " + jsonObject.toString());
             writer.write(jsonObject.toString());
             writer.flush();
             writer.close();
             os.close();
 
             int resCode = httpConn.getResponseCode();
-            Log.e("0000000", "doInBackground: " + resCode);
+            Log.e("Parser", "Res Code: " + resCode);
+
             if (resCode == 400) {
                 return null;
             }
@@ -901,24 +911,25 @@ public class Parser {
                 }
             }
 
-            Log.e("R@@@@@@", sb.toString());
+            Log.e("Parser", "Parser Input: " + resCode);
 
 
-            LogItem logItem = new LogItem();
+
+            PayLogItem payLogItem = new PayLogItem();
             JSONObject jsonObject1 = new JSONObject(sb.toString());
             try {
-                logItem.setId(jsonObject1.getInt("id"));
-                logItem.setfMobile(jsonObject1.getString("f"));
-                logItem.settMobile(jsonObject1.getString("t"));
-                logItem.setAmount(jsonObject1.getInt("a"));
-                logItem.setDate(jsonObject1.getString("d"));
-                logItem.setPaideBool(jsonObject1.getBoolean("o"));
-                logItem.setComment(jsonObject1.getString("c"));
+                payLogItem.setId(jsonObject1.getInt("id"));
+                payLogItem.setfMobile(jsonObject1.getString("f"));
+                payLogItem.settMobile(jsonObject1.getString("t"));
+                payLogItem.setAmount(jsonObject1.getInt("a"));
+                payLogItem.setDate(jsonObject1.getString("d"));
+                payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
+                payLogItem.setComment(jsonObject1.getString("c"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            return logItem;
+            return payLogItem;
 
         } catch (ProtocolException e) {
             e.printStackTrace();
@@ -931,12 +942,12 @@ public class Parser {
 
     }
 
-    public LogItem groupRequestFromAnother(String phone, String Amount, String cm, int groupId) {
+    public PayLogItem groupRequestFromAnother(String phone, String Amount, String cm, int groupId) {
 
         try {
 
             URL url = new URL(mainUrl + "api/payment/RequestFromAnother");
-            Log.e("1111111", "doInBackground: " + url);
+            Log.e("Parser", "Url: " + url);
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
             httpConn.setDoOutput(true);
             httpConn.setDoInput(true);
@@ -956,14 +967,14 @@ public class Parser {
             jsonObject.put("comment", cm);
             jsonObject.put("groupId", groupId);
 
-            Log.e("RR999999999", "activateSong: " + jsonObject.toString());
+            Log.e("Parser", "Parser Out: " + jsonObject.toString());
             writer.write(jsonObject.toString());
             writer.flush();
             writer.close();
             os.close();
 
             int resCode = httpConn.getResponseCode();
-            Log.e("0000000", "doInBackground: " + resCode);
+            Log.e("Parser", "Res Code: " + resCode);
             if (resCode == 400) {
                 return null;
             }
@@ -987,29 +998,29 @@ public class Parser {
                 }
             }
 
-            Log.e("R@@@@@@", sb.toString());
+            Log.e("Parser In", sb.toString());
 
 
-            LogItem logItem = new LogItem();
+            PayLogItem payLogItem = new PayLogItem();
             JSONObject jsonObject1 = new JSONObject(sb.toString());
             try {
                 JSONObject object = jsonObject1.getJSONObject("f");
-                logItem.setfPhoto("http://new.opaybot.ir" + object.getString("photo"));
-                logItem.setfMobile(object.getString("mobile"));
-                logItem.setfId(object.getString("id"));
-                logItem.setfTitle(object.getString("title"));
-                logItem.setId(jsonObject1.getInt("id"));
-                logItem.setAmount(jsonObject1.getInt("a"));
-                logItem.setDate(jsonObject1.getString("d"));
-                logItem.setPaideBool(jsonObject1.getBoolean("o"));
-                logItem.setStatus(jsonObject1.getBoolean("s"));
-                logItem.setGroup(jsonObject1.getBoolean("g"));
-                logItem.setComment(jsonObject1.getString("c"));
+                payLogItem.setfPhoto("http://new.opaybot.ir" + object.getString("photo"));
+                payLogItem.setfMobile(object.getString("mobile"));
+                payLogItem.setfId(object.getString("id"));
+                payLogItem.setfTitle(object.getString("title"));
+                payLogItem.setId(jsonObject1.getInt("id"));
+                payLogItem.setAmount(jsonObject1.getInt("a"));
+                payLogItem.setDate(jsonObject1.getString("d"));
+                payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
+                payLogItem.setStatus(jsonObject1.getBoolean("s"));
+                payLogItem.setGroup(jsonObject1.getBoolean("g"));
+                payLogItem.setComment(jsonObject1.getString("c"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            return logItem;
+            return payLogItem;
 
         } catch (ProtocolException e) {
             e.printStackTrace();
@@ -1022,12 +1033,12 @@ public class Parser {
 
     }
 
-    public LogItem accPaymentRequest(String id, String detail) {
+    public PayLogItem accPaymentRequest(String id, String detail) {
 
         try {
 
             URL url = new URL(mainUrl + "api/payment/AcceptPaymentRequest");
-            Log.e("1111111", "doInBackground: " + url);
+            Log.e("Parser", "Url: " + url);
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
             httpConn.setDoOutput(true);
             httpConn.setDoInput(true);
@@ -1045,14 +1056,14 @@ public class Parser {
             jsonObject.put("id", Integer.parseInt(id));
             jsonObject.put("paymentDetails", detail);
 
-            Log.e("999999999", "activateSong: " + jsonObject);
+            Log.e("Parser", "Out: " + jsonObject);
             writer.write(jsonObject.toString());
             writer.flush();
             writer.close();
             os.close();
 
             int resCode = httpConn.getResponseCode();
-            Log.e("0000000", "doInBackground: " + resCode);
+            Log.e("Parser", "ResCode: " + resCode);
             if (resCode == 400) {
                 return null;
             }
@@ -1076,26 +1087,26 @@ public class Parser {
                 }
             }
 
-            Log.e("accpay111111", sb.toString());
+            Log.e("Parser In", sb.toString());
 
-            LogItem logItem = new LogItem();
+            PayLogItem payLogItem = new PayLogItem();
             JSONObject jsonObject1 = new JSONObject(sb.toString());
             try {
-                logItem.setId(jsonObject1.getInt("id"));
-                logItem.setfMobile(jsonObject1.getString("f"));
-                logItem.settMobile(jsonObject1.getString("t"));
-                logItem.setAmount(jsonObject1.getInt("a"));
-                logItem.setDate(jsonObject1.getString("d"));
-                logItem.setPaideBool(jsonObject1.getBoolean("o"));
-                logItem.setComment(jsonObject1.getString("c"));
-                logItem.setStatus(jsonObject1.getBoolean("s"));
+                payLogItem.setId(jsonObject1.getInt("id"));
+                payLogItem.setfMobile(jsonObject1.getString("f"));
+                payLogItem.settMobile(jsonObject1.getString("t"));
+                payLogItem.setAmount(jsonObject1.getInt("a"));
+                payLogItem.setDate(jsonObject1.getString("d"));
+                payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
+                payLogItem.setComment(jsonObject1.getString("c"));
+                payLogItem.setStatus(jsonObject1.getBoolean("s"));
 
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            return logItem;
+            return payLogItem;
 
         } catch (ProtocolException e) {
             e.printStackTrace();
@@ -1113,7 +1124,7 @@ public class Parser {
         try {
 
             URL url = new URL(mainUrl + "api/Device");
-            Log.e("1111111", "Send push RegID: " + url);
+            Log.e("Parser", "Url " + url);
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
             httpConn.setDoOutput(true);
             httpConn.setDoInput(true);
@@ -1135,14 +1146,14 @@ public class Parser {
             jsonObject.put("AppVersion", "5555");
             jsonObject.put("PushToken", pushToken);
 
-            Log.e("999999999", "activateSong: " + jsonObject);
+            Log.e("Parser", "Out: " + jsonObject);
             writer.write(jsonObject.toString());
             writer.flush();
             writer.close();
             os.close();
 
             int resCode = httpConn.getResponseCode();
-            Log.e("0000000", "doInBackground: " + resCode);
+            Log.e("Parser", "ResCode: " + resCode);
             if (resCode == 400) {
                 return null;
             }
@@ -1166,7 +1177,7 @@ public class Parser {
                 }
             }
 
-            Log.e("accpay111111", sb.toString());
+            Log.e("Parser In", sb.toString());
             return sb + "";
 
         } catch (ProtocolException e) {
@@ -1180,25 +1191,22 @@ public class Parser {
 
     }
 
-    public boolean deletePayment(int id) {
+    public boolean deletePayment(Integer id) {
         boolean state = false;
         try {
 
             URL url = new URL(mainUrl + "api/Payment/" + id);
-            Log.e("1111111", "doInBackground: " + url);
+            Log.e("Parser", "Url: " + url);
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
-            httpConn.setDoOutput(true);
+            httpConn.setDoOutput(false);
             httpConn.setDoInput(true);
             httpConn.setAllowUserInteraction(false);
             httpConn.setRequestMethod("DELETE");
             httpConn.setConnectTimeout(20000);
             httpConn.setReadTimeout(20000);
-            httpConn.setRequestProperty("Content-Type", "application/json");
             httpConn.setRequestProperty("Authorization", "bearer " + token);
-
-            Log.e("Auth", "deletePayment: " + token);
             int resCode = httpConn.getResponseCode();
-            Log.e("0000000", "doInBackground: " + resCode);
+            Log.e("Parser", "ResCode: " + resCode);
             if (resCode == 200) {
                 state = true;
             } else state = false;
@@ -1210,12 +1218,12 @@ public class Parser {
         return state;
     }
 
-    public LogItem sendPaymentRequest(String phone, String detail, String comment, String amount) {
+    public PayLogItem sendPaymentRequest(String phone, String detail, String comment, String amount) {
 
         try {
 
             URL url = new URL(mainUrl + "api/payment/PayToAnotherWithTF");
-            Log.e("1111111", "doInBackground: " + url);
+            Log.e("Parser", "Url:" + url);
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
             httpConn.setDoOutput(true);
             httpConn.setDoInput(true);
@@ -1235,7 +1243,7 @@ public class Parser {
             jsonObject.put("amount", Integer.parseInt(amount));
             jsonObject.put("comment", comment);
 
-            Log.e("123456789", "activateSong: " + jsonObject.toString());
+            Log.e("Parser", "Output: " + jsonObject.toString());
             writer.write(jsonObject.toString());
             writer.flush();
             writer.close();
@@ -1265,27 +1273,27 @@ public class Parser {
                 }
             }
 
-            Log.e("@@@@@@", sb.toString());
+            Log.e("ParserIn ", sb.toString());
 
-            LogItem logItem = new LogItem();
+            PayLogItem payLogItem = new PayLogItem();
             JSONObject jsonObject1 = new JSONObject(sb.toString());
             try {
-                logItem.setId(jsonObject1.getInt("id"));
-                logItem.setfMobile(jsonObject1.getString("f"));
-                logItem.settMobile(jsonObject1.getString("t"));
-                logItem.setAmount(jsonObject1.getInt("a"));
-                logItem.setDate(jsonObject1.getString("d"));
-                logItem.setPaideBool(jsonObject1.getBoolean("o"));
-                logItem.setStatus(jsonObject1.getBoolean("s"));
+                payLogItem.setId(jsonObject1.getInt("id"));
+                payLogItem.setfMobile(jsonObject1.getString("f"));
+                payLogItem.settMobile(jsonObject1.getString("t"));
+                payLogItem.setAmount(jsonObject1.getInt("a"));
+                payLogItem.setDate(jsonObject1.getString("d"));
+                payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
+                payLogItem.setStatus(jsonObject1.getBoolean("s"));
 
-                logItem.setComment(jsonObject1.getString("c"));
+                payLogItem.setComment(jsonObject1.getString("c"));
 
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            return logItem;
+            return payLogItem;
 
         } catch (ProtocolException e) {
             e.printStackTrace();
@@ -1317,7 +1325,7 @@ public class Parser {
 
 
         URL url = new URL(mainUrl + "api/account/setPhotoBase64");
-        Log.e("1111111", "doInBackground: " + url);
+        Log.e("Parser", "Url: " + url);
         HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
         httpConn.setDoInput(true);
         httpConn.setAllowUserInteraction(false);
@@ -1337,7 +1345,7 @@ public class Parser {
         writer.close();
         os.close();
         int resCode = httpConn.getResponseCode();
-        Log.e("0000000", "doInBackground: " + resCode);
+        Log.e("Parser", "ResCode: " + resCode);
         if (resCode != 200) {
             return "Error";
         }
@@ -1362,7 +1370,7 @@ public class Parser {
             }
         }
 
-        Log.e("@@@@@@", sb.toString());
+        Log.e("Parser In", sb.toString());
         return sb.toString();
 
 
@@ -1386,8 +1394,8 @@ public class Parser {
         String base64 = Base64.encodeToString(bytes, Base64.NO_WRAP);
 
 
-        URL url = new URL(mainUrl + "api/GroupItem/" + id + "/SetPhotoBase64");
-        Log.e("1111111", "doInBackground: " + url);
+        URL url = new URL(mainUrl + "api/Group/" + id + "/SetPhotoBase64");
+        Log.e("Parser", "Url: " + url);
         HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
         httpConn.setDoInput(true);
         httpConn.setAllowUserInteraction(false);
@@ -1407,7 +1415,7 @@ public class Parser {
         writer.close();
         os.close();
         int resCode = httpConn.getResponseCode();
-        Log.e("0000000", "doInBackground: " + resCode);
+        Log.e("Parser", "ResCode: " + resCode);
         if (resCode != 200) {
             return "Error";
         }
@@ -1432,18 +1440,18 @@ public class Parser {
             }
         }
 
-        Log.e("@@@@@@", sb.toString());
+        Log.e("Parser In", sb.toString());
         return sb.toString();
 
 
     }
 
-    public Feed getLocation() {
+    public ChatListFeed getLocation() {
 
         try {
 
             URL url = new URL(mainUrl + "api/location");
-            Log.e("1111111", "doInBackground: Get " + url);
+            Log.e("Parser", "Url " + url);
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
             httpConn.setDoInput(true);
             httpConn.setAllowUserInteraction(false);
@@ -1454,7 +1462,7 @@ public class Parser {
             httpConn.setRequestProperty("Authorization", "bearer " + token);
 
             int resCode = httpConn.getResponseCode();
-            Log.e("0000000", "doInBackground: " + resCode);
+            Log.e("Parser", "ResCode: " + resCode);
             if (resCode == 400) {
                 return null;
             }
@@ -1478,24 +1486,24 @@ public class Parser {
                 }
             }
 
-            Feed feed = new Feed();
-            Log.e("@@@@@@2222", sb.toString());
+            ChatListFeed chatListFeed = new ChatListFeed();
+            Log.e("Parser In", sb.toString());
             JSONArray jsonArray = new JSONArray(sb.toString());
             for (int i = 0; i < jsonArray.length(); i++) {
-                Item item = new Item();
+                ChatListItem chatListItem = new ChatListItem();
                 try {
-                    item.setContactImg(jsonArray.getJSONObject(i).getString("photo"));
-                    item.setTelNo(jsonArray.getJSONObject(i).getString("mobile"));
-                    item.setUserId(jsonArray.getJSONObject(i).getString("id"));
-                    item.setContactName(jsonArray.getJSONObject(i).getString("title"));
+                    chatListItem.setContactImg(jsonArray.getJSONObject(i).getString("photo"));
+                    chatListItem.setTelNo(jsonArray.getJSONObject(i).getString("mobile"));
+                    chatListItem.setUserId(jsonArray.getJSONObject(i).getString("id"));
+                    chatListItem.setContactName(jsonArray.getJSONObject(i).getString("title"));
                 } catch (Exception e) {
                     e.printStackTrace();
 
                 }
-                feed.addItem(item);
+                chatListFeed.addItem(chatListItem);
             }
 
-            return feed;
+            return chatListFeed;
 
 
         } catch (JSONException | IOException e) {
@@ -1508,7 +1516,7 @@ public class Parser {
         try {
 
             URL url = new URL(mainUrl + "api/location");
-            Log.e("1111111", "doInBackground: " + url);
+            Log.e("Parser", "Url: " + url);
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
             httpConn.setDoInput(true);
             httpConn.setAllowUserInteraction(false);
@@ -1525,14 +1533,14 @@ public class Parser {
             jsonObject.put("lng", lng);
             jsonObject.put("acc", acc);
 
-            Log.e("999999999", "activateSong: " + jsonObject.toString());
+            Log.e("Parser", "Output: " + jsonObject.toString());
             writer.write(jsonObject.toString());
             writer.flush();
             writer.close();
             os.close();
 
             int resCode = httpConn.getResponseCode();
-            Log.e("0000000", "doInBackground: " + resCode);
+            Log.e("Parser", "ResCode: " + resCode);
 
         } catch (IOException | JSONException e) {
             e.printStackTrace();
@@ -1543,7 +1551,7 @@ public class Parser {
         try {
 
             URL url = new URL(mainUrl + "AddMember");
-            Log.e("1111111", "doInBackground: " + url);
+            Log.e("Parser", "Url: " + url);
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
             httpConn.setDoOutput(true);
             httpConn.setDoInput(true);
@@ -1566,14 +1574,14 @@ public class Parser {
             }
             jsonObject.put("membersMobiles", jsonArray);
 
-            Log.e("999999999", "activateSong: " + jsonObject.toString());
+            Log.e("Parser", "Output: " + jsonObject.toString());
             writer.write(jsonObject.toString());
             writer.flush();
             writer.close();
             os.close();
 
             int resCode = httpConn.getResponseCode();
-            Log.e("0000000", "doInBackground: " + resCode);
+            Log.e("Parser", "ResCode: " + resCode);
             if (resCode != 400) {
                 return null;
             }
@@ -1593,7 +1601,7 @@ public class Parser {
         try {
 
             URL url = new URL(mainUrl + "api/Group");
-            Log.e("1111111", "doInBackground: " + url);
+            Log.e("Parser", "Url: " + url);
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
             httpConn.setDoOutput(true);
             httpConn.setDoInput(true);
@@ -1604,7 +1612,6 @@ public class Parser {
             httpConn.setRequestProperty("Content-Type", "application/json");
             httpConn.setRequestProperty("Authorization", "bearer " + token);
 
-            Log.e("TOKEN", "group: " + "bearer " + token);
 
             OutputStream os = httpConn.getOutputStream();
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
@@ -1614,14 +1621,14 @@ public class Parser {
             jsonObject.put("title", title);
             jsonObject.put("membersMobiles", jsonMemberPhone);
 
-            Log.e("group999999999", "activateSong: " + jsonObject);
+            Log.e("Parser", "Output: " + jsonObject);
             writer.write(jsonObject.toString());
             writer.flush();
             writer.close();
             os.close();
 
             int resCode = httpConn.getResponseCode();
-            Log.e("group0000000", "doInBackground: " + resCode);
+            Log.e("Parser", "ResCode: " + resCode);
             if (resCode != 400) {
                 state = true;
             } else {
@@ -1648,7 +1655,7 @@ public class Parser {
             }
 
 
-            Log.e("@@@@@@2222", sb.toString());
+            Log.e("Parser In", sb.toString());
             JSONObject object = new JSONObject(sb.toString());
             groupItem = new GroupItem();
             groupItem.setGroupId(object.getInt("id"));
@@ -1690,11 +1697,11 @@ public class Parser {
         return null;
     }
 
-    public LogItem groupChat(int id, int pageSize, String maxDate, ArrayList<String> memberPhone) {
+    public PayLogItem groupChat(int id, int pageSize, String maxDate, ArrayList<String> memberPhone) {
         try {
 
             URL url = new URL(mainUrl + "Chat?id=" + id + "&pagesize=" + pageSize + "&maxDate=" + maxDate);
-            Log.e("1111111", "doInBackground: " + url);
+            Log.e("Parser", "Url: " + url);
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
             httpConn.setDoOutput(true);
             httpConn.setDoInput(true);
@@ -1706,7 +1713,7 @@ public class Parser {
             httpConn.setRequestProperty("Authorization", "bearer " + token);
 
             int resCode = httpConn.getResponseCode();
-            Log.e("0000000", "doInBackground: " + resCode);
+            Log.e("Parser", "ResCode: " + resCode);
             if (resCode != 400) {
                 return null;
             }
@@ -1730,20 +1737,20 @@ public class Parser {
                 }
             }
 
-            Log.e("@@@@@@", sb.toString());
+            Log.e("Parser In", sb.toString());
 
-            LogItem logItem = new LogItem();
+            PayLogItem payLogItem = new PayLogItem();
             JSONObject jsonObject1 = new JSONObject(sb.toString());
             try {
-                logItem.setId(jsonObject1.getInt("id"));
-                logItem.setfMobile(jsonObject1.getString("f"));
-                logItem.settMobile(jsonObject1.getString("t"));
-                logItem.setAmount(jsonObject1.getInt("a"));
-                logItem.setDate(jsonObject1.getString("d"));
-                logItem.setPaideBool(jsonObject1.getBoolean("o"));
-                logItem.setStatus(jsonObject1.getBoolean("s"));
+                payLogItem.setId(jsonObject1.getInt("id"));
+                payLogItem.setfMobile(jsonObject1.getString("f"));
+                payLogItem.settMobile(jsonObject1.getString("t"));
+                payLogItem.setAmount(jsonObject1.getInt("a"));
+                payLogItem.setDate(jsonObject1.getString("d"));
+                payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
+                payLogItem.setStatus(jsonObject1.getBoolean("s"));
 
-                logItem.setComment(jsonObject1.getString("c"));
+                payLogItem.setComment(jsonObject1.getString("c"));
 
 
             } catch (JSONException e) {
@@ -1757,12 +1764,96 @@ public class Parser {
 
     }
 
-    public LogItem payToAnotherWithTF(String anotherMobile, String paymentDetails, String Amount, String cm, int groupId) {
+    public GroupItem groupWithChat(String id, int pageSize) {
+
+        GroupItem groupItem = null;
+        try {
+
+            URL url = new URL(mainUrl + "api/group/" + id + "?pagesize=" + pageSize);
+            Log.e("Parser", "Url: " + url);
+            HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
+            httpConn.setDoOutput(false);
+            httpConn.setDoInput(true);
+            httpConn.setAllowUserInteraction(false);
+            httpConn.setRequestMethod("GET");
+            httpConn.setConnectTimeout(20000);
+            httpConn.setReadTimeout(20000);
+            httpConn.setRequestProperty("Authorization", "bearer " + token);
+
+            int resCode = httpConn.getResponseCode();
+            Log.e("Parser", "ResCode: " + resCode);
+            if (resCode != 400) {
+                return null;
+            }
+
+            InputStream in = httpConn.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            StringBuilder sb = new StringBuilder();
+
+            String line = null;
+            try {
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            Log.e("Parser In", sb.toString());
+            JSONObject object = new JSONObject(sb.toString());
+            groupItem = new GroupItem();
+            groupItem.setGroupId(object.getInt("id"));
+            groupItem.setGroupTitle(object.getString("title"));
+            groupItem.setGroupPhoto(object.getString("photo"));
+            if (!object.isNull("members")) {
+                JSONArray jsonArray = object.getJSONArray("members");
+                MembersFeed membersFeed = new MembersFeed();
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    MembersItem membersItem = new MembersItem();
+                    JSONObject object1 = jsonArray.getJSONObject(i);
+                    membersItem.setMemberTitle(object1.getString("title"));
+                    membersItem.setMemberPhoto(object1.getString("photo"));
+                    membersItem.setMemberPhone(object1.getString("mobile"));
+                    membersItem.setMemberId(object1.getString("id"));
+                    membersFeed.addMemberItem(membersItem);
+                }
+                groupItem.setMembersFeed(membersFeed);
+            }
+            if (object.isNull("lastChats")) {
+                JSONObject groupsLastChat = object.getJSONObject("lastchat");
+                groupItem.setGroupLastChatId(groupsLastChat.getInt("id"));
+                groupItem.setGroupLastChatFrom(groupsLastChat.getString("f"));
+                groupItem.setGroupLastChatTo(groupsLastChat.getString("t"));
+                groupItem.setGroupLastChatAmount(groupsLastChat.getInt("a"));
+                groupItem.setGroupLastChatDate(groupsLastChat.getString("d"));
+                groupItem.setGroupLastChatOrderPay(groupsLastChat.getBoolean("o"));
+                groupItem.setGroupLastChatStatus(groupsLastChat.getBoolean("s"));
+                groupItem.setGroupLastChatFromGroup(groupsLastChat.getBoolean("g"));
+                groupItem.setGroupLastChatComment(groupsLastChat.getString("c"));
+            }
+
+            return groupItem;
+
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+
+    }
+
+
+    public PayLogItem payToAnotherWithTF(String anotherMobile, String paymentDetails, String Amount, String cm, int groupId) {
 
         try {
 
             URL url = new URL(mainUrl + "api/Payment/PayToAnotherWithTF");
-            Log.e("1111111", "doInBackground: " + url);
+            Log.e("Parser", "Url: " + url);
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
             httpConn.setDoOutput(true);
             httpConn.setDoInput(true);
@@ -1783,14 +1874,14 @@ public class Parser {
             jsonObject.put("comment", cm);
             jsonObject.put("groupId", groupId);
 
-            Log.e("RR999999999", "activateSong: " + jsonObject.toString());
+            Log.e("Parser", "Output: " + jsonObject.toString());
             writer.write(jsonObject.toString());
             writer.flush();
             writer.close();
             os.close();
 
             int resCode = httpConn.getResponseCode();
-            Log.e("0000000", "doInBackground: " + resCode);
+            Log.e("Parser", "ResCode: " + resCode);
             if (resCode == 400) {
                 return null;
             }
@@ -1814,24 +1905,24 @@ public class Parser {
                 }
             }
 
-            Log.e("R@@@@@@", sb.toString());
+            Log.e("Parser In", sb.toString());
 
 
-            LogItem logItem = new LogItem();
+            PayLogItem payLogItem = new PayLogItem();
             JSONObject jsonObject1 = new JSONObject(sb.toString());
             try {
-                logItem.setId(jsonObject1.getInt("id"));
-                logItem.setfMobile(jsonObject1.getString("f"));
-                logItem.settMobile(jsonObject1.getString("t"));
-                logItem.setAmount(jsonObject1.getInt("a"));
-                logItem.setDate(jsonObject1.getString("d"));
-                logItem.setPaideBool(jsonObject1.getBoolean("o"));
-                logItem.setComment(jsonObject1.getString("c"));
+                payLogItem.setId(jsonObject1.getInt("id"));
+                payLogItem.setfMobile(jsonObject1.getString("f"));
+                payLogItem.settMobile(jsonObject1.getString("t"));
+                payLogItem.setAmount(jsonObject1.getInt("a"));
+                payLogItem.setDate(jsonObject1.getString("d"));
+                payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
+                payLogItem.setComment(jsonObject1.getString("c"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            return logItem;
+            return payLogItem;
 
         } catch (ProtocolException e) {
             e.printStackTrace();
@@ -1844,12 +1935,12 @@ public class Parser {
 
     }
 
-    public LogFeed getGroupChat(int id, int page, String date) {
+    public PayLogFeed getGroupChat(int id, int page, String date) {
 
         try {
 
             URL url = new URL(mainUrl + "api/Group/" + id + "/Chat?pagesize=" + page + "&maxDate=" + date);
-            Log.e("1111111", "doInBackground: " + url);
+            Log.e("Parser", "Url: " + url);
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
             httpConn.setDoOutput(false);
             httpConn.setDoInput(true);
@@ -1860,7 +1951,7 @@ public class Parser {
             httpConn.setRequestProperty("Authorization", "bearer " + token);
 
             int resCode = httpConn.getResponseCode();
-            Log.e("0000000", "doInBackground: " + resCode);
+            Log.e("Parser", "ResCode: " + resCode);
             if (resCode == 400) {
                 return null;
             }
@@ -1884,38 +1975,38 @@ public class Parser {
                 }
             }
 
-            Log.e("R@@@@@@", sb.toString());
+            Log.e("Parser In", sb.toString());
 
             JSONArray jsonArray = new JSONArray(sb.toString());
-            LogFeed feed = new LogFeed();
+            PayLogFeed feed = new PayLogFeed();
 
             for (int i = 0; i < jsonArray.length(); i++) {
-                LogItem logItem = null;
+                PayLogItem payLogItem = null;
                 try {
-                    logItem = new LogItem();
+                    payLogItem = new PayLogItem();
                     JSONObject object = jsonArray.getJSONObject(i);
                     JSONObject jsonObjectf = object.getJSONObject("f");
                     JSONObject jsonObjectt = object.getJSONObject("t");
-                    logItem.setfPhoto("http://new.opaybot.ir" + jsonObjectf.getString("photo"));
-                    logItem.setfMobile(jsonObjectf.getString("mobile"));
-                    logItem.setfId(jsonObjectf.getString("id"));
-                    logItem.setfTitle(jsonObjectf.getString("title"));
-                    logItem.settPhoto("http://new.opaybot.ir" + jsonObjectt.getString("photo"));
-                    logItem.settMobile(jsonObjectt.getString("mobile"));
-                    logItem.settId(jsonObjectt.getString("id"));
-                    logItem.settTitle(jsonObjectt.getString("title"));
-                    logItem.setId(object.getInt("id"));
-                    logItem.setAmount(object.getInt("a"));
-                    logItem.setDate(object.getString("d"));
-                    logItem.setPaideBool(object.getBoolean("o"));
-                    logItem.setStatus(object.getBoolean("s"));
-                    logItem.setGroup(object.getBoolean("g"));
-                    logItem.setComment(object.getString("c"));
+                    payLogItem.setfPhoto("http://new.opaybot.ir" + jsonObjectf.getString("photo"));
+                    payLogItem.setfMobile(jsonObjectf.getString("mobile"));
+                    payLogItem.setfId(jsonObjectf.getString("id"));
+                    payLogItem.setfTitle(jsonObjectf.getString("title"));
+                    payLogItem.settPhoto("http://new.opaybot.ir" + jsonObjectt.getString("photo"));
+                    payLogItem.settMobile(jsonObjectt.getString("mobile"));
+                    payLogItem.settId(jsonObjectt.getString("id"));
+                    payLogItem.settTitle(jsonObjectt.getString("title"));
+                    payLogItem.setId(object.getInt("id"));
+                    payLogItem.setAmount(object.getInt("a"));
+                    payLogItem.setDate(object.getString("d"));
+                    payLogItem.setPaideBool(object.getBoolean("o"));
+                    payLogItem.setStatus(object.getBoolean("s"));
+                    payLogItem.setGroup(object.getBoolean("g"));
+                    payLogItem.setComment(object.getString("c"));
                     feed.getHash().put(object.getInt("id"), i);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                feed.addItem(logItem);
+                feed.addItem(payLogItem);
             }
             return feed;
 
@@ -1930,12 +2021,12 @@ public class Parser {
 
     }
 
-    public LogItem sendGroupPaymentRequest(String phone, String detail, String comment, String amount, String id) {
+    public PayLogItem sendGroupPaymentRequest(String phone, String detail, String comment, String amount, String id) {
 
         try {
 
             URL url = new URL(mainUrl + "api/payment/PayToAnotherWithTF");
-            Log.e("1111111", "doInBackground: " + url);
+            Log.e("Parser", "Url: " + url);
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
             httpConn.setDoOutput(true);
             httpConn.setDoInput(true);
@@ -1956,14 +2047,14 @@ public class Parser {
             jsonObject.put("comment", comment);
             jsonObject.put("groupId", Integer.parseInt(id));
 
-            Log.e("123456789", "activateSong: " + jsonObject.toString());
+            Log.e("Parser", "Output: " + jsonObject.toString());
             writer.write(jsonObject.toString());
             writer.flush();
             writer.close();
             os.close();
 
             int resCode = httpConn.getResponseCode();
-            Log.e("44444444444", "doInBackground: " + resCode);
+            Log.e("Parser", "ResCode: " + resCode);
             if (resCode == 400) {
                 return null;
             }
@@ -1987,35 +2078,35 @@ public class Parser {
                 }
             }
 
-            Log.e("@@@@@@", sb.toString());
+            Log.e("Parser In", sb.toString());
 
-            LogItem logItem = new LogItem();
+            PayLogItem payLogItem = new PayLogItem();
             JSONObject jsonObject1 = new JSONObject(sb.toString());
             try {
                 JSONObject jsonObjectf = jsonObject1.getJSONObject("f");
                 JSONObject jsonObjectt = jsonObject1.getJSONObject("t");
-                logItem.setfPhoto("http://new.opaybot.ir" + jsonObjectf.getString("photo"));
-                logItem.setfMobile(jsonObjectf.getString("mobile"));
-                logItem.setfId(jsonObjectf.getString("id"));
-                logItem.setfTitle(jsonObjectf.getString("title"));
-                logItem.settPhoto("http://new.opaybot.ir" + jsonObjectt.getString("photo"));
-                logItem.settMobile(jsonObjectt.getString("mobile"));
-                logItem.settId(jsonObjectt.getString("id"));
-                logItem.settTitle(jsonObjectt.getString("title"));
-                logItem.setId(jsonObject1.getInt("id"));
-                logItem.setAmount(jsonObject1.getInt("a"));
-                logItem.setDate(jsonObject1.getString("d"));
-                logItem.setPaideBool(jsonObject1.getBoolean("o"));
-                logItem.setStatus(jsonObject1.getBoolean("s"));
-                logItem.setGroup(jsonObject1.getBoolean("g"));
-                logItem.setComment(jsonObject1.getString("c"));
+                payLogItem.setfPhoto("http://new.opaybot.ir" + jsonObjectf.getString("photo"));
+                payLogItem.setfMobile(jsonObjectf.getString("mobile"));
+                payLogItem.setfId(jsonObjectf.getString("id"));
+                payLogItem.setfTitle(jsonObjectf.getString("title"));
+                payLogItem.settPhoto("http://new.opaybot.ir" + jsonObjectt.getString("photo"));
+                payLogItem.settMobile(jsonObjectt.getString("mobile"));
+                payLogItem.settId(jsonObjectt.getString("id"));
+                payLogItem.settTitle(jsonObjectt.getString("title"));
+                payLogItem.setId(jsonObject1.getInt("id"));
+                payLogItem.setAmount(jsonObject1.getInt("a"));
+                payLogItem.setDate(jsonObject1.getString("d"));
+                payLogItem.setPaideBool(jsonObject1.getBoolean("o"));
+                payLogItem.setStatus(jsonObject1.getBoolean("s"));
+                payLogItem.setGroup(jsonObject1.getBoolean("g"));
+                payLogItem.setComment(jsonObject1.getString("c"));
 
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            return logItem;
+            return payLogItem;
 
         } catch (ProtocolException e) {
             e.printStackTrace();
