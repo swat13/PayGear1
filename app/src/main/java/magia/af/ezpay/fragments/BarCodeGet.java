@@ -1,4 +1,4 @@
-package magia.af.ezpay.fragments;
+package magia.af.ezpay.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 
 import magia.af.ezpay.MainActivity;
-import magia.af.ezpay.Parser.Feed;
+import magia.af.ezpay.Parser.ChatListFeed;
 import magia.af.ezpay.R;
 import magia.af.ezpay.SimpleScannerActivity;
 
@@ -23,7 +23,7 @@ import magia.af.ezpay.SimpleScannerActivity;
 public class BarCodeGet extends Fragment {
 
     ImageView imageView;
-    Feed _feed;
+    ChatListFeed _ChatList_feed;
 
 
     public static BarCodeGet getInstance() {
@@ -34,14 +34,14 @@ public class BarCodeGet extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.barcode_scanner, container, false);
-        _feed = (Feed) getArguments().getSerializable("contact");
+        _ChatList_feed = (ChatListFeed) getArguments().getSerializable("contact");
         ((MainActivity) getActivity()).fragment_status = 4;
         imageView = (ImageView) v.findViewById(R.id.QrCode);
         Button btnScanOtherQRCode = (Button) v.findViewById(R.id.btn_scan_other_users);
         btnScanOtherQRCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().startActivity(new Intent(getActivity(), SimpleScannerActivity.class).putExtra("contact", _feed));
+                getActivity().startActivity(new Intent(getActivity(), SimpleScannerActivity.class).putExtra("contact", _ChatList_feed));
             }
         });
 //        new getQr().execute();

@@ -8,9 +8,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Switch;
+import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -27,9 +32,10 @@ import java.net.URL;
 import magia.af.ezpay.ChatPageActivity;
 import magia.af.ezpay.GroupChatPageActivity;
 import magia.af.ezpay.MainActivity;
-import magia.af.ezpay.Parser.LogItem;
+import magia.af.ezpay.Parser.PayLogItem;
 import magia.af.ezpay.R;
-import magia.af.ezpay.fragments.FriendsList;
+import magia.af.ezpay.Fragments.FriendsList;
+import magia.af.ezpay.Splash;
 import magia.af.ezpay.interfaces.MessageHandler;
 
 /**
@@ -46,47 +52,54 @@ public class MessagingService extends FirebaseMessagingService {
     MessageHandler chatMessageHandler;
     MessageHandler mainMessageHandler;
     public static int mode;
+    int type;
     private static final String TAG = "MyFirebaseMsgService";
 
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        Log.e(TAG, "onMessageReceived: " + mode);
-        //Displaying data in log
-        //It is optional
-        Log.e(TAG, "From: " + remoteMessage.getFrom());
-        Log.e(TAG, "Notification Message Body: " + remoteMessage.getNotification().getBody());
+        Log.e(TAG, "Mode: " + mode);
+        Log.e(TAG, "Notification Received: " + remoteMessage.getNotification().getBody());
 
-        LogItem logItem = getChatItem(remoteMessage.getNotification().getBody());
+        PayLogItem payLogItem = getChatItem(remoteMessage.getNotification().getBody());
+        sendNotification(payLogItem);
         try {
             JSONObject jsonObject = new JSONObject(remoteMessage.getNotification().getBody());
-            if (mode == 1) {
+            if (mode == 1) {//chat pv
+                JSONObject object = jsonObject.getJSONObject("chatItem");
                 chatMessageHandler = ChatPageActivity.informNotif();
-                chatMessageHandler.handleMessage(logItem, jsonObject.isNull("chatItem"), "1");
-            } else if (mode == 2) {
+                chatMessageHandler.handleMessage(payLogItem, jsonObject.isNull("chatItem"), object.getString("t"));
+            } else if (mode == 2) {//group chat
                 groupMessageHandler = GroupChatPageActivity.informNotif();
-                groupMessageHandler.handleMessage(logItem, jsonObject.isNull("groupChatItem"), "2");
-            } else if (mode == 3) {
+                groupMessageHandler.handleMessage(payLogItem, jsonObject.isNull("groupChatItem"), "2");
+            } else if (mode == 3) {//update the chat list
                 mainMessageHandler = FriendsList.informNotif();
-                mainMessageHandler.handleMessage(logItem, false, "");
+                if (jsonObject.getString("type").contains("1")) {
+                    mainMessageHandler.handleMessage(payLogItem, false, "");
+                } else {
+                    mainMessageHandler.handleMessageGp(jsonObject.getString("body"), jsonObject.getString("param1"));
+                }
+
+
+
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Log.e(TAG, "onMessageReceived: " + logItem);
 
     }
 
-    private void sendNotification(LogItem messageBody) {
+    private void sendNotification(PayLogItem messageBody) {
 
         Log.e(TAG, "sendNotification: " + messageBody.getNotifType());
         Log.e(TAG, "sendNotification: " + messageBody.getNotifBody());
-//        Toast.makeText(getApplicationContext(), "salam, " + messageBody.getNotifType(), Toast.LENGTH_SHORT).show();
-        /*if (messageBody.getNotifType() == 4) {
+
+
+        if (messageBody.getNotifBody() != null) {
             Log.e(TAG, "sendNotification: 0000000");
             String url = messageBody.getNotifParam1();
-            Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(url));
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
             Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -101,12 +114,7 @@ public class MessagingService extends FirebaseMessagingService {
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
             notificationManager.notify(0, notificationBuilder.build());
-        } else {
-            Log.e(TAG, "sendNotification: 111111111");
-            Intent intent = new Intent(this, Splash.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-        }*/
+        }
 
     }
 
@@ -165,8 +173,8 @@ public class MessagingService extends FirebaseMessagingService {
         }
     }
 
-    private static LogItem getChatItem(String json) {
-        LogItem rssItem = new LogItem();
+    private static PayLogItem getChatItem(String json) {
+        PayLogItem rssItem = new PayLogItem();
         try {
             JSONObject jsonObject = new JSONObject(json);
             rssItem.setNotifBody(jsonObject.getString("body"));
@@ -175,6 +183,7 @@ public class MessagingService extends FirebaseMessagingService {
             if (!jsonObject.isNull("param2")) {
                 rssItem.setCancelId(Integer.parseInt(jsonObject.getString("param2")));
             }
+
             if (!jsonObject.isNull("chatItem")) {
                 JSONObject lastChatObject = jsonObject.getJSONObject("chatItem");
                 rssItem.setId(lastChatObject.getInt("id"));
@@ -211,5 +220,6 @@ public class MessagingService extends FirebaseMessagingService {
         }
         return rssItem;
     }
+
 
 }

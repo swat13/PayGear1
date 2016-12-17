@@ -1,18 +1,24 @@
 package magia.af.ezpay;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -30,15 +36,18 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
+import java.io.ByteArrayOutputStream;
+
 import magia.af.ezpay.Firebase.MessagingService;
-import magia.af.ezpay.Parser.LogItem;
+import magia.af.ezpay.Parser.PayLogItem;
 import magia.af.ezpay.Parser.MembersFeed;
 import magia.af.ezpay.Parser.MembersItem;
 import magia.af.ezpay.Parser.Parser;
-import magia.af.ezpay.Parser.Feed;
-import magia.af.ezpay.Parser.LogFeed;
+import magia.af.ezpay.Parser.ChatListFeed;
+import magia.af.ezpay.Parser.PayLogFeed;
 import magia.af.ezpay.Utilities.LocalPersistence;
 import magia.af.ezpay.helper.CalendarConversion;
+import magia.af.ezpay.helper.ImageMaker;
 import magia.af.ezpay.helper.NumberTextWatcher;
 import magia.af.ezpay.interfaces.MessageHandler;
 
@@ -55,7 +64,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
     private Dialog cardDialog;
     private Dialog payDialog;
     private Dialog requestDialog;
-    LogFeed feed;
+    PayLogFeed feed;
     GroupChatPageAdapter adapter;
     public int amount;
     private int position;
@@ -73,8 +82,8 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
     String mCardPassword;
     static MessageHandler mHandler;
     MembersItem membersItem;
-    LogItem logItem;
-    Feed _feed;
+    PayLogItem payLogItem;
+    ChatListFeed _ChatList_feed;
     MembersFeed groupMembers;
     int newPos;
     public static final String TAG = GroupChatPageActivity.class.getSimpleName();
@@ -92,7 +101,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_chat_page);
         MessagingService.mode = 2;
-        feed = new LogFeed();
+        feed = new PayLogFeed();
         mHandler = this;
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
@@ -100,17 +109,13 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
             groupPhoto = bundle.getString("photo");
             groupTitle = bundle.getString("title");
             groupMembers = (MembersFeed) bundle.getSerializable("members");
-            _feed = (Feed) bundle.getSerializable("contact");
+            _ChatList_feed = (ChatListFeed) bundle.getSerializable("contact");
         }
-        Log.e(TAG, "onCreate: " + groupId);
-        Log.e(TAG, "onCreate: " + groupTitle);
         phone = getSharedPreferences("EZpay", 0).getString("phoneNumber", "");
 
         date = "2050-01-01T00:00:00.000";
 
         for (int i = 0; i < groupMembers.memberItemCount(); i++) {
-            Log.e(TAG, "onCreate: " + groupMembers.getMember(i).getMemberPhone());
-            Log.e(TAG, "onCreate: " + groupMembers.getMember(i).getMemberTitle());
             if (groupMembers.getMember(i).getMemberPhone().equals(phone)) {
                 groupMembers.removeMemberItem(i);
             }
@@ -131,6 +136,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         setGroupPhoto();
         txtGroupTitle = (TextView) findViewById(R.id.groupTitle);
         txtGroupTitle.setText(groupTitle);
+
 
         ImageButton btnBack = (ImageButton) findViewById(R.id.btn_back);
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -174,20 +180,21 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
                         cardDialog = new Dialog(GroupChatPageActivity.this, R.style.PauseDialog);
                         cardDialog.setContentView(R.layout.group_payment_layout);
                         edtAmount = (EditText) cardDialog.findViewById(R.id.payAmount);
+                        edtAmount.requestFocus();
                         edtAmount.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                             @Override
                             public void onFocusChange(View v, boolean hasFocus) {
                                 if (hasFocus) {
                                     edtAmount.setGravity(Gravity.LEFT);
                                     edtAmount.setHint("");
-                                } else {
-                                    if (edtAmount.getText().length() == 0) {
-                                        edtAmount.setGravity(Gravity.CENTER);
-                                        edtAmount.setHint("مبلغ پرداختی");
-                                    }
+                                } else if (edtAmount.getText().length() == 0) {
+                                    edtAmount.setGravity(Gravity.CENTER);
+                                    edtAmount.setHint("مبلغ پرداختی");
+
                                 }
                             }
                         });
+
                         edtAmount.addTextChangedListener(new TextWatcher() {
                             private static final char space = ',';
 
@@ -211,6 +218,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
 
                                 } else {
                                     edtAmount.setGravity(Gravity.LEFT);
+                                    edtAmount.setHint("");
                                     if (s.length() > 0 && (s.length() % 4) == 0) {
                                         final char c = s.charAt(s.length() - 3);
                                         if (space == c) {
@@ -240,14 +248,43 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
                                 if (hasFocus) {
                                     edtComment.setGravity(Gravity.RIGHT);
                                     edtComment.setHint("");
-                                } else {
-                                    if (edtComment.getText().length() == 0) {
-                                        edtComment.setGravity(Gravity.CENTER);
-                                        edtComment.setHint("مبلغ پرداختی");
-                                    }
+                                } else if (edtComment.getText().length() == 0) {
+                                    edtComment.setGravity(Gravity.CENTER);
+                                    edtComment.setHint("مبلغ پرداختی");
+
                                 }
                             }
                         });
+
+                        edtComment.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                            }
+
+                            @Override
+                            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                                if (edtComment.getText().length() == 0) {
+                                    edtComment.setGravity(Gravity.CENTER);
+                                    edtComment.setHint("توضیحات");
+
+                                } else {
+
+                                    edtComment.setGravity(Gravity.RIGHT);
+                                    edtComment.setHint("");
+
+                                }
+
+
+                            }
+
+                            @Override
+                            public void afterTextChanged(Editable s) {
+
+                            }
+                        });
+
                         TextView contactDetail = (TextView) cardDialog.findViewById(R.id.texx);
                         contactDetail.setText("پرداخت وجه به " + membersItem.getMemberTitle());
                         Button btnCancel = (Button) cardDialog.findViewById(R.id.cancel);
@@ -274,6 +311,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
                                     payDialog = new Dialog(GroupChatPageActivity.this, R.style.PauseDialog);
                                     payDialog.setContentView(R.layout.group_card_layout);
                                     edtCardNumber = (EditText) payDialog.findViewById(R.id.payAmount);
+                                    edtCardNumber.requestFocus();
                                     edtCardNumber.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                                         @Override
                                         public void onFocusChange(View v, boolean hasFocus) {
@@ -382,10 +420,6 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
                                     btnConfirm.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-                                            Log.e(TAG, "onClick1: " + anotherMobile);
-                                            Log.e(TAG, "onClick2: " + edtCardNumber.getText().toString() + edtCardPassword.getText().toString());
-                                            Log.e(TAG, "onClick3: " + mComment);
-                                            Log.e(TAG, "onClick4: " + mAmount);
                                             new sendPaymentRequest().execute(anotherMobile
                                                     , edtCardNumber.getText().toString().replace("-", "") + edtCardPassword.getText().toString()
                                                     , mComment, mAmount, String.valueOf(groupId));
@@ -412,18 +446,49 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
                 dialog.setContentView(R.layout.group_request_payment_layout);
                 final EditText payAmount = (EditText) dialog.findViewById(R.id.payAmount);
                 final EditText commment = (EditText) dialog.findViewById(R.id.comments);
+                payAmount.requestFocus();
                 payAmount.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                     @Override
                     public void onFocusChange(View v, boolean hasFocus) {
                         if (hasFocus) {
                             payAmount.setGravity(Gravity.LEFT);
                             payAmount.setHint("");
-                        } else {
-                            if (payAmount.getText().length() == 0) {
-                                payAmount.setGravity(Gravity.CENTER);
-                                payAmount.setHint("مبلغ پرداختی");
-                            }
+                        } else if (payAmount.getText().length() == 0) {
+                            payAmount.setGravity(Gravity.CENTER);
+                            payAmount.setHint("مبلغ پرداختی");
+
                         }
+                    }
+                });
+
+
+                payAmount.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+
+                        if (payAmount.getText().length() == 0) {
+                            payAmount.setGravity(Gravity.CENTER);
+                            payAmount.setHint("مبلغ پرداختی");
+
+                        } else {
+
+                            payAmount.setGravity(Gravity.LEFT);
+                            payAmount.setHint("");
+
+                        }
+
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
                     }
                 });
 
@@ -434,12 +499,39 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
                         if (hasFocus) {
                             commment.setGravity(Gravity.RIGHT);
                             commment.setHint("");
-                        } else {
-                            if (commment.getText().length() == 0) {
-                                commment.setGravity(Gravity.CENTER);
-                                commment.setHint("توضیحات");
-                            }
+                        } else if (commment.getText().length() == 0) {
+                            commment.setGravity(Gravity.CENTER);
+                            commment.setHint("توضیحات");
+
                         }
+                    }
+                });
+
+                commment.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                        if (commment.getText().length() == 0) {
+                            commment.setGravity(Gravity.CENTER);
+                            commment.setHint("توضیحات");
+
+                        } else {
+                            commment.setGravity(Gravity.RIGHT);
+                            commment.setHint("");
+
+                        }
+
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
                     }
                 });
                 Button btnCancel = (Button) dialog.findViewById(R.id.cancel);
@@ -601,7 +693,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         return Integer.valueOf(number.replace(",", ""));
     }
 
-    private class requestFromAnother extends AsyncTask<String, Void, LogItem> {
+    private class requestFromAnother extends AsyncTask<String, Void, PayLogItem> {
         String phone;
         String amount;
         String comment;
@@ -620,13 +712,13 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         }
 
         @Override
-        protected LogItem doInBackground(String... params) {
+        protected PayLogItem doInBackground(String... params) {
             Parser parser = new Parser(getSharedPreferences("EZpay", 0).getString("token", ""));
             return parser.groupRequestFromAnother(phone, amount, comment, groupId);
         }
 
         @Override
-        protected void onPostExecute(LogItem result) {
+        protected void onPostExecute(PayLogItem result) {
             if (result != null) {
                 feed.addItem(result, 0);
                 new fillContact().execute("[]");
@@ -649,34 +741,26 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
 
             if (feed.getItem(position).getfMobile().equals(phone)) {
                 if (feed.getItem(position).isStatus()) {
-                    Log.e(TAG, "getItemViewType: " + "state2");
                     viewType = 0;//cancel from
                 } else if (feed.getItem(position).isPaideBool()) {
-                    Log.e(TAG, "getItemViewType: " + "state3");
                     viewType = 1;//payed from
                 } else {
-                    Log.e(TAG, "getItemViewType: " + "state4");
                     viewType = 2;//request to
                 }
             } else if (feed.getItem(position).getfMobile().equals(feed.getItem(position).gettMobile())) {
                 if (feed.getItem(position).isStatus()) {
-                    Log.e(TAG, "getItemViewType: " + "state6");
                     viewType = 3;//cancel from other
                 } else if (feed.getItem(position).isPaideBool()) {
-                    Log.e(TAG, "getItemViewType: " + "state7");
                     viewType = 0;// Payed From Another which is impossible
                 } else {
-                    Log.e(TAG, "getItemViewType: " + "state8");
                     viewType = 5;//request from other
                 }
             } else if (feed.getItem(position).gettMobile().equals(phone)) {
                 if (feed.getItem(position).isPaideBool()) {
-                    Log.e(TAG, "getItemViewType: " + "state10");
                     viewType = 4; //payed to from
                 }
             } else {
                 if (feed.getItem(position).isPaideBool()) {
-                    Log.e(TAG, "getItemViewType: " + "state11");
                     viewType = 6; //done
                 }
             }
@@ -714,7 +798,6 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
 
         @Override
         public void onBindViewHolder(final GroupChatPageAdapter.ViewHolder holder, final int position) {
-            Log.e("ffffff", "onBindViewHolder: " + holder.getItemViewType());
             int year;
             int month;
             int day;
@@ -988,7 +1071,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
 
     }
 
-    private class getChatLog extends AsyncTask<String, Void, LogFeed> {
+    private class getChatLog extends AsyncTask<String, Void, PayLogFeed> {
         int groupId;
         int page;
         String date;
@@ -1005,30 +1088,26 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         }
 
         @Override
-        protected LogFeed doInBackground(String... params) {
-            LogFeed logFeed = null;
+        protected PayLogFeed doInBackground(String... params) {
+            PayLogFeed payLogFeed = null;
             Parser parser = new Parser(getSharedPreferences("EZpay", 0).getString("token", ""));
             try {
-                logFeed = parser.getGroupChat(groupId, page, date);
+                payLogFeed = parser.getGroupChat(groupId, page, date);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return logFeed;
+            return payLogFeed;
         }
 
         @Override
-        protected void onPostExecute(LogFeed result) {
+        protected void onPostExecute(PayLogFeed result) {
             if (result != null) {
-                Log.e("0000000000", "onPostExecute: ");
                 if (feed == null || feed.getItemCount() == 0) {
-                    Log.e("1111111111", "onPostExecute: ");
                     feed = result;
-                    Log.i("PAY", result.toString());
                     adapter = new GroupChatPageAdapter();
                     payListRecycler.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
                 } else {
-                    Log.e("222222222", "onPostExecute: ");
                     feed = result;
                     adapter.notifyDataSetChanged();
                 }
@@ -1038,7 +1117,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         }
     }
 
-    private class sendPaymentRequest extends AsyncTask<String, Void, LogItem> {
+    private class sendPaymentRequest extends AsyncTask<String, Void, PayLogItem> {
 
         @Override
         protected void onPreExecute() {
@@ -1046,16 +1125,15 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         }
 
         @Override
-        protected LogItem doInBackground(String... params) {
+        protected PayLogItem doInBackground(String... params) {
             Parser parser = new Parser(getSharedPreferences("EZpay", 0).getString("token", ""));
             return parser.sendGroupPaymentRequest(params[0], params[1], params[2], params[3], params[4]);
         }
 
         @Override
-        protected void onPostExecute(LogItem result) {
+        protected void onPostExecute(PayLogItem result) {
             if (result != null) {
-//        feed.removeItem(pos);
-                Log.e("POS", pos + "");
+//        chatListFeed.removeItem(pos);
                 feed.addItem(result, 0);
                 new fillContact().execute("[]");
                 feed.getHash().put(result.getId(), 0);
@@ -1099,7 +1177,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         return GroupChatPageActivity.class.getSimpleName();
     }
 
-    private class accPaymentRequest extends AsyncTask<String, Void, LogItem> {
+    private class accPaymentRequest extends AsyncTask<String, Void, PayLogItem> {
 
         int pos;
 
@@ -1113,15 +1191,14 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         }
 
         @Override
-        protected LogItem doInBackground(String... params) {
+        protected PayLogItem doInBackground(String... params) {
             Parser parser = new Parser(getSharedPreferences("EZpay", 0).getString("token", ""));
-            Log.e("0000", "accpayment0000: " + getSharedPreferences("EZpay", 0).getString("id", ""));
             return parser.accPaymentRequest(params[0], params[1]);
 
         }
 
         @Override
-        protected void onPostExecute(LogItem result) {
+        protected void onPostExecute(PayLogItem result) {
             if (result != null) {
                 feed.addItem(result, 0);
                 adapter.notifyDataSetChanged();
@@ -1147,7 +1224,6 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         @Override
         protected Boolean doInBackground(Integer... params) {
             Parser parser = new Parser(getSharedPreferences("EZpay", 0).getString("token", ""));
-            Log.e("0000", "accpayment0000: " + getSharedPreferences("EZpay", 0).getString("id", ""));
             return parser.deletePayment(params[0]);
 
         }
@@ -1172,7 +1248,6 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         int pos;
 
         public DeletePaymentRequestWithID(int pos) {
-            Log.e("(((((((", "DeletePaymentRequestWithID: " + pos);
             this.pos = pos;
         }
 
@@ -1184,7 +1259,6 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         @Override
         protected Boolean doInBackground(Integer... params) {
             Parser parser = new Parser(getSharedPreferences("EZpay", 0).getString("token", ""));
-            Log.e("0000", "accpayment0000: " + getSharedPreferences("EZpay", 0).getString("id", ""));
             return parser.deletePayment(params[0]);
         }
 
@@ -1192,9 +1266,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         protected void onPostExecute(Boolean result) {
             if (result != null) {
                 new fillContact().execute("[]");
-                Log.e("TEst", "onClick: " + result);
                 if (result) {
-                    Log.e("TEst", "onClick: " + pos);
                     feed.getItem(pos).setStatus(true);
                     adapter.notifyDataSetChanged();
                 }
@@ -1204,46 +1276,46 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         }
     }
 
-    public void handleMessage(final LogItem logItem, final boolean deleteState, final String chatMemberMobile) {
-        Log.e(TAG, "handleMessage: " + logItem.getComment());
+    public void handleMessage(final PayLogItem payLogItem, final boolean deleteState, final String chatMemberMobile) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (deleteState) {
-                    Log.e("EQ2", "run: " + logItem.getCancelId());
-                    Log.e("EQ2", "run: " + feed.getHash());
+
                     try {
-                        newPos = feed.getHash().get(logItem.getCancelId());
+                        newPos = feed.getHash().get(payLogItem.getCancelId());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    new GroupChatPageActivity.DeletePaymentRequestWithID(newPos).execute(logItem.getCancelId());
+                    new GroupChatPageActivity.DeletePaymentRequestWithID(newPos).execute(payLogItem.getCancelId());
                     adapter.notifyDataSetChanged();
-                } else {
-                    Log.e("chatMemberMobile", "run: " + chatMemberMobile);
-                    Log.e("phone", "run: " + phone);
-                    Log.e("TTTT", "handleMessage pv: ");
+                } else if (payLogItem.getId() == groupId) {
 
                     new fillContact().execute("[]");
-                    feed.getHash().put(logItem.getId(), 0);
-                    feed.addItem(logItem, 0);
+                    feed.getHash().put(payLogItem.getId(), 0);
+                    feed.addItem(payLogItem, 0);
                     adapter.notifyDataSetChanged();
                 }
             }
         });
     }
 
+    @Override
+    public void handleMessageGp(String body, String chatMemberMobile) {
+
+    }
+
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         Intent intent = new Intent(GroupChatPageActivity.this, MainActivity.class);
-        intent.putExtra("contact", _feed);
+        intent.putExtra("contact", _ChatList_feed);
         startActivity(intent);
         finish();
-        super.onBackPressed();
     }
 
-    public class fillContact extends AsyncTask<String, Void, Feed> {
+    public class fillContact extends AsyncTask<String, Void, ChatListFeed> {
 
         @Override
         protected void onPreExecute() {
@@ -1251,15 +1323,15 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         }
 
         @Override
-        protected Feed doInBackground(String... params) {
+        protected ChatListFeed doInBackground(String... params) {
             Parser parser = new Parser(getSharedPreferences("EZpay", 0).getString("token", ""));
             return parser.checkContactListWithGroup(params[0]);
         }
 
         @Override
-        protected void onPostExecute(Feed result) {
+        protected void onPostExecute(ChatListFeed result) {
             if (result != null) {
-                _feed = result;
+                _ChatList_feed = result;
             } else {
                 Toast.makeText(GroupChatPageActivity.this, "problem in connection!", Toast.LENGTH_SHORT).show();
             }

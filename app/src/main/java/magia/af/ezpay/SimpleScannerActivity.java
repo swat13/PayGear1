@@ -8,17 +8,17 @@ import android.widget.Toast;
 
 import com.google.zxing.Result;
 
+import magia.af.ezpay.Parser.ChatListFeed;
+import magia.af.ezpay.Parser.ChatListItem;
 import magia.af.ezpay.Parser.Parser;
-import magia.af.ezpay.Parser.Feed;
-import magia.af.ezpay.Parser.Item;
-import magia.af.ezpay.fragments.QRCodeDetails;
+import magia.af.ezpay.Fragments.QRCodeDetails;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 public class SimpleScannerActivity extends BaseActivity implements ZXingScannerView.ResultHandler {
     private ZXingScannerView mScannerView;
-    Feed feed;
+    ChatListFeed chatListFeed;
     private String id;
     private boolean commit = false;
     int pos;
@@ -34,9 +34,9 @@ public class SimpleScannerActivity extends BaseActivity implements ZXingScannerV
         // Set the scanner view as the content view
 
 //        darkDialog = (RelativeLayout) findViewById(R.id.dark_dialog);
-        feed = (Feed) getIntent().getSerializableExtra("contact");
+        chatListFeed = (ChatListFeed) getIntent().getSerializableExtra("contact");
 
-        Log.e("Feeed", String.valueOf(feed));
+        Log.e("Feeed", String.valueOf(chatListFeed));
 
 
     }
@@ -50,7 +50,7 @@ public class SimpleScannerActivity extends BaseActivity implements ZXingScannerV
 
     @Override
     public void handleResult(Result rawResult) {
-        // Do something with the feed here
+        // Do something with the chatListFeed here
         Log.e("dddd", rawResult.getText()); // Prints scan results
         Log.e("eeeeeeeee", rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
 
@@ -75,7 +75,7 @@ public class SimpleScannerActivity extends BaseActivity implements ZXingScannerV
     }
 
 
-    public class getAccountId extends AsyncTask<String, Void, Item> {
+    public class getAccountId extends AsyncTask<String, Void, ChatListItem> {
 
         @Override
         protected void onPreExecute() {
@@ -88,7 +88,7 @@ public class SimpleScannerActivity extends BaseActivity implements ZXingScannerV
 
 
         @Override
-        protected Item doInBackground(String... params) {
+        protected ChatListItem doInBackground(String... params) {
 
             Parser parser = new Parser(getSharedPreferences("EZpay", 0).getString("token", ""));
             return parser.getAccountId(params[0]);
@@ -96,16 +96,16 @@ public class SimpleScannerActivity extends BaseActivity implements ZXingScannerV
         }
 
         @Override
-        protected void onPostExecute(Item jsons) {
+        protected void onPostExecute(ChatListItem jsons) {
             Log.e("jsons", String.valueOf(jsons));
 
             if (jsons != null) {
                 commit = true;
 
-                Log.e("LastFeed", String.valueOf(feed));
+                Log.e("LastFeed", String.valueOf(chatListFeed));
 
-                feed.addItem(jsons);
-                pos = feed.getItemCount() - 1;
+                chatListFeed.addItem(jsons);
+                pos = chatListFeed.getItemCount() - 1;
                 openDialog();
 //                finish();
             } else {
@@ -122,10 +122,10 @@ public class SimpleScannerActivity extends BaseActivity implements ZXingScannerV
             FragmentTransaction ft;
 //            darkDialog.setVisibility(View.VISIBLE);
             Bundle bundle = new Bundle();
-            Log.e("ssssssssssss", "openDialog: " + feed.getItem(pos).getContactName());
-            bundle.putString("phone", feed.getItem(pos).getTelNo());
-            bundle.putString("contactName", feed.getItem(pos).getContactName());
-            bundle.putString("image", feed.getItem(pos).getContactImg());
+            Log.e("ssssssssssss", "openDialog: " + chatListFeed.getItem(pos).getContactName());
+            bundle.putString("phone", chatListFeed.getItem(pos).getTelNo());
+            bundle.putString("contactName", chatListFeed.getItem(pos).getContactName());
+            bundle.putString("image", chatListFeed.getItem(pos).getContactImg());
             bundle.putInt("pos", pos);
             qrCodeDetails = QRCodeDetails.newInstance();
             qrCodeDetails.setArguments(bundle);
@@ -134,9 +134,9 @@ public class SimpleScannerActivity extends BaseActivity implements ZXingScannerV
             ft.add(android.R.id.content, qrCodeDetails).commit();
             isOpen = true;
 //            Intent goToChatPageActivity = new Intent(this, ChatPageActivity.class);
-//            goToChatPageActivity.putExtra("phone", feed.getItem(pos).getTelNo());
-//            goToChatPageActivity.putExtra("contactName", feed.getItem(pos).getContactName());
-//            goToChatPageActivity.putExtra("image", feed.getItem(pos).getContactImg());
+//            goToChatPageActivity.putExtra("phone", chatListFeed.getItem(pos).getTelNo());
+//            goToChatPageActivity.putExtra("contactName", chatListFeed.getItem(pos).getContactName());
+//            goToChatPageActivity.putExtra("image", chatListFeed.getItem(pos).getContactImg());
 //            goToChatPageActivity.putExtra("pos", pos);
 //            startActivityForResult(goToChatPageActivity, 10);
 
@@ -150,7 +150,7 @@ public class SimpleScannerActivity extends BaseActivity implements ZXingScannerV
         super.onResume();
         mScannerView.setResultHandler(this); // Register ourselves as a handler for scan results.
         mScannerView.startCamera();          // Start camera on resume
-//        feed= (Feed) getIntent().getSerializableExtra("contact");
+//        chatListFeed= (ChatListFeed) getIntent().getSerializableExtra("contact");
     }
 
     public boolean isDestroyed(boolean destroy) {
@@ -170,9 +170,9 @@ public class SimpleScannerActivity extends BaseActivity implements ZXingScannerV
 //            ft.add(android.R.id.content, qrCodeDetails).commit();
 //            isOpen = false;
 ////            Intent goToChatPageActivity = new Intent(this, ChatPageActivity.class);
-////            goToChatPageActivity.putExtra("phone", feed.getItem(pos).getTelNo());
-////            goToChatPageActivity.putExtra("contactName", feed.getItem(pos).getContactName());
-////            goToChatPageActivity.putExtra("image", feed.getItem(pos).getContactImg());
+////            goToChatPageActivity.putExtra("phone", chatListFeed.getItem(pos).getTelNo());
+////            goToChatPageActivity.putExtra("contactName", chatListFeed.getItem(pos).getContactName());
+////            goToChatPageActivity.putExtra("image", chatListFeed.getItem(pos).getContactImg());
 ////            goToChatPageActivity.putExtra("pos", pos);
 ////            startActivityForResult(goToChatPageActivity, 10);
 //

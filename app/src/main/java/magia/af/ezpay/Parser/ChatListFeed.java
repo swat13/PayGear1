@@ -3,35 +3,35 @@ package magia.af.ezpay.Parser;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Feed implements Serializable {
+public class ChatListFeed implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private int _itemcount = 0;
-	private ArrayList<Item> _itemlist;
+	private ArrayList<ChatListItem> _itemlist;
 
-	public Feed() {
+	public ChatListFeed() {
 		_itemlist = new ArrayList<>(0);
 	}
 
-	public void addItem(Item item) {
-		_itemlist.add(item);
+	public void addItem(ChatListItem chatListItem) {
+		_itemlist.add(chatListItem);
 		_itemcount++;
 	}
 
-	public void addAll(Feed item) {
+	public void addAll(ChatListFeed item) {
 
 		_itemlist.addAll(item._itemlist);
 	}
 
-	public void addAll(int index, Feed feed){
-		_itemlist.addAll(index , feed._itemlist);
+	public void addAll(int index, ChatListFeed chatListFeed){
+		_itemlist.addAll(index , chatListFeed._itemlist);
 	}
 	public void removeItem(int position) {
 		_itemlist.remove(position);
 //		_itemcount--;
 	}
 
-	public Item getItem(int location) {
+	public ChatListItem getItem(int location) {
 		return _itemlist.get(location);
 	}
 

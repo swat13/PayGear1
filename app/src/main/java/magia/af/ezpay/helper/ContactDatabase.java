@@ -7,8 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import magia.af.ezpay.Parser.Feed;
-import magia.af.ezpay.Parser.Item;
+import magia.af.ezpay.Parser.ChatListFeed;
+import magia.af.ezpay.Parser.ChatListItem;
 
 /**
  * Created by Saeid Yazdany on 11/2/2016.
@@ -52,22 +52,22 @@ public class ContactDatabase extends SQLiteOpenHelper {
     database.close();
   }
 
-  public Feed getAllData() {
+  public ChatListFeed getAllData() {
 
-    Feed feed = new Feed();
+    ChatListFeed chatListFeed = new ChatListFeed();
 
     //hp = new HashMap();
     SQLiteDatabase db = this.getReadableDatabase();
     Cursor res = db.rawQuery("select * from " + TABLE_NAME, null);
 //    res.moveToFirst();
     while (res.moveToNext()) {
-      Item item = new Item();
-      item.setTelNo(res.getString(res.getColumnIndex(CONTACT_NUMBER)));
-      item.setContactName(res.getString(res.getColumnIndex(CONTACT_NAME)));
-      feed.addItem(item);
+      ChatListItem chatListItem = new ChatListItem();
+      chatListItem.setTelNo(res.getString(res.getColumnIndex(CONTACT_NUMBER)));
+      chatListItem.setContactName(res.getString(res.getColumnIndex(CONTACT_NAME)));
+      chatListFeed.addItem(chatListItem);
     }
     res.close();
-    return feed;
+    return chatListFeed;
   }
 
   public String getNameFromNumber(String phone) {
@@ -94,33 +94,33 @@ public class ContactDatabase extends SQLiteOpenHelper {
     database.close();
   }
 
-  public Feed getInNetworkUserName() {
-    Feed feed = new Feed();
+  public ChatListFeed getInNetworkUserName() {
+    ChatListFeed chatListFeed = new ChatListFeed();
     SQLiteDatabase database = this.getReadableDatabase();
     Cursor cursor = database.rawQuery("select * from " + TABLE_NAME + " where " + CONTACT_IN_NETWORK + " = 'true' ", null);
     while (cursor.moveToNext()) {
-      Item item = new Item();
-      item.setContactName(cursor.getString(cursor.getColumnIndex(CONTACT_NAME)));
-      item.setContactImg(cursor.getString(cursor.getColumnIndex(CONTACT_IMAGE)));
-      item.setTelNo(cursor.getString(cursor.getColumnIndex(CONTACT_NUMBER)));
-      feed.addItem(item);
+      ChatListItem chatListItem = new ChatListItem();
+      chatListItem.setContactName(cursor.getString(cursor.getColumnIndex(CONTACT_NAME)));
+      chatListItem.setContactImg(cursor.getString(cursor.getColumnIndex(CONTACT_IMAGE)));
+      chatListItem.setTelNo(cursor.getString(cursor.getColumnIndex(CONTACT_NUMBER)));
+      chatListFeed.addItem(chatListItem);
     }
     cursor.close();
-    return feed;
+    return chatListFeed;
   }
 
-  public Feed search(String s) {
-    Feed feed = new Feed();
+  public ChatListFeed search(String s) {
+    ChatListFeed chatListFeed = new ChatListFeed();
     SQLiteDatabase database = this.getReadableDatabase();
     Cursor cursor = database.rawQuery("select * from " + TABLE_NAME + " where " + CONTACT_NAME + " LIKE " + "'"+ s +"'", null);
     while (cursor.moveToNext()) {
-      Item item = new Item();
-      item.setContactName(cursor.getString(cursor.getColumnIndex(CONTACT_NAME)));
-      item.setTelNo(cursor.getString(cursor.getColumnIndex(CONTACT_NUMBER)));
-      feed.addItem(item);
+      ChatListItem chatListItem = new ChatListItem();
+      chatListItem.setContactName(cursor.getString(cursor.getColumnIndex(CONTACT_NAME)));
+      chatListItem.setTelNo(cursor.getString(cursor.getColumnIndex(CONTACT_NUMBER)));
+      chatListFeed.addItem(chatListItem);
     }
     cursor.close();
-    return feed;
+    return chatListFeed;
   }
 
 }

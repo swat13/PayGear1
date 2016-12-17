@@ -28,13 +28,15 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
-import magia.af.ezpay.Parser.Item;
+import magia.af.ezpay.Parser.ChatListFeed;
+import magia.af.ezpay.Parser.ChatListItem;
 import magia.af.ezpay.helper.ContactDatabase;
 
 public class ChooseMemberActivity extends BaseActivity {
-    ArrayList<Item> rssFeed2 = new ArrayList<>();
-    ArrayList<Item> rssFeed = new ArrayList<>();
+    ArrayList<ChatListItem> rssFeed2 = new ArrayList<>();
+    ArrayList<ChatListItem> rssFeed = new ArrayList<>();
     EditText groupTitle;
+    ChatListFeed _ChatList_Feed;
     RecyclerView recyclerView;
     ImageView imageView;
     ArrayList<String> phone = new ArrayList<>();
@@ -46,7 +48,8 @@ public class ChooseMemberActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_friends);
 //    database = new ContactDatabase(this);
-        rssFeed2 = (ArrayList<Item>) getIntent().getSerializableExtra("contact");
+        _ChatList_Feed = (ChatListFeed) getIntent().getSerializableExtra("contact2");
+        rssFeed2 = (ArrayList<ChatListItem>) getIntent().getSerializableExtra("contact");
 
         rssFeed = rssFeed2;
         groupTitle = (EditText) findViewById(R.id.edt_group_title);
@@ -70,8 +73,8 @@ public class ChooseMemberActivity extends BaseActivity {
                     rssFeed = rssFeed2;
                     adapter.notifyDataSetChanged();
                 } else {
-//          feed = database.search(s.toString());
-//          feed = (ArrayList<Item>) getIntent().getSerializableExtra("contact");
+//          chatListFeed = database.search(s.toString());
+//          chatListFeed = (ArrayList<ChatListItem>) getIntent().getSerializableExtra("contact");
                     adapter.getFilter().filter(s);
                     adapter.notifyDataSetChanged();
 
@@ -89,7 +92,6 @@ public class ChooseMemberActivity extends BaseActivity {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("Phones", phone.toString());
                 JSONArray jsonArray = new JSONArray();
                 for (int i = 0; i < phone.size(); i++) {
                     try {
@@ -102,6 +104,7 @@ public class ChooseMemberActivity extends BaseActivity {
                     Intent intent = new Intent(ChooseMemberActivity.this, CreateGroupActivity.class);
                     intent.putExtra("contact", rssFeed);
                     intent.putExtra("contact2", rssFeed2);
+                    intent.putExtra("contact3", _ChatList_Feed);
                     intent.putExtra("json", jsonArray.toString());
                     startActivity(intent);
                     finish();
@@ -122,8 +125,6 @@ public class ChooseMemberActivity extends BaseActivity {
 
         @Override
         public void onBindViewHolder(final RecyclerAdapter.ViewHolder holder, int position) {
-            Log.e("POOOOS", "onBindViewHolder: " + position);
-            Log.e("Saeid TEST", "onBindViewHolder: " + rssFeed.get(position).getTitle());
             if (rssFeed.get(position).getTitle().length() > 15) {
                 holder.txt_contact_item_name.setText(rssFeed.get(position).getTitle().substring(0, 15) + "...");
             } else {
@@ -167,7 +168,7 @@ public class ChooseMemberActivity extends BaseActivity {
                 @SuppressWarnings("unchecked")
                 @Override
                 protected void publishResults(CharSequence constraint, FilterResults results) {
-                    rssFeed = (ArrayList<Item>) results.values;
+                    rssFeed = (ArrayList<ChatListItem>) results.values;
                     notifyDataSetChanged();
                 }
 
@@ -176,17 +177,17 @@ public class ChooseMemberActivity extends BaseActivity {
                     rssFeed = rssFeed2;
 
                     FilterResults results = new FilterResults();
-                    ArrayList<Item> FilteredArrayNames = new ArrayList<>();
+                    ArrayList<ChatListItem> FilteredArrayNames = new ArrayList<>();
 
                     constraint = constraint.toString().toLowerCase();
                     for (int i = 0; i < rssFeed.size(); i++) {
-//            String dataNames = feed.getItem(i).getContactName();
-                        Item item = new Item();
+//            String dataNames = chatListFeed.getItem(i).getContactName();
+                        ChatListItem chatListItem = new ChatListItem();
                         if (rssFeed.get(i).getTitle().toLowerCase().startsWith(constraint.toString())) {
-                            item.setTitle(rssFeed.get(i).getTitle());
-                            item.setTelNo(rssFeed.get(i).getTelNo());
-                            item.setContactImg(rssFeed.get(i).getContactImg());
-                            FilteredArrayNames.add(item);
+                            chatListItem.setTitle(rssFeed.get(i).getTitle());
+                            chatListItem.setTelNo(rssFeed.get(i).getTelNo());
+                            chatListItem.setContactImg(rssFeed.get(i).getContactImg());
+                            FilteredArrayNames.add(chatListItem);
                         }
                     }
 
@@ -223,7 +224,6 @@ public class ChooseMemberActivity extends BaseActivity {
                     status_circle.setVisibility(View.GONE);
                     phone.remove(rssFeed.get(getAdapterPosition()).getTelNo());
                 }
-                Log.e("Phones", phone.toString());
             }
         }
     }

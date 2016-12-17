@@ -1,4 +1,4 @@
-package magia.af.ezpay.fragments;
+package magia.af.ezpay.Fragments;
 
 
 import android.app.Activity;
@@ -50,8 +50,8 @@ import java.io.IOException;
 
 import magia.af.ezpay.LoginActivity;
 import magia.af.ezpay.MainActivity;
+import magia.af.ezpay.Parser.ChatListItem;
 import magia.af.ezpay.Parser.Parser;
-import magia.af.ezpay.Parser.Item;
 import magia.af.ezpay.R;
 
 
@@ -477,7 +477,7 @@ public class Profile extends Fragment {
         return inSampleSize;
     }
 
-    public class getAccount extends AsyncTask<Void, Void, Item> {
+    public class getAccount extends AsyncTask<Void, Void, ChatListItem> {
 
         @Override
         protected void onPreExecute() {
@@ -489,13 +489,13 @@ public class Profile extends Fragment {
         }
 
         @Override
-        protected Item doInBackground(Void... params) {
+        protected ChatListItem doInBackground(Void... params) {
             Parser parser = new Parser(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
             return parser.getAccount();
         }
 
         @Override
-        protected void onPostExecute(Item result) {
+        protected void onPostExecute(ChatListItem result) {
             Log.e("jsons", String.valueOf(result));
 
 

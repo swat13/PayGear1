@@ -19,12 +19,12 @@ import org.json.JSONArray;
 
 import java.io.File;
 
+import magia.af.ezpay.Parser.ChatListFeed;
 import magia.af.ezpay.Parser.Parser;
-import magia.af.ezpay.Parser.Feed;
-import magia.af.ezpay.fragments.BarCodeGet;
-import magia.af.ezpay.fragments.FriendsList;
-import magia.af.ezpay.fragments.Profile;
-import magia.af.ezpay.fragments.Radar;
+import magia.af.ezpay.Fragments.BarCodeGet;
+import magia.af.ezpay.Fragments.FriendsList;
+import magia.af.ezpay.Fragments.Profile;
+import magia.af.ezpay.Fragments.Radar;
 import magia.af.ezpay.location.LocationService;
 
 /**
@@ -35,11 +35,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
 
     public RelativeLayout darkDialog, waitingDialog;
-    public FriendsList friendsList;
+    FriendsList friendsList;
     public BarCodeGet barCodeGet;
     public LinearLayout friendsLayout, barcodeReader, profileLayout, radarLayout;
     public int fragment_status = 0;
-    Feed _feed;
+    ChatListFeed _ChatList_feed;
     public String description;
     public Radar radar;
     public int amount;
@@ -61,97 +61,34 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         imageView = (ImageView) findViewById(R.id.image_view);
 
 
-//    ContactDatabase database = new ContactDatabase(this);
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            _feed = (Feed) bundle.getSerializable("contact");
+            Log.e("Ok","In Bundle");
+            _ChatList_feed = (ChatListFeed) bundle.getSerializable("contact");//not null at this line
 
             FragmentManager fm = getSupportFragmentManager();
             if (fm != null) {
-                friendsList = new FriendsList().getInstance(_feed);
+                Log.e("Ok","In Fm");
+
+                friendsList = new FriendsList().getInstance(_ChatList_feed);
                 fm.beginTransaction().replace(R.id.detail_fragment, friendsList).addToBackStack(null).commit();
             }
         } else {
             JSONArray array = new JSONArray();
             new fillContact().execute(array.toString());
         }
-//    for (int i = 0; i < _feed.getItemCount(); i++) {
-//      Log.e("MAin", "onCreate: " + _feed.getItem(i).getTitle());
-//    }
-//    Log.e("Main", "Before calling locationservice");
-//        startService(new Intent(this, LocationService.class));
-
-
-//    manager = (LocationManager) getSystemService(LOCATION_SERVICE);
-//    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//      // TODO: Consider calling
-//      //    ActivityCompat#requestPermissions
-//      // here to request the missing permissions, and then overriding
-//      //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//      //                                          int[] grantResults)
-//      // to handle the case where the user grants the permission. See the documentation
-//      // for ActivityCompat#requestPermissions for more details.
-//      return;
-//    }
-//    Location location = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//    if (location == null) {
-//      location = manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-//      Log.e("TestNN", "showMyLocation: ");
-//    }
-////
-//    if (location != null) {
-//      Log.e("TestN", "showMyLocation: ");
-//      showMyLocation(location);
-//    } else {
-//      Log.e("TestN2", "showMyLocation: ");
-//    }
-//    LocationListener locationListener = new LocationListener() {
-//      @Override
-//      public void onLocationChanged(Location location) {
-//        Log.e("TestLL", "showMyLocation: ");
-//        showMyLocation(location);
-//        Log.e("TestDD", "showMyLocation: ");
-//      }
-//
-//      @Override
-//      public void onStatusChanged(String provider, int status, Bundle extras) {
-//
-//      }
-//
-//      @Override
-//      public void onProviderEnabled(String provider) {
-//
-//      }
-//
-//      @Override
-//      public void onProviderDisabled(String provider) {
-//
-//      }
-//    };
-//    manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
+        startService(new Intent(this, LocationService.class));
 
         if (getSharedPreferences("EZpay", 0).contains("push"))
             new AsyncPushToken().execute(getSharedPreferences("EZpay", 0).getString("push", ""));
 
         FragmentManager fm = getSupportFragmentManager();
         if (fm != null) {
-            friendsList = new FriendsList().getInstance(_feed);
+            friendsList = new FriendsList().getInstance(_ChatList_feed);
             fm.beginTransaction().replace(R.id.detail_fragment, friendsList).addToBackStack(null).commit();
         }
 
     }
-
-//  private void showMyLocation(final Location location) {
-//    Log.e("Test", "showMyLocation: ");
-//    Timer timer = new Timer();
-//    timer.scheduleAtFixedRate(new TimerTask() {
-//      @Override
-//      public void run() {
-//        new PostLocation(MainActivity.this).execute(location.getLatitude(), location.getLongitude());
-//      }
-//    }, 0L, 10000);
-//  }
-
 
     @Override
     protected void onDestroy() {
@@ -167,7 +104,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.friends_layout:
-                friendsList = FriendsList.getInstance(_feed);
+                friendsList = FriendsList.getInstance(_ChatList_feed);
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.detail_fragment, friendsList)
@@ -181,7 +118,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.barcode_reader:
                 barCodeGet = BarCodeGet.getInstance();
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("contact", _feed);
+                bundle.putSerializable("contact", _ChatList_feed);
                 BarCodeGet barCodeGet = new BarCodeGet();
                 barCodeGet.setArguments(bundle);
                 getSupportFragmentManager()
@@ -241,7 +178,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 description = data.getStringExtra("description");
                 amount = data.getIntExtra("amount", 0);
                 int position = data.getIntExtra("pos", 0);
-                friendsList = FriendsList.getInstance(_feed);
+                friendsList = FriendsList.getInstance(_ChatList_feed);
                 Bundle bundle = new Bundle();
                 bundle.putString("description", description);
                 bundle.putInt("amount", amount);
@@ -271,7 +208,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     public void onBackPressed() {
-        Log.e("Finish", "onBackPressed: ");
         finish();
 
     }
@@ -299,7 +235,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    private class fillContact extends AsyncTask<String, Void, Feed> {
+    private class fillContact extends AsyncTask<String, Void, ChatListFeed> {
 
         @Override
         protected void onPreExecute() {
@@ -307,13 +243,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
 
         @Override
-        protected Feed doInBackground(String... params) {
+        protected ChatListFeed doInBackground(String... params) {
             Parser parser = new Parser(getSharedPreferences("EZpay", 0).getString("token", ""));
             return parser.checkContactListWithGroup(params[0]);
         }
 
         @Override
-        protected void onPostExecute(Feed result) {
+        protected void onPostExecute(ChatListFeed result) {
             if (result != null) {
                 FragmentManager fm = getSupportFragmentManager();
                 if (fm != null) {
