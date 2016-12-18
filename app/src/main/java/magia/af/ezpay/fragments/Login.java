@@ -1,8 +1,10 @@
-package magia.af.ezpay.Fragments;
+package magia.af.ezpay.fragments;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -19,9 +21,15 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import magia.af.ezpay.LoginActivity;
+import magia.af.ezpay.Parser.JSONParser;
 import magia.af.ezpay.Parser.Parser;
 import magia.af.ezpay.R;
+import magia.af.ezpay.Utilities.Constant;
+import magia.af.ezpay.Utilities.DialogMaker;
 
 /**
  * Created by Saeid Yazdany on 10/26/2016.
@@ -30,7 +38,7 @@ import magia.af.ezpay.R;
 public class Login extends Fragment implements View.OnClickListener {
     private ImageButton btn_done;
     private String phone;
-
+    private Dialog dialog;
     private EditText edtInputPhoneNumber;
 //تت
 
@@ -91,7 +99,43 @@ public class Login extends Fragment implements View.OnClickListener {
             case R.id.btn_done:
 //                ((LoginActivity) getActivity()).darkDialog.setVisibility(View.VISIBLE);
                 phone = edtInputPhoneNumber.getText().toString();
-                new registration().execute(edtInputPhoneNumber.getText().toString());
+                JSONParser parser = JSONParser.connect(Constant.REGISTER);
+                parser.setRequestMethod(JSONParser.POST);
+                parser.setReadTimeOut(20000);
+                parser.setConnectionTimeOut(20000);
+                JSONObject object = new JSONObject();
+                try {
+                    object.put("mobile",phone);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                parser.setJson(object.toString());
+                parser.execute(new JSONParser.Execute() {
+                    @Override
+                    public void onPreExecute() {
+                        DialogMaker.makeDialog(getContext()).showDialog();
+                    }
+
+                    @Override
+                    public void onPostExecute(String s) {
+                        Log.e("STRING S", "onPostExecute: " + s);
+                        if (s!=null){
+                            DialogMaker.disMissDialog();
+                            ((LoginActivity)getActivity()).loadActiveFragment(phone);
+                        }
+                        else {
+                            Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    DialogMaker.disMissDialog();
+                                    Toast.makeText(getActivity(), "خطایی رخ داده است", Toast.LENGTH_SHORT).show();
+                                }
+                            }, 3000);
+                        }
+                    }
+                });
+//                new registration().execute(edtInputPhoneNumber.getText().toString());
                 break;
         }
 

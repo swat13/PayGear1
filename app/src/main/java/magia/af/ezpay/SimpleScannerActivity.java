@@ -11,7 +11,7 @@ import com.google.zxing.Result;
 import magia.af.ezpay.Parser.ChatListFeed;
 import magia.af.ezpay.Parser.ChatListItem;
 import magia.af.ezpay.Parser.Parser;
-import magia.af.ezpay.Fragments.QRCodeDetails;
+import magia.af.ezpay.fragments.QRCodeDetails;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;

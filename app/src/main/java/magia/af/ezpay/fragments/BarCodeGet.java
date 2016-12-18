@@ -1,4 +1,4 @@
-package magia.af.ezpay.Fragments;
+package magia.af.ezpay.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -35,7 +35,7 @@ public class BarCodeGet extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.barcode_scanner, container, false);
         _ChatList_feed = (ChatListFeed) getArguments().getSerializable("contact");
-        ((MainActivity) getActivity()).fragment_status = 4;
+//        ((MainActivity) getActivity()).fragment_status = 4;
         imageView = (ImageView) v.findViewById(R.id.QrCode);
         Button btnScanOtherQRCode = (Button) v.findViewById(R.id.btn_scan_other_users);
         btnScanOtherQRCode.setOnClickListener(new View.OnClickListener() {

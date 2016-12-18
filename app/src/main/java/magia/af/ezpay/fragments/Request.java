@@ -1,4 +1,4 @@
-package magia.af.ezpay.Fragments;
+package magia.af.ezpay.fragments;
 
 import android.app.Fragment;
 import android.content.Context;

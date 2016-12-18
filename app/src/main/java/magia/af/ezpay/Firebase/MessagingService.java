@@ -34,8 +34,7 @@ import magia.af.ezpay.GroupChatPageActivity;
 import magia.af.ezpay.MainActivity;
 import magia.af.ezpay.Parser.PayLogItem;
 import magia.af.ezpay.R;
-import magia.af.ezpay.Fragments.FriendsList;
-import magia.af.ezpay.Splash;
+import magia.af.ezpay.fragments.FriendsList;
 import magia.af.ezpay.interfaces.MessageHandler;
 
 /**

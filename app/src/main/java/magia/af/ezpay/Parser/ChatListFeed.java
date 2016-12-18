@@ -1,5 +1,7 @@
 package magia.af.ezpay.Parser;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -37,6 +39,7 @@ public class ChatListFeed implements Serializable {
 
 	public int getItemCount() {
 		return _itemlist.size();
+
 	}
 
 }

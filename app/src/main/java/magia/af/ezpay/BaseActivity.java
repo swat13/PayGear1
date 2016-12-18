@@ -1,10 +1,15 @@
 package magia.af.ezpay;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 

@@ -39,14 +39,12 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import org.json.JSONArray;
 
 import magia.af.ezpay.Firebase.MessagingService;
+import magia.af.ezpay.Parser.JSONParser;
 import magia.af.ezpay.Parser.PayLogFeed;
 import magia.af.ezpay.Parser.PayLogItem;
 import magia.af.ezpay.Parser.Parser;
 import magia.af.ezpay.Parser.ChatListFeed;
 import magia.af.ezpay.Utilities.LocalPersistence;
-import magia.af.ezpay.Fragments.GetCard;
-import magia.af.ezpay.Fragments.Payment;
-import magia.af.ezpay.Fragments.Request;
 import magia.af.ezpay.helper.CalendarConversion;
 import magia.af.ezpay.helper.NumberTextWatcher;
 import magia.af.ezpay.interfaces.MessageHandler;
@@ -63,9 +61,6 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
     ChatPageAdapter adapter;
     static boolean isOpen = false;
     public RelativeLayout darkDialog;
-    public GetCard getCard;
-    public Payment payment;
-    public Request request;
     public int fragment_status = 0;
     int newPos;
 
@@ -1189,13 +1184,13 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
 //    new accPaymentRequest().execute(id + "", detail);
 //  }
 
-    public void payBill(int amount, String comment) {
-        darkDialog.setVisibility(View.VISIBLE);
-        getCard = GetCard.newInstance(amount, comment);
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.setCustomAnimations(R.animator.enter_from_right, R.animator.exit_to_right);
-        ft.add(android.R.id.content, getCard).commit();
-    }
+//    public void payBill(int amount, String comment) {
+//        darkDialog.setVisibility(View.VISIBLE);
+//        getCard = GetCard.newInstance(amount, comment);
+//        FragmentTransaction ft = getFragmentManager().beginTransaction();
+//        ft.setCustomAnimations(R.animator.enter_from_right, R.animator.exit_to_right);
+//        ft.add(android.R.id.content, getCard).commit();
+//    }
 
 //  @Override
 //  public void onBackPressed() {

@@ -1,4 +1,4 @@
-package magia.af.ezpay.Fragments;
+package magia.af.ezpay.fragments;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -181,7 +181,7 @@ public class Payment extends Fragment {
                     comment = Comments.getText().toString();
                     hideKey(view);
 //                    getActivity().getFragmentManager().beginTransaction().setCustomAnimations(R.animator.exit_to_right2, R.animator.enter_from_right2).remove(Payment.this).commit();
-                    ((ChatPageActivity) getActivity()).payBill(correctNum(payamount), comment);
+//                    ((ChatPageActivity) getActivity()).payBill(correctNum(payamount), comment);
 
                 }
 
