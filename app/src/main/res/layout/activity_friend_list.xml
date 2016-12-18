@@ -105,11 +105,20 @@
             </LinearLayout>
         </android.support.v7.widget.CardView>
 
+        <EditText
+            android:id="@+id/src_title"
+            android:layout_width="match_parent"
+            android:layout_below="@id/invite_friends"
+            android:hint="انتخاب افراد گروه"
+            android:gravity="center|right"
+            android:visibility="gone"
+            android:layout_height="50dp"/>
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/contact_recycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/invite_friends" />
+            android:layout_below="@id/src_title" />
 
 
     </RelativeLayout>
