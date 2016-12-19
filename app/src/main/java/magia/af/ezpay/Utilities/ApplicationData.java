@@ -2,6 +2,8 @@ package magia.af.ezpay.Utilities;
 
 import android.content.Context;
 import android.os.Handler;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -11,12 +13,19 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import magia.af.ezpay.MainActivity;
 import magia.af.ezpay.Parser.ChatListFeed;
 import magia.af.ezpay.Parser.ChatListItem;
 import magia.af.ezpay.Parser.GroupItem;
 import magia.af.ezpay.Parser.JSONParser;
 import magia.af.ezpay.Parser.MembersFeed;
 import magia.af.ezpay.Parser.MembersItem;
+import magia.af.ezpay.R;
+import magia.af.ezpay.fragments.FriendsList;
+
+/**
+ * Created by pc on 12/18/2016.
+ */
 
 public class ApplicationData {
   private static boolean done;
@@ -152,12 +161,7 @@ public class ApplicationData {
       public void onPostExecute(String s) {
         Log.e("STRING S", "onPostExecute: " + s);
         if (s != null) {
-          ApplicationData.getContactListWithGroup(s);
-          Log.e("DONE'nt", "onPostExecute: ");
-          if (isDone()) {
-            Log.e("DONE", "onPostExecute: ");
-            chatListFeed = getChatListFeed();
-          }
+          chatListFeed = ApplicationData.getContactListWithGroup(s);
         } else {
           Handler handler = new Handler();
           handler.postDelayed(new Runnable() {
