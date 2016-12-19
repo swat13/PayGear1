@@ -67,6 +67,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
           Log.e("Contact", "onPostExecute: " + _ChatList_feed.getItem(i).getTitle());
         }
       }
+
       FragmentManager fm = getSupportFragmentManager();
       if (fm != null) {
         Log.e("Ok", "In Fm");
@@ -83,8 +84,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
       parser.setJson("[]");
       parser.execute(new JSONParser.Execute() {
         @Override
-        public void onPreExecute() {
-        }
+        public void onPreExecute() {}
 
         @Override
         public void onPostExecute(String s) {

@@ -80,8 +80,8 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
     MessagingService.mode = 3;
     mHandler = this;
     View v = inflater.inflate(R.layout.activity_friend_list, container, false);
-//    ((MainActivity) getActivity()).fragment_status = 2;
-//    _ChatList_feed = new ChatListFeed();
+ //   ((MainActivity) getActivity()).fragment_status = 2;
+//     _ChatList_feed = new ChatListFeed();
 //    ChatListItem item = new ChatListItem();
 //    item.setComment(";djksafhkl;jdf");
 //    item.setContactImg("dsgaf");
@@ -90,6 +90,15 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
 //    item.setTelNo("sdfhsdfhdfs");
 //    item.setTitle("fgfsd");
 //    _ChatList_feed.addItem(item);
+//      item = new ChatListItem();
+//    item.setComment(";djksafhkl;jdf");
+//    item.setContactImg("dsgaf");
+//    item.setContactName("dasgasdfg");
+//    item.setLastChatAmount(10000);
+//    item.setTelNo("sdfhsdfhdfs");
+//    item.setTitle("fgfsd");
+//    _ChatList_feed.addItem(item);
+
     recBills = (RecyclerView) v.findViewById(R.id.contact_recycler);
 //    _ChatList_feed = (ChatListFeed) getArguments().getSerializable("contact");
 //        _ChatList_feed = (ChatListFeed) getActivity().getIntent().getSerializableExtra("contact");
@@ -97,7 +106,7 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
       Log.e("Line 87", "onCreateView: " + _ChatList_feed.getItemCount());
       for (int i = 0; i < _ChatList_feed.getItemCount(); i++) {
         if (_ChatList_feed.getItem(i).getGroupItem() != null) {
-          groups = _ChatList_feed.getItem(i).getGroupItem();
+        //  groups = _ChatList_feed.getItem(i).getGroupItem();
         } else {
           contacts = _ChatList_feed.getItem(i).getContactMembers();
         }
@@ -119,16 +128,16 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
         getActivity().startActivity(intent);
       }
     });
-//    Bundle bundle = getArguments();
-//    if (bundle != null) {
-//      comment = getArguments().getString("description");
-//      amount = getArguments().getInt("amount");
-//      position = getArguments().getInt("pos");
-//      if (comment.length() > 0 && amount > 0) {
-//        _ChatList_feed.getItem(position).setComment(comment);
-//        _ChatList_feed.getItem(position).setLastChatAmount(amount);
-//      }
-//    }
+    Bundle bundle = getArguments();
+    if (bundle != null) {
+      comment = getArguments().getString("description");
+      amount = getArguments().getInt("amount");
+      position = getArguments().getInt("pos");
+      if (comment.length() > 0 && amount > 0) {
+        _ChatList_feed.getItem(position).setComment(comment);
+        _ChatList_feed.getItem(position).setLastChatAmount(amount);
+      }
+    }
     if (_ChatList_feed != null && _ChatList_feed.getItemCount() != 0) {
       adapter = new FriendsList.ListAdapter(this);
       recBills.setAdapter(adapter);
