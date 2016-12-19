@@ -81,8 +81,8 @@ public class CreateGroupActivity extends BaseActivity {
             checkPermissions();
         }
         rssFeed = (ArrayList<ChatListItem>) getIntent().getSerializableExtra("contact");
-        rssFeed2 = (ArrayList<ChatListItem>) getIntent().getSerializableExtra("contact2");
-        _ChatList_Feed = (ChatListFeed) getIntent().getSerializableExtra("contact3");
+        rssFeed2 = (ArrayList<ChatListItem>) getIntent().getSerializableExtra("chatFeed");
+        _ChatList_Feed = (ChatListFeed) getIntent().getSerializableExtra("chatListFeed");
         for (int i = 0; i < rssFeed.size(); i++) {
             Log.e(TAG, "onCreate: " + rssFeed.get(i).getTitle());
             Log.e(TAG, "onCreate: " + rssFeed.get(i).getTelNo());
@@ -95,7 +95,6 @@ public class CreateGroupActivity extends BaseActivity {
 //    database = new ContactDatabase(this);
 //    databaseChatListFeed = database.getInNetworkUserName();
         groupMember = new ChatListFeed();
-        membersItem = new MembersItem();
         try {
             jsonArray = new JSONArray(json);
             for (int i = 0; i < jsonArray.length(); i++) {

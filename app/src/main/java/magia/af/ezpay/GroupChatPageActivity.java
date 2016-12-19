@@ -1,24 +1,18 @@
 package magia.af.ezpay;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -36,8 +30,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
-import java.io.ByteArrayOutputStream;
-
 import magia.af.ezpay.Firebase.MessagingService;
 import magia.af.ezpay.Parser.PayLogItem;
 import magia.af.ezpay.Parser.MembersFeed;
@@ -47,7 +39,6 @@ import magia.af.ezpay.Parser.ChatListFeed;
 import magia.af.ezpay.Parser.PayLogFeed;
 import magia.af.ezpay.Utilities.LocalPersistence;
 import magia.af.ezpay.helper.CalendarConversion;
-import magia.af.ezpay.helper.ImageMaker;
 import magia.af.ezpay.helper.NumberTextWatcher;
 import magia.af.ezpay.interfaces.MessageHandler;
 
@@ -109,7 +100,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
             groupPhoto = bundle.getString("photo");
             groupTitle = bundle.getString("title");
             groupMembers = (MembersFeed) bundle.getSerializable("members");
-            _ChatList_feed = (ChatListFeed) bundle.getSerializable("contact");
+            _ChatList_feed = (ChatListFeed) bundle.getSerializable("chatFeed");
         }
         phone = getSharedPreferences("EZpay", 0).getString("phoneNumber", "");
 
@@ -125,11 +116,12 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         groupImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(GroupChatPageActivity.this, GroupDetails.class);
+                Intent intent = new Intent(GroupChatPageActivity.this, GroupDetailsActivity.class);
                 intent.putExtra("id", groupId);
                 intent.putExtra("photo", groupPhoto);
                 intent.putExtra("title", groupTitle);
                 intent.putExtra("members", groupMembers);
+                intent.putExtra("chatFeed",_ChatList_feed);
                 startActivity(intent);
             }
         });
