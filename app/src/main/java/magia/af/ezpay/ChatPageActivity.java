@@ -599,6 +599,11 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
 
     }
 
+//    @Override
+//    public void handleMessage(PayLogItem logItem, boolean deleteState, String chatMemberMobile) {
+//
+//    }
+
 
     private class sendPaymentRequest extends AsyncTask<String, Void, PayLogItem> {
 

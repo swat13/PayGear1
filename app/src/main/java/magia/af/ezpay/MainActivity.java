@@ -140,13 +140,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
       });
     }
-
-    FragmentManager fm = getSupportFragmentManager();
-    if (fm != null) {
-      friendsList = new FriendsList().getInstance(_ChatList_feed);
-      fm.beginTransaction().replace(R.id.detail_fragment, friendsList).addToBackStack(null).commit();
-    }
-
   }
 
   @Override
@@ -165,7 +158,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
   public void onClick(View v) {
     switch (v.getId()) {
       case R.id.friends_layout:
-        friendsList = new FriendsList().getInstance(_ChatList_feed);
+        friendsList = new FriendsList();
+        friendsList.set_ChatList_feed(_ChatList_feed);
         getSupportFragmentManager()
           .beginTransaction()
           .replace(R.id.detail_fragment, friendsList)
