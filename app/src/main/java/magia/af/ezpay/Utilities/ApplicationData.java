@@ -2,8 +2,6 @@ package magia.af.ezpay.Utilities;
 
 import android.content.Context;
 import android.os.Handler;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -13,25 +11,35 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import magia.af.ezpay.MainActivity;
 import magia.af.ezpay.Parser.ChatListFeed;
 import magia.af.ezpay.Parser.ChatListItem;
 import magia.af.ezpay.Parser.GroupItem;
 import magia.af.ezpay.Parser.JSONParser;
 import magia.af.ezpay.Parser.MembersFeed;
 import magia.af.ezpay.Parser.MembersItem;
-import magia.af.ezpay.R;
-import magia.af.ezpay.fragments.FriendsList;
-
-/**
- * Created by pc on 12/18/2016.
- */
 
 public class ApplicationData {
+  private static boolean done;
   private static ChatListFeed chatListFeed;
 
+  public static ChatListFeed getChatListFeed() {
+    return chatListFeed;
+  }
+
+  public static void setChatListFeed(ChatListFeed chatListFeed) {
+    ApplicationData.chatListFeed = chatListFeed;
+  }
+
+  public static boolean isDone() {
+    return done;
+  }
+
+  public static void setDone(boolean done) {
+    ApplicationData.done = done;
+  }
+
   public static ChatListFeed getContactListWithGroup(String s) {
-    JSONArray jsonArray = null;
+    JSONArray jsonArray;
     ChatListFeed chatListFeed = null;
     try {
       jsonArray = new JSONArray(s);
@@ -52,6 +60,10 @@ public class ApplicationData {
             JSONObject jsonObject = contactObject.getJSONObject("lastchat");
             rssChatListItem.setComment(jsonObject.getString("c"));
             rssChatListItem.setLastChatAmount(jsonObject.getInt("a"));
+            rssChatListItem.setLastChatFrom(jsonObject.getString("f"));
+            rssChatListItem.setLastChatTo(jsonObject.getString("t"));
+            rssChatListItem.setLastChatOrderByFromOrTo(jsonObject.getBoolean("o"));
+            rssChatListItem.setContactStatus(jsonObject.getBoolean("s"));
           }
 
           rssChatListItem.setContactCount(i);
@@ -78,7 +90,11 @@ public class ApplicationData {
               JSONArray groupLastChatArray = contactObject.getJSONArray("lastChats");
               for (int j = 0; j < groupLastChatArray.length(); j++) {
                 JSONObject lastChatGroupObject = groupLastChatArray.getJSONObject(j);
+                JSONObject jsonObjectf = lastChatGroupObject.getJSONObject("f");
+                JSONObject jsonObjectt = lastChatGroupObject.getJSONObject("t");
                 groupItem.setGroupLastChatAmount(lastChatGroupObject.getInt("a"));
+                groupItem.setGroupLastChatFrom(jsonObjectf.getString("mobile"));
+                groupItem.setGroupLastChatTo(jsonObjectt.getString("mobile"));
                 groupItem.setGroupLastChatId(lastChatGroupObject.getInt("id"));
                 groupItem.setGroupLastChatDate(lastChatGroupObject.getString("d"));
                 groupItem.setGroupLastChatOrderPay(lastChatGroupObject.getBoolean("o"));
@@ -136,7 +152,12 @@ public class ApplicationData {
       public void onPostExecute(String s) {
         Log.e("STRING S", "onPostExecute: " + s);
         if (s != null) {
-          chatListFeed = ApplicationData.getContactListWithGroup(s);
+          ApplicationData.getContactListWithGroup(s);
+          Log.e("DONE'nt", "onPostExecute: ");
+          if (isDone()) {
+            Log.e("DONE", "onPostExecute: ");
+            chatListFeed = getChatListFeed();
+          }
         } else {
           Handler handler = new Handler();
           handler.postDelayed(new Runnable() {

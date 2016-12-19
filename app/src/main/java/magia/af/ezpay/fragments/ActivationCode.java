@@ -216,7 +216,8 @@ public class ActivationCode extends Fragment implements View.OnClickListener, Ev
                     if (s != null) {
                       DialogMaker.disMissDialog();
                       chatListFeed = ApplicationData.getContactListWithGroup(s);
-                      startActivity(new Intent(getActivity(), MainActivity.class).putExtra("contact", chatListFeed));
+                      ApplicationData.setChatListFeed(chatListFeed);
+                      startActivity(new Intent(getActivity(), MainActivity.class));
                       getActivity().finish();
                     } else {
                       Handler handler = new Handler();

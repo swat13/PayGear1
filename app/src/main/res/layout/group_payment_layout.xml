@@ -68,7 +68,7 @@
                     android:gravity="center"
                     android:hint="مبلغ پرداختی"
                     android:imeOptions="actionNext"
-                    android:inputType="number"
+                    android:inputType="phone"
                     android:maxLength="19"
                     android:maxLines="1"
                     android:padding="10dp"

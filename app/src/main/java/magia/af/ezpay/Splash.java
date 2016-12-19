@@ -156,7 +156,8 @@ public class Splash extends BaseActivity {
             Log.e("STRING S", "onPostExecute: " + s);
             if (s != null) {
               ChatListFeed chatListFeed = ApplicationData.getContactListWithGroup(s);
-              startActivity(new Intent(Splash.this,MainActivity.class).putExtra("contact",chatListFeed));
+              ApplicationData.setChatListFeed(chatListFeed);
+              startActivity(new Intent(Splash.this,MainActivity.class));
               finish();
             }
           }
