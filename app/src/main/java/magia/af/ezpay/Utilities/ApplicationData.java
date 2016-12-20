@@ -20,6 +20,7 @@ import magia.af.ezpay.Parser.GroupItem;
 import magia.af.ezpay.Parser.JSONParser;
 import magia.af.ezpay.Parser.MembersFeed;
 import magia.af.ezpay.Parser.MembersItem;
+import magia.af.ezpay.Parser.PayLogFeed;
 import magia.af.ezpay.R;
 import magia.af.ezpay.fragments.FriendsList;
 
@@ -30,6 +31,7 @@ import magia.af.ezpay.fragments.FriendsList;
 public class ApplicationData {
   private static boolean done;
   private static ChatListFeed chatListFeed;
+  private static PayLogFeed payLogFeed;
 
   public static ChatListFeed getChatListFeed() {
     return chatListFeed;
@@ -175,5 +177,13 @@ public class ApplicationData {
     });
 
     return chatListFeed;
+  }
+
+  public static PayLogFeed getPayLogFeed() {
+    return payLogFeed;
+  }
+
+  public static void setPayLogFeed(PayLogFeed payLogFeed) {
+    ApplicationData.payLogFeed = payLogFeed;
   }
 }

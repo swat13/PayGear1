@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -24,6 +25,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -36,6 +39,8 @@ import magia.af.ezpay.Parser.ChatListItem;
 import magia.af.ezpay.Parser.GroupItem;
 import magia.af.ezpay.Parser.JSONParser;
 import magia.af.ezpay.Parser.MembersFeed;
+import magia.af.ezpay.Parser.MembersItem;
+import magia.af.ezpay.Parser.Parser;
 import magia.af.ezpay.Parser.PayLogItem;
 import magia.af.ezpay.R;
 import magia.af.ezpay.Utilities.ApplicationData;

@@ -95,6 +95,7 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
   private Dialog cardDialog;
   private Dialog payDialog;
   private Dialog requestDialog;
+  private String selfNumber;
 
   static {
     handler = new Handler(Looper.getMainLooper());
@@ -124,7 +125,7 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
       imageUrl = imageUrl + bundle.getString("image");
       _ChatList_feed = (ChatListFeed) bundle.getSerializable("contact");
     }
-
+    selfNumber = getSharedPreferences("EZpay", 0).getString("mobile", "");
     date = "2050-01-01T00:00:00.000";
 
     final ImageView contactImage = (ImageView) findViewById(R.id.profile_image);
@@ -1299,10 +1300,7 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
     runOnUiThread(new Runnable() {
       @Override
       public void run() {
-//        new fillContact().execute("[]");
-        Log.e("Phone:", phone);
-
-
+        Log.e("DELETE", "run: ");
         if (deleteState) {
           try {
             newPos = feed.getHash().get(payLogItem.getCancelId());
@@ -1312,14 +1310,22 @@ public class ChatPageActivity extends BaseActivity implements MessageHandler {
           new DeletePaymentRequestWithID(newPos).execute(payLogItem.getCancelId());
           adapter.notifyDataSetChanged();
 
-        } else if (payLogItem.getfMobile().equals(phone)) {
+        } else if (payLogItem.getfMobile().equals(selfNumber) && payLogItem.getCancelId() != 0) {
           Log.e("TEST", "run: ");
           feed.getHash().put(payLogItem.getId(), 0);
           feed.addItem(payLogItem, 0);
           adapter.notifyDataSetChanged();
-//          new fillContact().execute("[]");
+        } else if (payLogItem.gettMobile().equals(phone)) {
+          Log.e("TEST", "run: ");
+          feed.getHash().put(payLogItem.getId(), 0);
+          feed.addItem(payLogItem, 0);
+          adapter.notifyDataSetChanged();
+        } else if (payLogItem.getfMobile().equals(phone) && payLogItem.getCancelId() != 0) {
+          Log.e("TEST", "run: ");
+          feed.getHash().put(payLogItem.getId(), 0);
+          feed.addItem(payLogItem, 0);
+          adapter.notifyDataSetChanged();
         }
-
       }
     });
   }

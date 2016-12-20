@@ -33,6 +33,7 @@ public class Constant {
   public static final String POST_LOCATION = "http://new.opaybot.ir/api/location";
   public static final String ADD_MEMBER_TO_GROUP = "http://new.opaybot.ir/AddMember";
   public static final String CREATE_GROUP = "http://new.opaybot.ir/api/Group";
+  public static final String DATE = "2050-01-01T00:00:00.000";
 
 
   public static String getQrCodeId(int id) {

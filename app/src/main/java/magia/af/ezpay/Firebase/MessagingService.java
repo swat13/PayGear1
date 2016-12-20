@@ -34,9 +34,11 @@ import magia.af.ezpay.GroupChatPageActivity;
 import magia.af.ezpay.MainActivity;
 import magia.af.ezpay.Parser.ChatListFeed;
 import magia.af.ezpay.Parser.Parser;
+import magia.af.ezpay.Parser.PayLogFeed;
 import magia.af.ezpay.Parser.PayLogItem;
 import magia.af.ezpay.R;
 import magia.af.ezpay.Utilities.ApplicationData;
+import magia.af.ezpay.Utilities.Constant;
 import magia.af.ezpay.fragments.FriendsList;
 import magia.af.ezpay.interfaces.MessageHandler;
 
@@ -69,9 +71,8 @@ public class MessagingService extends FirebaseMessagingService {
     try {
       JSONObject jsonObject = new JSONObject(remoteMessage.getNotification().getBody());
       if (mode == 1) {//chat pv
-        JSONObject object = jsonObject.getJSONObject("chatItem");
         chatMessageHandler = ChatPageActivity.informNotif();
-        chatMessageHandler.handleMessage(payLogItem, jsonObject.isNull("chatItem"), object.getString("t"));
+        chatMessageHandler.handleMessage(payLogItem, jsonObject.isNull("chatItem"), "1");
       } else if (mode == 2) {//group chat
         groupMessageHandler = GroupChatPageActivity.informNotif();
         groupMessageHandler.handleMessage(payLogItem, jsonObject.isNull("groupChatItem"), "2");
@@ -175,7 +176,7 @@ public class MessagingService extends FirebaseMessagingService {
     }
   }
 
-  public void start(){
+  public void start() {
     new fillContact().execute("[]");
   }
 
@@ -227,6 +228,7 @@ public class MessagingService extends FirebaseMessagingService {
     return rssItem;
   }
 
+
   public class fillContact extends AsyncTask<String, Void, ChatListFeed> {
 
     @Override
@@ -249,5 +251,6 @@ public class MessagingService extends FirebaseMessagingService {
     }
 
   }
+
 
 }
