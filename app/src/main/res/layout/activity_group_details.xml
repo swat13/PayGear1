@@ -39,7 +39,7 @@
             android:layout_height="40dp"/>
     </RelativeLayout>
     <Button
-        android:id="@+id/btn_add_member"
+        android:id="@+id/btnAddMemberToGroup"
         android:layout_below="@+id/actionBarLayout"
         android:drawableLeft="@drawable/ic_add_member"
         android:text="اضافه کردن افراد جدید"
@@ -52,7 +52,7 @@
         android:id="@+id/memberRecycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_add_member">
+        android:layout_below="@+id/btnAddMemberToGroup">
 
     </android.support.v7.widget.RecyclerView>
 

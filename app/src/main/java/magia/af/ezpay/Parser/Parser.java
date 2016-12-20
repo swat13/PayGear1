@@ -1521,7 +1521,7 @@ public class Parser {
     public String addMemberToGroup(int id, ArrayList<String> memberPhone) {
         try {
 
-            URL url = new URL(mainUrl + "api/group/AddMember");
+            URL url = new URL(mainUrl + "AddMember");
             Log.e("Parser", "Url: " + url);
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
             httpConn.setDoOutput(true);
@@ -1556,28 +1556,6 @@ public class Parser {
             if (resCode != 400) {
                 return null;
             }
-
-            InputStream in = httpConn.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            StringBuilder sb = new StringBuilder();
-
-            String line = null;
-            try {
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-
-            Log.e("Parser In", sb.toString());
 
         } catch (IOException e) {
             e.printStackTrace();

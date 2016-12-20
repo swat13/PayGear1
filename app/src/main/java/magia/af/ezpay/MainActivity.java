@@ -31,15 +31,15 @@ import magia.af.ezpay.location.LocationService;
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
 
-  public RelativeLayout darkDialog, waitingDialog;
-  FriendsList friendsList;
-  public magia.af.ezpay.fragments.BarCodeGet barCodeGet;
-  public LinearLayout friendsLayout, barcodeReader, profileLayout, radarLayout;
-  ChatListFeed _ChatList_feed;
-  public String description;
-  public magia.af.ezpay.fragments.Radar radar;
-  public int amount;
-  public ImageView imageView;
+    public RelativeLayout darkDialog, waitingDialog;
+    FriendsList friendsList;
+    public magia.af.ezpay.fragments.BarCodeGet barCodeGet;
+    public LinearLayout friendsLayout, barcodeReader, profileLayout, radarLayout;
+    ChatListFeed _ChatList_feed;
+    public String description;
+    public magia.af.ezpay.fragments.Radar radar;
+    public int amount;
+    public ImageView imageView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -108,107 +108,107 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
     startService(new Intent(this, LocationService.class));
 
-    if (getSharedPreferences("EZpay", 0).contains("push")) {
-      JSONParser parser = JSONParser.connect(Constant.SEND_DEVICE_ID);
-      parser.setRequestMethod(JSONParser.POST);
-      parser.setReadTimeOut(20000);
-      parser.setConnectionTimeOut(20000);
-      parser.setAuthorization(getSharedPreferences("EZpay", 0).getString("token", ""));
-      JSONObject jsonObject = new JSONObject();
-      try {
-        jsonObject.put("IMEI", "5555");
-        jsonObject.put("DeviceID", "5555");
-        jsonObject.put("Platform", "1");
-        jsonObject.put("OsVersion", "5555");
-        jsonObject.put("AppVersion", "5555");
-        jsonObject.put("PushToken", getSharedPreferences("EZpay", 0).getString("push", ""));
-      } catch (JSONException e) {
-        e.printStackTrace();
-      }
-      parser.setJson(jsonObject.toString());
-      parser.execute(new JSONParser.Execute() {
-        @Override
-        public void onPreExecute() {
+        if (getSharedPreferences("EZpay", 0).contains("push")) {
+            JSONParser parser = JSONParser.connect(Constant.SEND_DEVICE_ID);
+            parser.setRequestMethod(JSONParser.POST);
+            parser.setReadTimeOut(20000);
+            parser.setConnectionTimeOut(20000);
+            parser.setAuthorization(getSharedPreferences("EZpay", 0).getString("token", ""));
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("IMEI", "5555");
+                jsonObject.put("DeviceID", "5555");
+                jsonObject.put("Platform", "1");
+                jsonObject.put("OsVersion", "5555");
+                jsonObject.put("AppVersion", "5555");
+                jsonObject.put("PushToken", getSharedPreferences("EZpay", 0).getString("push", ""));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            parser.setJson(jsonObject.toString());
+            parser.execute(new JSONParser.Execute() {
+                @Override
+                public void onPreExecute() {
 
+                }
+
+                @Override
+                public void onPostExecute(String s) {
+                    getSharedPreferences("EZpay", 0).edit().remove("push").apply();
+                }
+            });
         }
+    }
 
-        @Override
-        public void onPostExecute(String s) {
-          getSharedPreferences("EZpay", 0).edit().remove("push").apply();
+    @Override
+    protected void onDestroy() {
+        startService(new Intent(this, LocationService.class));
+        super.onDestroy();
+    }
+
+    public void checkPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 0);
         }
-      });
     }
-  }
 
-  @Override
-  protected void onDestroy() {
-    startService(new Intent(this, LocationService.class));
-    super.onDestroy();
-  }
-
-  public void checkPermissions() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-      ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 0);
-    }
-  }
-
-  @Override
-  public void onClick(View v) {
-    switch (v.getId()) {
-      case R.id.friends_layout:
-        friendsList = new FriendsList();
-        friendsList.set_ChatList_feed(_ChatList_feed);
-        getSupportFragmentManager()
-          .beginTransaction()
-          .replace(R.id.detail_fragment, friendsList)
-          .addToBackStack(null)
-          .commit();
-        friendsLayout.setAlpha((float) 1);
-        barcodeReader.setAlpha((float) 0.45);
-        profileLayout.setAlpha((float) 0.45);
-        radarLayout.setAlpha((float) 0.45);
-        break;
-      case R.id.barcode_reader:
-        barCodeGet = BarCodeGet.getInstance();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("contact", _ChatList_feed);
-        BarCodeGet barCodeGet = new BarCodeGet();
-        barCodeGet.setArguments(bundle);
-        getSupportFragmentManager()
-          .beginTransaction()
-          .addToBackStack(null)
-          .replace(R.id.detail_fragment, barCodeGet)
-          .commit();
-        friendsLayout.setAlpha((float) 0.45);
-        barcodeReader.setAlpha((float) 1);
-        profileLayout.setAlpha((float) 0.45);
-        radarLayout.setAlpha((float) 0.45);
-        break;
-      case R.id.profile_layout:
-        barCodeGet = BarCodeGet.getInstance();
-        getSupportFragmentManager().beginTransaction().remove(barCodeGet).commit();
-        Profile profile = new Profile();
-        getSupportFragmentManager()
-          .beginTransaction()
-          .replace(R.id.detail_fragment, profile)
-          .commit();
-        friendsLayout.setAlpha((float) 0.45);
-        barcodeReader.setAlpha((float) 0.45);
-        profileLayout.setAlpha((float) 1);
-        radarLayout.setAlpha((float) 0.45);
-        break;
-      case R.id.radar_layout:
-        radar = Radar.getInstance();
-        getSupportFragmentManager()
-          .beginTransaction()
-          .replace(R.id.detail_fragment, radar)
-          .addToBackStack(null)
-          .commit();
-        friendsLayout.setAlpha((float) 0.45);
-        barcodeReader.setAlpha((float) 0.45);
-        profileLayout.setAlpha((float) 0.45);
-        radarLayout.setAlpha((float) 1);
-        break;
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.friends_layout:
+                friendsList = new FriendsList();
+                friendsList.set_ChatList_feed(_ChatList_feed);
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.detail_fragment, friendsList)
+                        .addToBackStack(null)
+                        .commit();
+                friendsLayout.setAlpha((float) 1);
+                barcodeReader.setAlpha((float) 0.45);
+                profileLayout.setAlpha((float) 0.45);
+                radarLayout.setAlpha((float) 0.45);
+                break;
+            case R.id.barcode_reader:
+                barCodeGet = BarCodeGet.getInstance();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("contact", _ChatList_feed);
+                BarCodeGet barCodeGet = new BarCodeGet();
+                barCodeGet.setArguments(bundle);
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .addToBackStack(null)
+                        .replace(R.id.detail_fragment, barCodeGet)
+                        .commit();
+                friendsLayout.setAlpha((float) 0.45);
+                barcodeReader.setAlpha((float) 1);
+                profileLayout.setAlpha((float) 0.45);
+                radarLayout.setAlpha((float) 0.45);
+                break;
+            case R.id.profile_layout:
+                barCodeGet = BarCodeGet.getInstance();
+                getSupportFragmentManager().beginTransaction().remove(barCodeGet).commit();
+                Profile profile = new Profile();
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.detail_fragment, profile)
+                        .commit();
+                friendsLayout.setAlpha((float) 0.45);
+                barcodeReader.setAlpha((float) 0.45);
+                profileLayout.setAlpha((float) 1);
+                radarLayout.setAlpha((float) 0.45);
+                break;
+            case R.id.radar_layout:
+                radar = Radar.getInstance();
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.detail_fragment, radar)
+                        .addToBackStack(null)
+                        .commit();
+                friendsLayout.setAlpha((float) 0.45);
+                barcodeReader.setAlpha((float) 0.45);
+                profileLayout.setAlpha((float) 0.45);
+                radarLayout.setAlpha((float) 1);
+                break;
 //      case R.id.barcode_reader1:
 //
 //        barCodeGet = new BarCodeGet().getInstance();
@@ -218,10 +218,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //        barcodeReader.setAlpha((float) 0.45);
 //        barcodeGet.setAlpha((float)1);
 //        break;
-      default:
-        break;
+            default:
+                break;
+        }
     }
-  }
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -250,15 +250,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
           Log.e("#######", "onActivityResult: 0000" + data.getData());
 //                    File file = new File(Environment.getExternalStorageDirectory().getPath(), "photo.jpg");
 //                    CallAsync(Uri.fromFile(file));
-          break;
-        case 1:
+                    break;
+                case 1:
 //                    CallAsync(tempUri);
-          break;
-        default:
-          break;
-      }
+                    break;
+                default:
+                    break;
+            }
+        }
     }
-  }
 
 
   @Override
