@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -13,7 +12,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,6 +43,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        _ChatList_feed = ApplicationData.getChatListFeed();
         if (Build.VERSION.SDK_INT >= 23) {
             checkPermissions();
         }
@@ -56,60 +55,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         radarLayout = (LinearLayout) findViewById(R.id.radar_layout);
         imageView = (ImageView) findViewById(R.id.image_view);
 
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            Log.e("Ok", "In Bundle");
-            _ChatList_feed = (ChatListFeed) getIntent().getSerializableExtra("contact");//not null at this line
-            for (int i = 0; i < _ChatList_feed.getItemCount(); i++) {
-                if (_ChatList_feed.getItem(i).getGroupItem() != null) {
-                    Log.e("GROUP", "onPostExecute: " + _ChatList_feed.getItem(i).getGroupItem().getGroupTitle());
-                } else {
-                    Log.e("Contact", "onPostExecute: " + _ChatList_feed.getItem(i).getTitle());
-                }
+        for (int i = 0; i < _ChatList_feed.getItemCount(); i++) {
+            if (_ChatList_feed.getItem(i).getGroupItem() != null) {
+                Log.e("GROUP", "onPostExecute: " + _ChatList_feed.getItem(i).getGroupItem().getGroupTitle());
+            } else {
+                Log.e("Contact", "onPostExecute: " + _ChatList_feed.getItem(i).getTitle());
             }
-
-            FragmentManager fm = getSupportFragmentManager();
-            if (fm != null) {
-                Log.e("Ok", "In Fm");
-                friendsList = new FriendsList();
-                friendsList.set_ChatList_feed(_ChatList_feed);
-                fm.beginTransaction().replace(R.id.detail_fragment, friendsList).addToBackStack(null).commit();
-            }
-        } else {
-            JSONParser parser = JSONParser.connect(Constant.CHECK_CONTACT_LIST_WITH_GROUP);
-            parser.setRequestMethod(JSONParser.POST);
-            parser.setReadTimeOut(20000);
-            parser.setConnectionTimeOut(20000);
-            parser.setAuthorization(getSharedPreferences("EZpay", 0).getString("token", ""));
-            parser.setJson("[]");
-            parser.execute(new JSONParser.Execute() {
-                @Override
-                public void onPreExecute() {
-                }
-
-                @Override
-                public void onPostExecute(String s) {
-                    Log.e("STRING S", "onPostExecute: " + s);
-                    if (s != null) {
-                        FragmentManager fm = getSupportFragmentManager();
-                        if (fm != null) {
-                            ChatListFeed chatListFeed = ApplicationData.getContactListWithGroup(s);
-                            friendsList = new FriendsList().getInstance(chatListFeed);
-                            fm.beginTransaction().replace(R.id.detail_fragment, friendsList).addToBackStack(null).commit();
-                        }
-                    } else {
-                        Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(MainActivity.this, "خطایی رخ داده است", Toast.LENGTH_SHORT).show();
-                            }
-                        }, 3000);
-                    }
-                }
-            });
         }
-        startService(new Intent(this, LocationService.class));
+
+        FragmentManager fm = getSupportFragmentManager();
+        if (fm != null) {
+            Log.e("Ok", "In Fm");
+            friendsList = new FriendsList();
+            friendsList.set_ChatList_feed(_ChatList_feed);
+            fm.beginTransaction().replace(R.id.detail_fragment, friendsList).addToBackStack(null).commit();
+        }
+//        startService(new Intent(this, LocationService.class));
 
         if (getSharedPreferences("EZpay", 0).contains("push")) {
             JSONParser parser = JSONParser.connect(Constant.SEND_DEVICE_ID);
@@ -234,7 +195,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 description = data.getStringExtra("description");
                 amount = data.getIntExtra("amount", 0);
                 int position = data.getIntExtra("pos", 0);
-                friendsList = new FriendsList().getInstance(_ChatList_feed);
+                friendsList = new FriendsList();
+                friendsList.set_ChatList_feed(_ChatList_feed);
                 Bundle bundle = new Bundle();
                 bundle.putString("description", description);
                 bundle.putInt("amount", amount);
@@ -261,6 +223,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         }
     }
+
 
     @Override
     public void onBackPressed() {

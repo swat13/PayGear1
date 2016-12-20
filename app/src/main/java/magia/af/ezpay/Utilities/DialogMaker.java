@@ -15,24 +15,23 @@ import magia.af.ezpay.R;
  */
 
 public class DialogMaker {
-    private static Dialog dialog;
-
-    public static DialogMaker makeDialog(Context context) {
-        DialogMaker dialogMaker = new DialogMaker();
-        dialog = new Dialog(context);
-        dialog.setContentView(R.layout.gif_dialog);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        ImageView gif = (ImageView) dialog.findViewById(R.id.gif);
-        Glide.with(dialog.getContext()).load(R.drawable.gif_loading).into(gif);
+  private static Dialog dialog;
+  public static DialogMaker makeDialog(Context context){
+    DialogMaker dialogMaker = new DialogMaker();
+    dialog = new Dialog(context);
+    dialog.setContentView(R.layout.gif_dialog);
+    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+    ImageView gif = (ImageView)dialog.findViewById(R.id.gif);
+    Glide.with(dialog.getContext()).load(R.drawable.gif_loading).into(gif);
 //    dialog.show();
-        return dialogMaker;
-    }
+    return dialogMaker;
+  }
 
-    public void showDialog() {
-        dialog.show();
-    }
+  public void showDialog(){
+    dialog.show();
+  }
 
-    public static void disMissDialog() {
-        dialog.dismiss();
-    }
+  public static void disMissDialog(){
+    dialog.dismiss();
+  }
 }
