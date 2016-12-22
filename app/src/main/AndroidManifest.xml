@@ -43,7 +43,8 @@
             android:name=".LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".MainActivity"/>
+        <activity android:name=".MainActivity"
+            android:windowSoftInputMode="adjustPan" />
         <activity android:name=".ChatPageActivity" />
         <activity android:name=".SimpleScannerActivity"/>
         <!--
@@ -77,7 +78,7 @@
         <activity android:name=".GroupChatPageActivity"/>
         <activity android:name=".CreateGroupActivity">
         </activity>
-        <activity android:name=".GroupDetails" />
+        <activity android:name=".GroupDetailsActivity" />
     </application>
 
 </manifest>

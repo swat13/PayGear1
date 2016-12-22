@@ -41,21 +41,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public int amount;
     public ImageView imageView;
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    _ChatList_feed = ApplicationData.getChatListFeed();
-    setContentView(R.layout.activity_main);
-    if (Build.VERSION.SDK_INT >= 23) {
-      checkPermissions();
-    }
-    darkDialog = (RelativeLayout) findViewById(R.id.dark_dialog);
-    waitingDialog = (RelativeLayout) findViewById(R.id.wait_layout);
-    friendsLayout = (LinearLayout) findViewById(R.id.friends_layout);
-    barcodeReader = (LinearLayout) findViewById(R.id.barcode_reader);
-    profileLayout = (LinearLayout) findViewById(R.id.profile_layout);
-    radarLayout = (LinearLayout) findViewById(R.id.radar_layout);
-    imageView = (ImageView) findViewById(R.id.image_view);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        _ChatList_feed = ApplicationData.getChatListFeed();
+        setContentView(R.layout.activity_main);
+        if (Build.VERSION.SDK_INT >= 23) {
+            checkPermissions();
+        }
+
+        darkDialog = (RelativeLayout) findViewById(R.id.dark_dialog);
+        waitingDialog = (RelativeLayout) findViewById(R.id.wait_layout);
+        friendsLayout = (LinearLayout) findViewById(R.id.friends_layout);
+        barcodeReader = (LinearLayout) findViewById(R.id.barcode_reader);
+        profileLayout = (LinearLayout) findViewById(R.id.profile_layout);
+        radarLayout = (LinearLayout) findViewById(R.id.radar_layout);
+        imageView = (ImageView) findViewById(R.id.image_view);
 
 //    for (int i = 0; i < _ChatList_feed.getItemCount(); i++) {
 //      if (_ChatList_feed.getItem(i).getGroupItem() != null) {
@@ -99,14 +100,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //        }
 //      });
 //    }
-    FragmentManager fm = getSupportFragmentManager();
-    if (fm != null) {
-      Log.e("Ok", "In Fm");
-      friendsList = new FriendsList();
-      friendsList.set_ChatList_feed(_ChatList_feed);
-      fm.beginTransaction().replace(R.id.detail_fragment, friendsList).addToBackStack(null).commit();
-    }
-    startService(new Intent(this, LocationService.class));
+
+        FragmentManager fm = getSupportFragmentManager();
+        if (fm != null) {
+            Log.e("Ok", "In Fm");
+            friendsList = new FriendsList();
+            friendsList.set_ChatList_feed(_ChatList_feed);
+            fm.beginTransaction().replace(R.id.detail_fragment, friendsList).addToBackStack(null).commit();
+        }
+        startService(new Intent(this, LocationService.class));
 
         if (getSharedPreferences("EZpay", 0).contains("push")) {
             JSONParser parser = JSONParser.connect(Constant.SEND_DEVICE_ID);
@@ -223,31 +225,30 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-  @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-    if (resultCode == Activity.RESULT_OK) {
-      if (requestCode == 10) {
-        description = data.getStringExtra("description");
-        amount = data.getIntExtra("amount", 0);
-        int position = data.getIntExtra("pos", 0);
-        friendsList = new FriendsList();
-        friendsList.set_ChatList_feed(_ChatList_feed);
-        Bundle bundle = new Bundle();
-        bundle.putString("description", description);
-        bundle.putInt("amount", amount);
-        bundle.putInt("pos", position);
-        friendsList.setArguments(bundle);
-        getSupportFragmentManager()
-          .beginTransaction()
-          .replace(R.id.detail_fragment, friendsList)
-          .addToBackStack(null)
-          .commit();
-      }
-      Log.e("3333333333", "onActivityResult: " + requestCode);
-      switch (requestCode) {
-        case 0:
-          Log.e("#######", "onActivityResult: 0000" + data.getData());
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == 10) {
+                description = data.getStringExtra("description");
+                amount = data.getIntExtra("amount", 0);
+                int position = data.getIntExtra("pos", 0);
+                friendsList = new FriendsList();
+                friendsList.set_ChatList_feed(_ChatList_feed);
+                Bundle bundle = new Bundle();
+                bundle.putString("description", description);
+                bundle.putInt("amount", amount);
+                bundle.putInt("pos", position);
+                friendsList.setArguments(bundle);
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.detail_fragment, friendsList)
+                        .addToBackStack(null)
+                        .commit();
+            }
+
+            switch (requestCode) {
+                case 0:
 //                    File file = new File(Environment.getExternalStorageDirectory().getPath(), "photo.jpg");
 //                    CallAsync(Uri.fromFile(file));
                     break;
@@ -261,8 +262,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
 
-  @Override
-  public void onBackPressed() {
-    finish();
-  }
+    @Override
+    public void onBackPressed() {
+
+        if (friendsList.srcTitle.getText().length() > 0) {
+            friendsList.srcTitle.clearFocus();
+        } else {
+            finish();
+        }
+    }
 }

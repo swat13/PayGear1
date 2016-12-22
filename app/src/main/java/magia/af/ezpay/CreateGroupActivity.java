@@ -82,8 +82,8 @@ public class CreateGroupActivity extends BaseActivity {
             checkPermissions();
         }
         rssFeed = (ArrayList<ChatListItem>) getIntent().getSerializableExtra("contact");
-        rssFeed2 = (ArrayList<ChatListItem>) getIntent().getSerializableExtra("contact2");
-        _ChatList_Feed = (ChatListFeed) getIntent().getSerializableExtra("contact3");
+        rssFeed2 = (ArrayList<ChatListItem>) getIntent().getSerializableExtra("chatFeed");
+        _ChatList_Feed = (ChatListFeed) getIntent().getSerializableExtra("chatListFeed");
         for (int i = 0; i < rssFeed.size(); i++) {
             Log.e(TAG, "onCreate: " + rssFeed.get(i).getTitle());
             Log.e(TAG, "onCreate: " + rssFeed.get(i).getTelNo());
@@ -96,7 +96,6 @@ public class CreateGroupActivity extends BaseActivity {
 //    database = new ContactDatabase(this);
 //    databaseChatListFeed = database.getInNetworkUserName();
         groupMember = new ChatListFeed();
-        membersItem = new MembersItem();
         try {
             jsonArray = new JSONArray(json);
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -113,7 +112,6 @@ public class CreateGroupActivity extends BaseActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         groupTitle = (EditText) findViewById(R.id.edt_group_title);
         recyclerView = (RecyclerView) findViewById(R.id.contact_recycler);
         LinearLayoutManager manager = new LinearLayoutManager(this);
@@ -124,11 +122,9 @@ public class CreateGroupActivity extends BaseActivity {
         groupAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 AlertDialog.Builder builder1 = new AlertDialog.Builder(CreateGroupActivity.this);
                 builder1.setMessage("Get photo from gallery or take picture ?");
 //                builder1.setCancelable(true);
-
                 builder1.setPositiveButton(
                         "Import from gallery",
                         new DialogInterface.OnClickListener() {
@@ -139,7 +135,6 @@ public class CreateGroupActivity extends BaseActivity {
                                 startActivityForResult(Intent.createChooser(intent, "Select File"), 1);
                             }
                         });
-
                 builder1.setNegativeButton(
                         "Take picture",
                         new DialogInterface.OnClickListener() {
@@ -148,7 +143,6 @@ public class CreateGroupActivity extends BaseActivity {
                                 startActivityForResult(intent, 0);
                             }
                         });
-
                 AlertDialog alert11 = builder1.create();
                 alert11.show();
             }
@@ -170,29 +164,22 @@ public class CreateGroupActivity extends BaseActivity {
 
     private String onCaptureImageResult(Intent data) {
         if (data != null) {
-
             thumbnail = (Bitmap) data.getExtras().get("data");
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-
-
             byte[] byteArray = bytes.toByteArray();
             String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
             return encoded;
-
         }
         return null;
-
     }
-
-
 
     @SuppressWarnings("deprecation")
     private String onSelectFromGalleryResult(Intent data) {
         thumbnail = null;
         if (data != null) {
-
-            ImageMaker imageMaker=new ImageMaker(getApplicationContext(),data);
+            ImageMaker imageMaker = new ImageMaker(getApplicationContext(), data);
+            Log.e("imageMaker",imageMaker.onSelectFromGalleryResult() );
             return imageMaker.onSelectFromGalleryResult();
         }
         return null;
@@ -200,13 +187,12 @@ public class CreateGroupActivity extends BaseActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.e("11111111", "onActivityResult: 0000" + resultCode);
-        Log.e("22222222", "onActivityResult: 1111" + requestCode);
         if (resultCode == Activity.RESULT_OK) {
-
             switch (requestCode) {
                 case 0:
                     this.mData = data;
+                    flag = 0;
+
                     Glide.with(CreateGroupActivity.this)
                             .load(onCaptureImageResult(data))
                             .asBitmap()
@@ -220,11 +206,13 @@ public class CreateGroupActivity extends BaseActivity {
                                     groupAvatar.setImageDrawable(circularBitmapDrawable);
                                 }
                             });
-                    flag = 0;
+
+
                     break;
                 case 1:
                     this.mData = data;
                     flag = 1;
+
                     Glide.with(CreateGroupActivity.this)
                             .load(onSelectFromGalleryResult(data))
                             .asBitmap()
@@ -238,6 +226,7 @@ public class CreateGroupActivity extends BaseActivity {
                                     groupAvatar.setImageDrawable(circularBitmapDrawable);
                                 }
                             });
+
                     break;
                 default:
                     break;
@@ -255,7 +244,6 @@ public class CreateGroupActivity extends BaseActivity {
     }
 
     public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
-
         @Override
         public RecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_contact_item, parent, false);
@@ -264,7 +252,7 @@ public class CreateGroupActivity extends BaseActivity {
 
         @Override
         public void onBindViewHolder(final RecyclerAdapter.ViewHolder holder, int position) {
-            Log.e(TAG, "onBindViewHolder: " + groupMember.getItem(position).getContactName());
+
             holder.txt_contact_item_name.setText(groupMember.getItem(position).getContactName());
             holder.txt_contact_item_phone.setText(groupMember.getItem(position).getTelNo());
             Glide.with(CreateGroupActivity.this)
@@ -286,7 +274,6 @@ public class CreateGroupActivity extends BaseActivity {
         public int getItemCount() {
             return groupMember.getItemCount();
         }
-
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             TextView txt_contact_item_name;
@@ -326,7 +313,7 @@ public class CreateGroupActivity extends BaseActivity {
                 groupItem = result;
                 if (flag == 0) {
                     if (mData != null) {
-                        new AsyncInsertGpImage().execute(onCaptureImageResult(mData), result.getGroupId()+"");
+                        new AsyncInsertGpImage().execute(onCaptureImageResult(mData), result.getGroupId() + "");
                     } else {
                         Intent intent = new Intent(CreateGroupActivity.this, GroupChatPageActivity.class);
                         intent.putExtra("title", groupItem.getGroupTitle());
@@ -339,7 +326,7 @@ public class CreateGroupActivity extends BaseActivity {
                     }
                 } else if (flag == 1) {
                     if (mData != null) {
-                        new AsyncInsertGpImage().execute(onSelectFromGalleryResult(mData), result.getGroupId()+"");
+                        new AsyncInsertGpImage().execute(onSelectFromGalleryResult(mData), result.getGroupId() + "");
                     } else {
                         Intent intent = new Intent(CreateGroupActivity.this, GroupChatPageActivity.class);
                         intent.putExtra("title", groupItem.getGroupTitle());
@@ -354,14 +341,12 @@ public class CreateGroupActivity extends BaseActivity {
             } else {
                 imageView.setEnabled(true);
                 Toast.makeText(CreateGroupActivity.this, "problem in connection!", Toast.LENGTH_SHORT).show();
-
             }
             super.onPostExecute(result);
         }
     }
 
     public class AsyncInsertGpImage extends AsyncTask<String, Void, String> {
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -394,7 +379,6 @@ public class CreateGroupActivity extends BaseActivity {
                                 groupAvatar.setImageDrawable(circularBitmapDrawable);
                             }
                         });
-
                 getSharedPreferences("EZpay", 0).edit().putString("Ipath", result).apply();
                 Intent intent = new Intent(CreateGroupActivity.this, GroupChatPageActivity.class);
                 intent.putExtra("title", groupItem.getGroupTitle());

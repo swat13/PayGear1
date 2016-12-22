@@ -13,7 +13,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,41 +24,50 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
+import magia.af.ezpay.Parser.ChatListFeed;
+import magia.af.ezpay.Parser.ChatListItem;
+import magia.af.ezpay.Parser.GroupItem;
 import magia.af.ezpay.Parser.MembersFeed;
+import magia.af.ezpay.Parser.MembersItem;
 import magia.af.ezpay.Parser.Parser;
+import magia.af.ezpay.Utilities.LocalPersistence;
 import magia.af.ezpay.helper.ImageMaker;
 
-public class GroupDetails extends BaseActivity {
-
+public class GroupDetailsActivity extends BaseActivity {
     private int groupId;
     private String groupTitle;
     private String groupPhoto;
-    private MembersFeed groupMembers;
+    static MembersFeed groupMembers;
     private RecyclerView membersRecycler;
     private RecyclerAdapter adapter;
     ImageView groupAvatar;
-
+    ChatListFeed _ChatList_feed;
     Bitmap thumbnail;
     Intent mData;
+    String json;
 
+    boolean isUpdated;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        isUpdated=false;
         setContentView(R.layout.activity_group_details);
-
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             groupId = bundle.getInt("id");
             groupTitle = bundle.getString("title");
             groupPhoto = bundle.getString("photo");
             groupMembers = (MembersFeed) bundle.getSerializable("members");
+            _ChatList_feed = (ChatListFeed) bundle.getSerializable("chatFeed");
         }
-
-
         TextView txtNameOfGroup = (TextView) findViewById(R.id.nameOfGroup);
         txtNameOfGroup.setText(groupTitle);
         groupAvatar = (ImageView) findViewById(R.id.groupAvatar);
@@ -83,16 +91,11 @@ public class GroupDetails extends BaseActivity {
         manager.setReverseLayout(true);
         membersRecycler.setLayoutManager(manager);
         membersRecycler.setAdapter(adapter);
-
-
         groupAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-                AlertDialog.Builder builder1 = new AlertDialog.Builder(GroupDetails.this);
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(GroupDetailsActivity.this);
                 builder1.setMessage("Get photo from gallery or take picture ?");
-
                 builder1.setPositiveButton(
                         "Import from gallery",
                         new DialogInterface.OnClickListener() {
@@ -103,7 +106,6 @@ public class GroupDetails extends BaseActivity {
                                 startActivityForResult(Intent.createChooser(intent, "Select File"), 1);
                             }
                         });
-
                 builder1.setNegativeButton(
                         "Take picture",
                         new DialogInterface.OnClickListener() {
@@ -112,34 +114,31 @@ public class GroupDetails extends BaseActivity {
                                 startActivityForResult(intent, 0);
                             }
                         });
-
                 AlertDialog alert11 = builder1.create();
                 alert11.show();
-
-
             }
         });
-
-
+        findViewById(R.id.btn_add_member).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(new Intent(GroupDetailsActivity.this, ChooseMemberActivity.class).putExtra("groupMembers", groupMembers).putExtra("addMember", true), 3);
+            }
+        });
     }
 
-
     public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
-
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public RecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_contact_item, parent, false);
-            return new ViewHolder(rootView);
+            return new RecyclerAdapter.ViewHolder(rootView);
         }
 
         @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
-            Log.e("POOOOS", "onBindViewHolder: " + position);
-            Log.e("Saeid TEST", "onBindViewHolder: " + groupMembers.getMember(position).getMemberTitle());
+        public void onBindViewHolder(final RecyclerAdapter.ViewHolder holder, int position) {
             holder.txt_contact_item_name.setText(groupMembers.getMember(position).getMemberTitle());
             holder.txt_contact_item_phone.setText(groupMembers.getMember(position).getMemberPhone());
             String imageUrl = "http://new.opaybot.ir";
-            Glide.with(GroupDetails.this)
+            Glide.with(GroupDetailsActivity.this)
                     .load(imageUrl + groupMembers.getMember(position).getMemberPhoto())
                     .asBitmap()
                     .centerCrop()
@@ -176,30 +175,23 @@ public class GroupDetails extends BaseActivity {
 
             @Override
             public void onClick(View v) {
-
             }
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 for (int i = 0; i < parent.getCount(); i++) {
-
                     View v = parent.getChildAt(i);
                     ImageView imageView = (ImageView) v.findViewById(R.id.status_circle);
                     imageView.setVisibility(View.GONE);
-
                 }
-
                 ImageView imageView = (ImageView) view.findViewById(R.id.status_circle);
                 imageView.setVisibility(View.VISIBLE);
-
             }
         }
     }
 
-
     private String onCaptureImageResult(Intent data) {
         if (data != null) {
-
             thumbnail = (Bitmap) data.getExtras().get("data");
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
@@ -210,26 +202,20 @@ public class GroupDetails extends BaseActivity {
         return null;
     }
 
-
     @SuppressWarnings("deprecation")
     private String onSelectFromGalleryResult(Intent data) {
-
         if (data != null) {
             ImageMaker imageMaker = new ImageMaker(getApplicationContext(), data);
             return imageMaker.onSelectFromGalleryResult();
         }
         return null;
-
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-
-        Log.e("11111111", "onActivityResult: 0000" + resultCode);
-        Log.e("22222222", "onActivityResult: 1111" + requestCode);
-        if (resultCode == Activity.RESULT_OK) {
+        if (requestCode == 3 && resultCode == Activity.RESULT_OK) {
+            addMembers(data.getStringExtra("json"), (ArrayList<ChatListItem>) data.getSerializableExtra("contact"));
+        } else if (resultCode == Activity.RESULT_OK) {
 //            Log.e(TAG, "onActivityResult: "+imageReturnedIntent.getData() );
 //            Uri tempUri = getImageUri(getActivity(), bitmap);
             switch (requestCode) {
@@ -242,13 +228,10 @@ public class GroupDetails extends BaseActivity {
                 default:
                     break;
             }
-
         }
     }
 
-
     public class AsyncInsertGpImage extends AsyncTask<String, Void, String> {
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -268,7 +251,7 @@ public class GroupDetails extends BaseActivity {
         @Override
         protected void onPostExecute(String result) {
             if (!result.equals("Error")) {
-                Glide.with(GroupDetails.this)
+                Glide.with(GroupDetailsActivity.this)
                         .load("http://new.opaybot.ir" + result.replace("\"", ""))
                         .asBitmap()
                         .centerCrop()
@@ -282,11 +265,56 @@ public class GroupDetails extends BaseActivity {
                             }
                         });
             } else {
-                Toast.makeText(GroupDetails.this, "Error In Connection", Toast.LENGTH_SHORT).show();
+                Toast.makeText(GroupDetailsActivity.this, "Error In Connection", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
+    public void addMembers(String jsonArray, ArrayList<ChatListItem> rssFeed) {
+        try {
+            JSONArray jsonArray1 = new JSONArray(jsonArray);
+            ArrayList<String> phoneNumbers = new ArrayList<String>();
+            for (int i = 0; i < jsonArray1.length(); i++) {
+                MembersItem membersItem = new MembersItem();
+                for (int j = 0; j < rssFeed.size(); j++) {
+                    if (jsonArray1.getString(i).equals(rssFeed.get(j).getTelNo())) {
+                        membersItem.setMemberTitle(rssFeed.get(j).getTitle());
+                        membersItem.setMemberPhone(rssFeed.get(j).getTelNo());
+                        phoneNumbers.add(rssFeed.get(j).getTelNo());
+                        membersItem.setMemberPhoto(rssFeed.get(j).getContactImg());
+                        membersItem.setMemberId(rssFeed.get(j).getUserId());
+                    }
+                }
+                groupMembers.addMemberItem(membersItem);
 
+            }
+            new AddMemberToGp(groupId, phoneNumbers).execute();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public class AddMemberToGp extends AsyncTask<Void, Void, String> {
+        int id;
+        ArrayList<String> membersPhone;
+
+        public AddMemberToGp(int id, ArrayList<String> membersPhone) {
+            this.id = id;
+            this.membersPhone = membersPhone;
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            Parser parser = new Parser(getSharedPreferences("EZpay", 0).getString("token", ""));
+            return parser.addMemberToGroup(id, membersPhone);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            GroupChatPageActivity.groupMembers=groupMembers;
+            adapter.notifyDataSetChanged();
+        }
+    }
 }
-
