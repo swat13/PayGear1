@@ -1,6 +1,7 @@
 package magia.af.ezpay.Parser;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 public class PayLogItem implements Serializable {
 
@@ -31,6 +32,16 @@ public class PayLogItem implements Serializable {
     private String tMobile;
     private String tId;
     private int cancelId;
+
+    private HashMap<Integer,Integer> hashMap;
+
+    public HashMap<Integer, Integer> getHashMap() {
+        return hashMap;
+    }
+
+    public void setHashMap(HashMap<Integer, Integer> hashMap) {
+        this.hashMap = hashMap;
+    }
 
     public int getCancelId() {
         return cancelId;

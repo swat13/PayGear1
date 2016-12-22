@@ -53,4 +53,8 @@ public class PayLogFeed implements Serializable {
 		return _itemlist.size();// _itemcount;
 	}
 
+	public void set(int index,PayLogItem item){
+		_itemlist.set(index,item);
+	}
+
 }

@@ -23,6 +23,9 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import magia.af.ezpay.Utilities.LocalPersistence;
 
 public class Parser {
 
@@ -673,6 +676,9 @@ public class Parser {
                         JSONObject jsonObject = contactObject.getJSONObject("lastchat");
                         rssChatListItem.setComment(jsonObject.getString("c"));
                         rssChatListItem.setLastChatAmount(jsonObject.getInt("a"));
+                        rssChatListItem.setLastChatId(jsonObject.getInt("id"));
+                        rssChatListItem.setLastChatTo(jsonObject.getString("f"));
+                        rssChatListItem.setLastChatFrom(jsonObject.getString("t"));
                     }
 
                     rssChatListItem.setContactCount(i);
@@ -703,6 +709,8 @@ public class Parser {
                                 JSONObject lastChatGroupObject = groupLastChatArray.getJSONObject(j);
                                 groupItem.setGroupLastChatAmount(lastChatGroupObject.getInt("a"));
                                 groupItem.setGroupLastChatId(lastChatGroupObject.getInt("id"));
+                                groupItem.setGroupLastChatFrom(lastChatGroupObject.getString("f"));
+                                groupItem.setGroupLastChatTo(lastChatGroupObject.getString("t"));
                                 groupItem.setGroupLastChatDate(lastChatGroupObject.getString("d"));
                                 groupItem.setGroupLastChatOrderPay(lastChatGroupObject.getBoolean("o"));
                                 groupItem.setGroupLastChatStatus(lastChatGroupObject.getBoolean("s"));
@@ -822,6 +830,7 @@ public class Parser {
                 //kk
                 try {
                     payLogItem1.setId(jsonObject.getInt("id"));
+                    payLogFeed.getHash().put(jsonObject.getInt("id"),i);
                     payLogItem1.setfMobile(jsonObject.getString("f"));
                     payLogItem1.settMobile(jsonObject.getString("t"));
                     payLogItem1.setAmount(jsonObject.getInt("a"));
@@ -829,7 +838,6 @@ public class Parser {
                     payLogItem1.setPaideBool(jsonObject.getBoolean("o"));
                     payLogItem1.setStatus(jsonObject.getBoolean("s"));
                     payLogItem1.setComment(jsonObject.getString("c"));
-                    payLogFeed.getHash().put(jsonObject.getInt("id"), i);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

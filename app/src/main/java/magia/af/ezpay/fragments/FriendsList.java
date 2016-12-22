@@ -1,6 +1,5 @@
 package magia.af.ezpay.fragments;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -8,7 +7,6 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -27,8 +25,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -41,7 +37,6 @@ import magia.af.ezpay.Parser.ChatListItem;
 import magia.af.ezpay.Parser.GroupItem;
 import magia.af.ezpay.Parser.JSONParser;
 import magia.af.ezpay.Parser.MembersFeed;
-import magia.af.ezpay.Parser.MembersItem;
 import magia.af.ezpay.Parser.Parser;
 import magia.af.ezpay.Parser.PayLogItem;
 import magia.af.ezpay.R;
@@ -71,11 +66,6 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
   String mobile;
   private String TAG = "TEST";
 
-  public FriendsList getInstance(ChatListFeed chatListFeed) {
-    _ChatList_feed = chatListFeed;
-    return new FriendsList();
-  }
-
   public void set_ChatList_feed(ChatListFeed _ChatList_feed) {
     this._ChatList_feed = _ChatList_feed;
   }
@@ -87,9 +77,11 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
 
   @Override
   public void onStart() {
-    super.onStart();
     _ChatList_feed = ApplicationData.getChatListFeed();
-    adapter.notifyDataSetChanged();
+    if (adapter != null){
+      adapter.notifyDataSetChanged();
+    }
+    super.onStart();
   }
 
   @Override
@@ -181,235 +173,28 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
 
   @Override
   public void handleMessage(final PayLogItem payLogItem, final boolean deleteState, final String chatMemberMobile) {
-
     Log.e("handleMessage", "In Pv");
-//    new fillContact().execute("[]");
     getActivity().runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        JSONParser parser = JSONParser.connect(Constant.CHECK_CONTACT_LIST_WITH_GROUP);
-        parser.setRequestMethod(JSONParser.POST);
-        parser.setReadTimeOut(20000);
-        parser.setConnectionTimeOut(20000);
-        parser.setAuthorization(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
-        parser.setJson("[]");
-        parser.execute(new JSONParser.Execute() {
-          @Override
-          public void onPreExecute() {
-
-          }
-
-          @Override
-          public void onPostExecute(String s) {
-            Log.e("STRING S", "onPostExecute: " + s);
-            if (s != null) {
-              JSONArray jsonArray;
-              try {
-                jsonArray = new JSONArray(s);
-                _ChatList_feed = new ChatListFeed();
-                ChatListItem rssChatListItem;
-
-                ArrayList<ChatListItem> contactMembers = new ArrayList<>();
-                for (int i = 0; i < jsonArray.length(); i++) {
-                  rssChatListItem = new ChatListItem();
-                  JSONObject contactObject = jsonArray.getJSONObject(i);
-                  if (contactObject.getString("$type").contains("FriendModel")) {
-                    rssChatListItem.setContactImg(contactObject.getString("photo"));
-                    rssChatListItem.setTelNo(contactObject.getString("mobile"));
-                    rssChatListItem.setUserId(contactObject.getString("id"));
-                    rssChatListItem.setTitle(contactObject.getString("title"));
-
-                    if (!contactObject.isNull("lastchat")) {
-                      JSONObject jsonObject = contactObject.getJSONObject("lastchat");
-                      rssChatListItem.setComment(jsonObject.getString("c"));
-                      rssChatListItem.setLastChatAmount(jsonObject.getInt("a"));
-                      rssChatListItem.setLastChatFrom(jsonObject.getString("f"));
-                      rssChatListItem.setLastChatTo(jsonObject.getString("t"));
-                      rssChatListItem.setLastChatOrderByFromOrTo(jsonObject.getBoolean("o"));
-                      rssChatListItem.setContactStatus(jsonObject.getBoolean("s"));
-                    }
-
-                    rssChatListItem.setContactCount(i);
-                    contactMembers.add(rssChatListItem);
-                  } else if (contactObject.getString("$type").contains("GroupModel")) {
-                    GroupItem groupItem = new GroupItem();
-                    groupItem.setGroupId(contactObject.getInt("id"));
-                    groupItem.setGroupPhoto(contactObject.getString("photo"));
-                    groupItem.setGroupTitle(contactObject.getString("title"));
-                    //Be Checked
-                    if (!contactObject.isNull("members")) {
-                      JSONArray groupsMemberObject = contactObject.getJSONArray("members");
-                      MembersFeed membersFeed = new MembersFeed();
-                      for (int j = 0; j < groupsMemberObject.length(); j++) {
-                        MembersItem membersItem = new MembersItem();
-                        JSONObject memberGroupObject = groupsMemberObject.getJSONObject(j);
-                        membersItem.setMemberId(memberGroupObject.getString("id"));
-                        membersItem.setMemberTitle(memberGroupObject.getString("title"));
-                        membersItem.setMemberPhoto(memberGroupObject.getString("photo"));
-                        membersItem.setMemberPhone(memberGroupObject.getString("mobile"));
-                        membersFeed.addMemberItem(membersItem);
-                      }
-                      if (!contactObject.isNull("lastChats")) {
-                        JSONArray groupLastChatArray = contactObject.getJSONArray("lastChats");
-                        for (int j = 0; j < groupLastChatArray.length(); j++) {
-                          JSONObject lastChatGroupObject = groupLastChatArray.getJSONObject(j);
-                          groupItem.setGroupLastChatAmount(lastChatGroupObject.getInt("a"));
-                          groupItem.setGroupLastChatId(lastChatGroupObject.getInt("id"));
-                          groupItem.setGroupLastChatDate(lastChatGroupObject.getString("d"));
-                          groupItem.setGroupLastChatOrderPay(lastChatGroupObject.getBoolean("o"));
-                          groupItem.setGroupLastChatStatus(lastChatGroupObject.getBoolean("s"));
-                          groupItem.setGroupLastChatFromGroup(lastChatGroupObject.getBoolean("g"));
-                          groupItem.setGroupLastChatComment(lastChatGroupObject.getString("c"));
-                        }
-                      }
-                      groupItem.setMembersFeed(membersFeed);
-                    }
-                    rssChatListItem.setGroupItem(groupItem);
-                  }
-                  //Come Back Here!!!
-                  rssChatListItem.setContactMembers(contactMembers);
-//                rssChatListItem.setGroupFeed();
-                  _ChatList_feed.addItem(rssChatListItem);
-                  adapter.notifyDataSetChanged();
-                }
-                ApplicationData.setChatListFeed(_ChatList_feed);
-              } catch (JSONException e) {
-                e.printStackTrace();
-              }
-            } else {
-              Handler handler = new Handler();
-              handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                  Toast.makeText(getActivity(), "خطایی رخ داده است", Toast.LENGTH_SHORT).show();
-                }
-              }, 3000);
-            }
-          }
-        });
+        new fillContact().execute("[]");
       }
     });
-
   }
-
   @Override
   public void handleMessageGp(final String body, final String chatMemberMobile) {
-
-
     Log.e("handleMessage", "In Gp");
-
     getActivity().runOnUiThread(new Runnable() {
       @Override
       public void run() {
         getActivity().runOnUiThread(new Runnable() {
           @Override
           public void run() {
-            JSONParser parser = JSONParser.connect(Constant.CHECK_CONTACT_LIST_WITH_GROUP);
-            parser.setRequestMethod(JSONParser.POST);
-            parser.setReadTimeOut(20000);
-            parser.setConnectionTimeOut(20000);
-            parser.setAuthorization(getActivity().getSharedPreferences("EZpay", 0).getString("token", ""));
-            parser.setJson("[]");
-            parser.execute(new JSONParser.Execute() {
-              @Override
-              public void onPreExecute() {
-
-              }
-
-              @Override
-              public void onPostExecute(String s) {
-                Log.e("STRING S", "onPostExecute: " + s);
-                if (s != null) {
-                  JSONArray jsonArray;
-                  try {
-                    jsonArray = new JSONArray(s);
-                    _ChatList_feed = new ChatListFeed();
-                    ChatListItem rssChatListItem;
-
-                    ArrayList<ChatListItem> contactMembers = new ArrayList<>();
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                      rssChatListItem = new ChatListItem();
-                      JSONObject contactObject = jsonArray.getJSONObject(i);
-                      if (contactObject.getString("$type").contains("FriendModel")) {
-                        rssChatListItem.setContactImg(contactObject.getString("photo"));
-                        rssChatListItem.setTelNo(contactObject.getString("mobile"));
-                        rssChatListItem.setUserId(contactObject.getString("id"));
-                        rssChatListItem.setTitle(contactObject.getString("title"));
-
-                        if (!contactObject.isNull("lastchat")) {
-                          JSONObject jsonObject = contactObject.getJSONObject("lastchat");
-                          rssChatListItem.setComment(jsonObject.getString("c"));
-                          rssChatListItem.setLastChatAmount(jsonObject.getInt("a"));
-                          rssChatListItem.setLastChatFrom(jsonObject.getString("f"));
-                          rssChatListItem.setLastChatTo(jsonObject.getString("t"));
-                          rssChatListItem.setLastChatOrderByFromOrTo(jsonObject.getBoolean("o"));
-                          rssChatListItem.setContactStatus(jsonObject.getBoolean("s"));
-                        }
-
-                        rssChatListItem.setContactCount(i);
-                        contactMembers.add(rssChatListItem);
-                      } else if (contactObject.getString("$type").contains("GroupModel")) {
-                        GroupItem groupItem = new GroupItem();
-                        groupItem.setGroupId(contactObject.getInt("id"));
-                        groupItem.setGroupPhoto(contactObject.getString("photo"));
-                        groupItem.setGroupTitle(contactObject.getString("title"));
-                        //Be Checked
-                        if (!contactObject.isNull("members")) {
-                          JSONArray groupsMemberObject = contactObject.getJSONArray("members");
-                          MembersFeed membersFeed = new MembersFeed();
-                          for (int j = 0; j < groupsMemberObject.length(); j++) {
-                            MembersItem membersItem = new MembersItem();
-                            JSONObject memberGroupObject = groupsMemberObject.getJSONObject(j);
-                            membersItem.setMemberId(memberGroupObject.getString("id"));
-                            membersItem.setMemberTitle(memberGroupObject.getString("title"));
-                            membersItem.setMemberPhoto(memberGroupObject.getString("photo"));
-                            membersItem.setMemberPhone(memberGroupObject.getString("mobile"));
-                            membersFeed.addMemberItem(membersItem);
-                          }
-                          if (!contactObject.isNull("lastChats")) {
-                            JSONArray groupLastChatArray = contactObject.getJSONArray("lastChats");
-                            for (int j = 0; j < groupLastChatArray.length(); j++) {
-                              JSONObject lastChatGroupObject = groupLastChatArray.getJSONObject(j);
-                              groupItem.setGroupLastChatAmount(lastChatGroupObject.getInt("a"));
-                              groupItem.setGroupLastChatId(lastChatGroupObject.getInt("id"));
-                              groupItem.setGroupLastChatDate(lastChatGroupObject.getString("d"));
-                              groupItem.setGroupLastChatOrderPay(lastChatGroupObject.getBoolean("o"));
-                              groupItem.setGroupLastChatStatus(lastChatGroupObject.getBoolean("s"));
-                              groupItem.setGroupLastChatFromGroup(lastChatGroupObject.getBoolean("g"));
-                              groupItem.setGroupLastChatComment(lastChatGroupObject.getString("c"));
-                            }
-                          }
-                          groupItem.setMembersFeed(membersFeed);
-                        }
-                        rssChatListItem.setGroupItem(groupItem);
-                      }
-                      //Come Back Here!!!
-                      rssChatListItem.setContactMembers(contactMembers);
-//                rssChatListItem.setGroupFeed();
-                      _ChatList_feed.addItem(rssChatListItem);
-                      adapter.notifyDataSetChanged();
-                    }
-                    ApplicationData.setChatListFeed(_ChatList_feed);
-                  } catch (JSONException e) {
-                    e.printStackTrace();
-                  }
-                } else {
-                  Handler handler = new Handler();
-                  handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                      Toast.makeText(getActivity(), "خطایی رخ داده است", Toast.LENGTH_SHORT).show();
-                    }
-                  }, 3000);
-                }
-              }
-            });
+            new fillContact().execute("[]");
           }
         });
       }
     });
-
-
   }
 
   public class FeedViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -452,12 +237,13 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
     }
 
     @Override
-    public void onBindViewHolder(final FriendsList.FeedViewHolder FeedViewHolder, final int position) {
+    public void onBindViewHolder(final FriendsList.FeedViewHolder FeedViewHolder, int position) {
       String contactName = "";
       ChatListItem fe = _ChatList_feed.getItem(position);
-      if (fe.getGroupItem() != null) {
-        Log.e(TAG, "onBindViewHolder: " + fe.getGroupItem().getGroupLastChatAmount());
-      }
+      ContactDatabase database = new ContactDatabase(getActivity());
+//      if (fe.getGroupItem() != null) {
+//        Log.e(TAG, "onBindViewHolder: " + fe.getGroupItem().getGroupLastChatAmount() + "     ===>" + position);
+//      }
       if (fe.getGroupItem() != null) {
         if (fe.getGroupItem().getGroupLastChatFrom() != null) {
           if (fe.getGroupItem().isGroupLastChatOrderPay() && fe.getGroupItem().getGroupLastChatFrom().equals(mobile)) {
@@ -516,9 +302,12 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
         }
         FeedViewHolder.description.setText(fe.getComment());
         if (fe.getTitle().length() > 15) {
-          contactName = fe.getTitle();
+          contactName = database.getNameFromNumber(fe.getTelNo());
           FeedViewHolder.contactName.setText(contactName.substring(0, 15) + "...");
         } else {
+          FeedViewHolder.contactName.setText(database.getNameFromNumber(fe.getTelNo()));
+        }
+        if (FeedViewHolder.contactName.getText().toString().length() == 0 || FeedViewHolder.contactName.getText().toString().isEmpty()) {
           FeedViewHolder.contactName.setText(fe.getTitle());
         }
 
@@ -595,6 +384,13 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
         }
       }
     });
+  }
+
+  @Override
+  public void onResume() {
+    _ChatList_feed = ApplicationData.getChatListFeed();
+    adapter.notifyDataSetChanged();
+    super.onResume();
   }
 
   public class fillContact extends AsyncTask<String, Void, ChatListFeed> {

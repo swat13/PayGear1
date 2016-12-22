@@ -45,6 +45,7 @@ import magia.af.ezpay.Parser.ChatListItem;
 import magia.af.ezpay.Parser.GroupItem;
 import magia.af.ezpay.Parser.MembersItem;
 import magia.af.ezpay.Parser.Parser;
+import magia.af.ezpay.Utilities.ApplicationData;
 import magia.af.ezpay.helper.ContactDatabase;
 import magia.af.ezpay.helper.ExifUtils;
 import magia.af.ezpay.helper.ImageMaker;
@@ -321,6 +322,7 @@ public class CreateGroupActivity extends BaseActivity {
         @Override
         protected void onPostExecute(GroupItem result) {
             if (result != null) {
+                new fillContact().execute("[]");
                 groupItem = result;
                 if (flag == 0) {
                     if (mData != null) {
@@ -410,6 +412,31 @@ public class CreateGroupActivity extends BaseActivity {
 
     public void checkPermissions() {
         ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, 0);
+    }
+
+    public class fillContact extends AsyncTask<String, Void, ChatListFeed> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected ChatListFeed doInBackground(String... params) {
+            Parser parser = new Parser(getSharedPreferences("EZpay", 0).getString("token", ""));
+            return parser.checkContactListWithGroup(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(ChatListFeed result) {
+            if (result != null) {
+                ApplicationData.setChatListFeed(result);
+            } else {
+                Toast.makeText(CreateGroupActivity.this, "problem in connection!", Toast.LENGTH_SHORT).show();
+            }
+            super.onPostExecute(result);
+        }
+
     }
 
 }

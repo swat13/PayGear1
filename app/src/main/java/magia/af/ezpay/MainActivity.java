@@ -44,8 +44,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
     _ChatList_feed = ApplicationData.getChatListFeed();
+    setContentView(R.layout.activity_main);
     if (Build.VERSION.SDK_INT >= 23) {
       checkPermissions();
     }
@@ -57,13 +57,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     radarLayout = (LinearLayout) findViewById(R.id.radar_layout);
     imageView = (ImageView) findViewById(R.id.image_view);
 
-    for (int i = 0; i < _ChatList_feed.getItemCount(); i++) {
-      if (_ChatList_feed.getItem(i).getGroupItem() != null) {
-        Log.e("GROUP", "onPostExecute: " + _ChatList_feed.getItem(i).getGroupItem().getGroupTitle());
-      } else {
-        Log.e("Contact", "onPostExecute: " + _ChatList_feed.getItem(i).getTitle());
-      }
-    }
+//    for (int i = 0; i < _ChatList_feed.getItemCount(); i++) {
+//      if (_ChatList_feed.getItem(i).getGroupItem() != null) {
+//        Log.e("GROUP", "onPostExecute: " + _ChatList_feed.getItem(i).getGroupItem().getGroupTitle());
+//      } else {
+//        Log.e("Contact", "onPostExecute: " + _ChatList_feed.getItem(i).getTitle());
+//      }
+//    }
 //    if (_ChatList_feed==null){
 //      JSONParser parser = JSONParser.connect(Constant.CHECK_CONTACT_LIST_WITH_GROUP);
 //      parser.setRequestMethod(JSONParser.POST);

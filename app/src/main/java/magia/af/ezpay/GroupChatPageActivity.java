@@ -30,6 +30,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
+import java.util.HashMap;
+
 import magia.af.ezpay.Firebase.MessagingService;
 import magia.af.ezpay.Parser.ChatListFeed;
 import magia.af.ezpay.Parser.MembersFeed;
@@ -86,7 +88,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
   private boolean payState;
   private boolean requestState;
   private boolean cancelState;
-
+  HashMap<Integer, Integer> hashMap = new HashMap<>();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -1088,6 +1090,9 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
       if (result != null) {
         if (feed == null || feed.getItemCount() == 0) {
           feed = result;
+          for (int i = 0; i < feed.getItemCount(); i++) {
+            hashMap.put(result.getItem(i).getId(), i);
+          }
           adapter = new GroupChatPageAdapter();
           payListRecycler.setAdapter(adapter);
           adapter.notifyDataSetChanged();
@@ -1120,7 +1125,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
 //        chatListFeed.removeItem(pos);
         feed.addItem(result, 0);
         new fillContact().execute("[]");
-        feed.getHash().put(result.getId(), 0);
+        hashMap.put(result.getId(), 0);
         new LocalPersistence().writeObjectToFile(GroupChatPageActivity.this, feed, "Payment_Chat_List");
         adapter.notifyDataSetChanged();
       } else
@@ -1265,12 +1270,9 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
     runOnUiThread(new Runnable() {
       @Override
       public void run() {
-//                new fillContact().execute("[]");
-        Log.e(TAG, "onCreate: id:" + payLogItem.getId());
         if (deleteState) {
-
           try {
-            newPos = feed.getHash().get(payLogItem.getCancelId());
+            newPos = hashMap.get(payLogItem.getCancelId());
           } catch (Exception e) {
             e.printStackTrace();
           }
@@ -1278,11 +1280,9 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
           adapter.notifyDataSetChanged();
         } else if (payLogItem.getNotifParam1().equals(String.valueOf(groupId))) {
           Log.e(TAG, "run: ");
-
-//                    new fillContact().execute("[]");
-          feed.getHash().put(payLogItem.getId(), 0);
-          feed.addItem(payLogItem, 0);
           adapter.notifyDataSetChanged();
+          feed.addItem(payLogItem, 0);
+          hashMap = shiftHashMap(payLogItem.getId());
         }
       }
     });
@@ -1296,7 +1296,9 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
 
   @Override
   public void onBackPressed() {
+    MessagingService.mode = 3;
     super.onBackPressed();
+    finish();
   }
 
   public class fillContact extends AsyncTask<String, Void, ChatListFeed> {
@@ -1323,5 +1325,13 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
       super.onPostExecute(result);
     }
 
+  }
+  public HashMap<Integer, Integer> shiftHashMap(int key) {
+    HashMap<Integer, Integer> temp = new HashMap<>();
+//    temp.put(key, 0);
+    for (int i = 0; i < feed.getItemCount(); i++) {
+      temp.put(feed.getItem(i).getId(), i);
+    }
+    return temp;
   }
 }

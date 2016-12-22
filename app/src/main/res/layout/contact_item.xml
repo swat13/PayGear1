@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="+90000"
+                android:text="0"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="#6db314" />
 
