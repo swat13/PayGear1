@@ -78,7 +78,7 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
   @Override
   public void onStart() {
     _ChatList_feed = ApplicationData.getChatListFeed();
-    if (adapter != null){
+    if (adapter != null) {
       adapter.notifyDataSetChanged();
     }
     super.onStart();
@@ -181,6 +181,7 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
       }
     });
   }
+
   @Override
   public void handleMessageGp(final String body, final String chatMemberMobile) {
     Log.e("handleMessage", "In Gp");
@@ -286,19 +287,19 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
 
 
       } else {
-        if (fe.isLastChatOrderByFromOrTo() && fe.getLastChatFrom().equals(mobile)) {
+        if (fe.isLastChatOrderByFromOrTo() && fe.getLastChatTo().equals(mobile)) {
           FeedViewHolder.pay.setTextColor(Color.RED);
           FeedViewHolder.pay.setText("-" + getDividedToman((long) fe.getLastChatAmount()) + "");
         } else if (!fe.isLastChatOrderByFromOrTo()) {
           FeedViewHolder.pay.setTextColor(Color.GRAY);
           FeedViewHolder.pay.setText(getDividedToman((long) fe.getLastChatAmount()) + "");
-        } else {
-          FeedViewHolder.pay.setTextColor(Color.parseColor("#6db314"));
-          FeedViewHolder.pay.setText("+" + getDividedToman((long) fe.getLastChatAmount()) + "");
-        }
-        if (fe.isContactStatus()) {
+        } else if (fe.isContactStatus()){
           FeedViewHolder.pay.setTextColor(Color.GRAY);
           FeedViewHolder.pay.setText(getDividedToman((long) fe.getLastChatAmount()) + "");
+        }
+        else {
+          FeedViewHolder.pay.setTextColor(Color.parseColor("#6db314"));
+          FeedViewHolder.pay.setText("+" + getDividedToman((long) fe.getLastChatAmount()) + "");
         }
         FeedViewHolder.description.setText(fe.getComment());
         if (fe.getTitle().length() > 15) {

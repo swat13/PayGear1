@@ -679,6 +679,8 @@ public class Parser {
                         rssChatListItem.setLastChatId(jsonObject.getInt("id"));
                         rssChatListItem.setLastChatTo(jsonObject.getString("f"));
                         rssChatListItem.setLastChatFrom(jsonObject.getString("t"));
+                        rssChatListItem.setLastChatOrderByFromOrTo(jsonObject.getBoolean("o"));
+                        rssChatListItem.setContactStatus(jsonObject.getBoolean("s"));
                     }
 
                     rssChatListItem.setContactCount(i);
@@ -707,10 +709,12 @@ public class Parser {
                             JSONArray groupLastChatArray = contactObject.getJSONArray("lastChats");
                             for (int j = 0; j < groupLastChatArray.length(); j++) {
                                 JSONObject lastChatGroupObject = groupLastChatArray.getJSONObject(j);
+                                JSONObject from = lastChatGroupObject.getJSONObject("f");
+                                JSONObject to = lastChatGroupObject.getJSONObject("t");
                                 groupItem.setGroupLastChatAmount(lastChatGroupObject.getInt("a"));
                                 groupItem.setGroupLastChatId(lastChatGroupObject.getInt("id"));
-                                groupItem.setGroupLastChatFrom(lastChatGroupObject.getString("f"));
-                                groupItem.setGroupLastChatTo(lastChatGroupObject.getString("t"));
+                                groupItem.setGroupLastChatFrom(from.getString("mobile"));
+                                groupItem.setGroupLastChatTo(to.getString("mobile"));
                                 groupItem.setGroupLastChatDate(lastChatGroupObject.getString("d"));
                                 groupItem.setGroupLastChatOrderPay(lastChatGroupObject.getBoolean("o"));
                                 groupItem.setGroupLastChatStatus(lastChatGroupObject.getBoolean("s"));

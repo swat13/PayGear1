@@ -79,6 +79,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
   PayLogItem payLogItem;
   ChatListFeed _ChatList_feed;
   MembersFeed groupMembers;
+  boolean flagSelected;
   int newPos;
   public static final String TAG = GroupChatPageActivity.class.getSimpleName();
   private String date;
@@ -88,6 +89,10 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
   private boolean payState;
   private boolean requestState;
   private boolean cancelState;
+  private int statusCirclePos;
+  private int[] ints;
+  private boolean[] booleans;
+  private int state;
   HashMap<Integer, Integer> hashMap = new HashMap<>();
 
   @Override
@@ -617,7 +622,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
       return groupMembers.memberItemCount();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, AdapterView.OnItemClickListener {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
       TextView txt_contact_item_name;
       TextView txt_contact_item_phone;
       ImageView contact_item_image;
@@ -634,28 +639,17 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
 
       @Override
       public void onClick(View v) {
+//        state = getAdapterPosition();
         if (status_circle.getVisibility() == View.GONE) {
+          flagSelected = true;
           status_circle.setVisibility(View.VISIBLE);
           anotherMobile = groupMembers.getMember(getAdapterPosition()).getMemberPhone();
           membersItem = groupMembers.getMember(getAdapterPosition());
+          statusCirclePos = getAdapterPosition();
+
         } else {
           status_circle.setVisibility(View.GONE);
         }
-      }
-
-      @Override
-      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        for (int i = 0; i < parent.getCount(); i++) {
-
-          View v = parent.getChildAt(i);
-          ImageView imageView = (ImageView) v.findViewById(R.id.status_circle);
-          imageView.setVisibility(View.GONE);
-
-        }
-
-        ImageView imageView = (ImageView) view.findViewById(R.id.status_circle);
-        imageView.setVisibility(View.VISIBLE);
-
       }
     }
   }
@@ -955,7 +949,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
 
             holder.userReceiverName.setText(feed.getItem(pos).getfTitle());
             holder.payedToUserName.setText(feed.getItem(pos).gettTitle());
-            onBindViewGlide(holder.payedToUserImage, false);
+            onBindViewGlide(holder.payedToUserImage, true);
             onBindViewGlide(holder.requesterUserAvatar, false);
             break;
 

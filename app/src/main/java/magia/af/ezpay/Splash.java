@@ -8,7 +8,6 @@ import android.hardware.fingerprint.FingerprintManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
@@ -17,26 +16,10 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONStringer;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 
 import magia.af.ezpay.Parser.ChatListFeed;
-import magia.af.ezpay.Parser.ChatListItem;
-import magia.af.ezpay.Parser.GroupItem;
-import magia.af.ezpay.Parser.JSONParser;
-import magia.af.ezpay.Parser.MembersFeed;
-import magia.af.ezpay.Parser.MembersItem;
 import magia.af.ezpay.Parser.Parser;
 import magia.af.ezpay.Utilities.ApplicationData;
-import magia.af.ezpay.Utilities.Constant;
-import magia.af.ezpay.Utilities.LocalPersistence;
 import magia.af.ezpay.helper.ContactDatabase;
 import magia.af.ezpay.helper.GetContact;
 
@@ -54,30 +37,31 @@ public class Splash extends BaseActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.splash);
 
-    keyguardManager =
-      (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-      fingerprintManager =
-        (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
-    }
-
-    if (!keyguardManager.isKeyguardSecure()) {
-
-//            Toast.makeText(this,
-//              "Lock screen security not enabled in Settings",
-//              Toast.LENGTH_LONG).show();
-    }
-
-    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
-      // TODO: Consider calling
-      //    ActivityCompat#requestPermissions
-      // here to request the missing permissions, and then overriding
-      //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-      //                                          int[] grantResults)
-      // to handle the case where the user grants the permission. See the documentation
-      // for ActivityCompat#requestPermissions for more details.
-      return;
-    }
+    Log.e("0", "onCreate0: ");
+//    keyguardManager =
+//      (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
+//    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//      fingerprintManager =
+//        (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
+//    }
+//
+//    if (!keyguardManager.isKeyguardSecure()) {
+//
+////            Toast.makeText(this,
+////              "Lock screen security not enabled in Settings",
+////              Toast.LENGTH_LONG).show();
+//    }
+//
+//    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
+//      // TODO: Consider calling
+//      //    ActivityCompat#requestPermissions
+//      // here to request the missing permissions, and then overriding
+//      //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//      //                                          int[] grantResults)
+//      // to handle the case where the user grants the permission. See the documentation
+//      // for ActivityCompat#requestPermissions for more details.
+//      return;
+//    }
 //        if (!fingerprintManager.hasEnrolledFingerprints()) {
 //
 //            // This happens when no fingerprints are registered.
