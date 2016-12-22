@@ -1056,7 +1056,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
     }
 
   }
-
+//kjk
   private class getChatLog extends AsyncTask<String, Void, PayLogFeed> {
     int groupId;
     int page;
