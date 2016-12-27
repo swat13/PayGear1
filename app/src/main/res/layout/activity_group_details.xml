@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"/>
 
         <ImageButton
-            android:id="@+id/assignPicForGroup"
+            android:id="@+id/assign_pic"
             android:layout_marginLeft="10dp"
             android:alpha="0.5"
             android:layout_centerVertical="true"

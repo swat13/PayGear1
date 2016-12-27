@@ -120,29 +120,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/src_title" />
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:id="@+id/cc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/contact_recycler"
-            android:background="@drawable/text_background_gray">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="دوستان دیگر"
-                android:layout_marginRight="10dp"
-                android:layout_marginEnd="10dp" />
-
-        </LinearLayout>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/not_contacts"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/cc" />
-
 
     </RelativeLayout>
 

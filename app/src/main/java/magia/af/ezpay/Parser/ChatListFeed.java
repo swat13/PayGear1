@@ -33,6 +33,11 @@ public class ChatListFeed implements Serializable {
 //		_itemcount--;
 	}
 
+	public void removeAll() {
+		_itemlist.clear();
+//		_itemcount--;
+	}
+
 	public ChatListItem getItem(int location) {
 		return _itemlist.get(location);
 	}

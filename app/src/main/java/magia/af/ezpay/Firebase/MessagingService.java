@@ -12,6 +12,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Switch;
@@ -27,13 +28,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
 import magia.af.ezpay.ChatPageActivity;
 import magia.af.ezpay.GroupChatPageActivity;
 import magia.af.ezpay.MainActivity;
 import magia.af.ezpay.Parser.ChatListFeed;
+import magia.af.ezpay.Parser.GroupItem;
 import magia.af.ezpay.Parser.Parser;
+import magia.af.ezpay.Parser.PayLogFeed;
 import magia.af.ezpay.Parser.PayLogItem;
 import magia.af.ezpay.R;
 import magia.af.ezpay.Utilities.ApplicationData;
@@ -54,6 +58,10 @@ public class MessagingService extends FirebaseMessagingService {
     MessageHandler chatMessageHandler;
     MessageHandler mainMessageHandler;
     public static int mode;
+
+
+    GroupItem gpItem;
+    PayLogFeed payFeed;
     int type;
     private static final String TAG = "MyFirebaseMsgService";
 
@@ -65,7 +73,7 @@ public class MessagingService extends FirebaseMessagingService {
         Log.e(TAG, "Notification Received: " + remoteMessage.getNotification().getBody());
 
         PayLogItem payLogItem = getChatItem(remoteMessage.getNotification().getBody());
-        sendNotification(payLogItem);
+        sendNotification(payLogItem, 0);
         try {
             JSONObject jsonObject = new JSONObject(remoteMessage.getNotification().getBody());
             if (mode == 1) {//chat pv
@@ -91,22 +99,36 @@ public class MessagingService extends FirebaseMessagingService {
 
     }
 
-    private void sendNotification(PayLogItem messageBody) {
+    //    goToChatPageActivity.putExtra("phone", chatListItem.getTelNo());
+//    goToChatPageActivity.putExtra("contactName", chatListItem.getTitle());
+//    goToChatPageActivity.putExtra("image", chatListItem.getContactImg());
+//    goToChatPageActivity.putExtra("pos", chatListItem.getPosition());
+//    goToChatPageActivity.putExtra("date", chatListItem.getLastChatDate());
+//    goToChatPageActivity.putExtra("contact", _ChatList_feed);
+
+    private void sendNotification(PayLogItem messageBody, int mode) {
 
         if (messageBody.getNotifBody() != null) {
-            Log.e(TAG, "sendNotification: 0000000");
+            Log.e("send Notification", messageBody + "");
             String url = messageBody.getNotifParam1();
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+
+
+            Log.e("sendNotif", url);
+
+            Log.e(TAG, messageBody.getNotifParam1());
+
+
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class).putExtra("id", messageBody.getNotifParam1());
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), (int) System.currentTimeMillis(), intent, 0);
+
             Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+            final NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                     .setSmallIcon(R.drawable.ali)
                     .setContentTitle(getResources().getString(R.string.app_name))
                     .setContentText(messageBody.getNotifBody())
-                    .setAutoCancel(true)
-                    .setSound(defaultSoundUri)
-                    .setContentIntent(pendingIntent);
+                    .setSound(defaultSoundUri).setContentIntent(pendingIntent);
+
 
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -170,6 +192,7 @@ public class MessagingService extends FirebaseMessagingService {
         }
     }
 
+
     public void start() {
         new fillContact().execute("[]");
     }
@@ -179,6 +202,7 @@ public class MessagingService extends FirebaseMessagingService {
         try {
             JSONObject jsonObject = new JSONObject(json);
             rssItem.setNotifBody(jsonObject.getString("body"));
+            Log.e("Parse PayLog", rssItem.getNotifBody());
             rssItem.setNotifType(jsonObject.getInt("type"));
             rssItem.setNotifParam1(jsonObject.getString("param1"));
             if (!jsonObject.isNull("param2")) {
@@ -220,6 +244,45 @@ public class MessagingService extends FirebaseMessagingService {
             e.printStackTrace();
         }
         return rssItem;
+    }
+
+
+    public class getGp extends AsyncTask<String, Void, Object[]> {
+
+
+//        groupId = bundle.getInt("id");
+//
+//        groupPhoto = bundle.getString("photo");
+//        groupTitle = bundle.getString("title");
+//        groupMembers = (MembersFeed) bundle.getSerializable("members");
+//        _ChatList_feed = (ChatListFeed) bundle.getSerializable("contact");
+
+
+        @Override
+
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Object[] doInBackground(String... params) {
+            Parser parser = new Parser(getSharedPreferences("EZpay", 0).getString("token", ""));
+            return parser.groupWithChat(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Object[] result) {
+            if (result != null) {
+
+
+//                startActivity(new Intent(MessagingService.this,GroupChatPageActivity.class).putExtra("id",gpItem.getGroupId()).putExtra("title",gpItem.getGroupTitle()).putExtra("members",gpItem.getMembersFeed()).putExtra("payLog",payFeed));
+
+
+            }
+
+            super.onPostExecute(result);
+        }
+
     }
 
 

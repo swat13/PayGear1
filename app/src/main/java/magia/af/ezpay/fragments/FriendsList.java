@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -57,13 +58,13 @@ import magia.af.ezpay.interfaces.OnClickHandler;
 
 public class FriendsList extends Fragment implements OnClickHandler, MessageHandler {
 
-    ChatListFeed _ChatList_feed;
+    static ChatListFeed _ChatList_feed;
     GroupItem groups;
     MembersFeed membersFeed;
     ArrayList<ChatListItem> contacts;
-    RecyclerView recContacts, recUnCoctacts;
-    FriendsList.ListAdapter adapter;
-    FriendsList.UnListAdapter adapterUnContacts;
+    RecyclerView recContacts;
+    ListAdapter adapter;
+
     public String comment;
     public int amount;
     public int position;
@@ -77,9 +78,16 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
     public EditText srcTitle;
     ImageButton srcBtn;
     public ChatListFeed filteredChatList;
-    public ChatListFeed filteredUnContacts;
     String titleTxt;
-    ChatListFeed notContact;
+
+    @Override
+    public void onStart() {
+        _ChatList_feed = ApplicationData.getChatListFeed();
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
+        super.onStart();
+    }
 
     @Override
     public void onDestroyView() {
@@ -100,36 +108,18 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
 
 
     @Override
-    public void onStart() {
-        _ChatList_feed = ApplicationData.getChatListFeed();
-        if (adapter != null) {
-            adapter.notifyDataSetChanged();
-        }
-        super.onStart();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mHandler = this;
         View v = inflater.inflate(R.layout.activity_friend_list, container, false);
         mobile = getActivity().getSharedPreferences("EZpay", 0).getString("mobile", "");
         MessagingService.mode = 3;
         recContacts = (RecyclerView) v.findViewById(R.id.contact_recycler);
-        recUnCoctacts = (RecyclerView) v.findViewById(R.id.not_contacts);
 
         srcTitle = (EditText) v.findViewById(R.id.src_title);
         srcBtn = (ImageButton) v.findViewById(R.id.btn_search);
-
         titleTxt = getActivity().getSharedPreferences("EZpay", 0).getString("srcTitle", "");
-
         srcTitle.setText(titleTxt);
-        if (titleTxt.length() > 0) {
-            srcTitle.setVisibility(View.VISIBLE);
-        }
 
-
-//        filteredChatList = new ChatListFeed();
-        filteredChatList = _ChatList_feed;
 
         try {
             for (int i = 0; i < _ChatList_feed.getItemCount(); i++) {
@@ -144,6 +134,8 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
             e.printStackTrace();
         }
 
+        filteredChatList = _ChatList_feed;
+
         getAccount();
         CardView inviteFriends = (CardView) v.findViewById(R.id.invite_friends);
         inviteFriends.setOnClickListener(new View.OnClickListener() {
@@ -156,9 +148,33 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
             }
         });
         Bundle bundle = getArguments();
-        if (bundle.getSerializable("notContacts") != null) {
-            notContact = (ChatListFeed) bundle.getSerializable("notContacts");
-            filteredUnContacts = notContact;
+        if (bundle != null && bundle.getString("id") != null) {
+
+            String id = bundle.getString("id");
+
+            for (int i = 0; i < _ChatList_feed.getItemCount(); i++) {
+
+//                    if (String.valueOf(_ChatList_feed.getItem(i).getGroupItem().getGroupId()).equals(id)) {
+//
+//                        friendsList.onClick(_ChatList_feed.getItem(i));
+//                    }
+
+                Log.e("00000", id);
+
+                Log.e("11111", String.valueOf(_ChatList_feed.getItem(i).getId()));
+
+
+                if (String.valueOf(_ChatList_feed.getItem(i).getUserId()).equals(id)) {
+
+                    Log.e("inFor", "0000");
+
+                    onClick(_ChatList_feed.getItem(i));
+
+                }
+
+            }
+
+
         }
 
 //    if (bundle != null) {
@@ -171,7 +187,7 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
 //      }
 //    }
         assert recContacts != null;
-        adapter = new FriendsList.ListAdapter(this, filteredChatList);
+        adapter = new ListAdapter(this, filteredChatList);
         recContacts.setAdapter(adapter);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
@@ -179,15 +195,12 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
         recContacts.setLayoutManager(llm);
         adapter.notifyDataSetChanged();
 
-        //Adapter For Non Contacts
-        assert recUnCoctacts != null;
-        adapterUnContacts = new FriendsList.UnListAdapter(this, filteredUnContacts);
-        recUnCoctacts.setAdapter(adapterUnContacts);
-        LinearLayoutManager llm2 = new LinearLayoutManager(getActivity());
-        llm2.setOrientation(LinearLayoutManager.VERTICAL);
-        recUnCoctacts.setNestedScrollingEnabled(true);
-        recUnCoctacts.setLayoutManager(llm2);
-        adapterUnContacts.notifyDataSetChanged();
+        if (titleTxt.length() > 0) {
+
+            srcTitle.setVisibility(View.VISIBLE);
+            adapter.getFilter().filter(titleTxt);
+        }
+
 
         srcBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -222,7 +235,10 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+
                 adapter.getFilter().filter(s.toString());
+//                adapter.getFilter().filter(s.toString());
+//                adapterUnContacts.getFilter().filter(s.toString());
             }
 
             @Override
@@ -232,9 +248,16 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
         });
 
         v.findViewById(R.id.btn_done).setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-                srcTitle.clearFocus();
+
+                if (srcTitle.getVisibility() == View.VISIBLE) {
+
+                    srcTitle.setText(null);
+                    srcTitle.setVisibility(View.GONE);
+
+                }
 
             }
         });
@@ -245,6 +268,10 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
 
     @Override
     public void onClick(ChatListItem chatListItem) {
+        if (srcTitle != null) {
+            srcTitle.setVisibility(View.GONE);
+        }
+
 
         if (chatListItem.getGroupItem() != null) {
             Intent goToChatPageActivity = new Intent(getActivity(), GroupChatPageActivity.class);
@@ -277,6 +304,7 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
             @Override
             public void run() {
                 new fillContact().execute("[]");
+
             }
         });
     }
@@ -287,12 +315,9 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        new fillContact().execute("[]");
-                    }
-                });
+                Log.e("0000", "FillContactEx");
+                new fillContact().execute("[]");
+
             }
         });
     }
@@ -324,50 +349,29 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
     }
 
 
-    public class UnContactFeedViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-        TextView contactName, description;
-        OnClickHandler onClickHandler;
-
-
-        public UnContactFeedViewHolder(View v, OnClickHandler onClickHandler) {
-            super(v);
-            contactName = (TextView) v.findViewById(R.id.txt_contact_item_name);
-            description = (TextView) v.findViewById(R.id.txt_contact_item_description);
-            v.setOnClickListener(this);
-            this.onClickHandler = onClickHandler;
-
-        }
-
-
-        @Override
-        public void onClick(View v) {
-
-        }
-    }
-
     public class ListAdapter extends RecyclerView.Adapter<FriendsList.FeedViewHolder> implements Filterable {
         OnClickHandler onClickHandler;
 
+
         private doFilter mFilter;
 
-        private ChatListFeed chatItems;
+        private ChatListFeed filterChatList = ApplicationData.getChatListFeed();
 
-        public ListAdapter(OnClickHandler onClickHandler, ChatListFeed chatItems) {
+        public ListAdapter(OnClickHandler onClickHandler, ChatListFeed filterChatList) {
             this.onClickHandler = onClickHandler;
             mFilter = new doFilter(ListAdapter.this);
-            this.chatItems = chatItems;
+            this.filterChatList = filterChatList;
         }
 
         @Override
         public int getItemCount() {
-            return chatItems.getItemCount();
+            return filterChatList.getItemCount();
         }
 
         @Override
         public void onBindViewHolder(final FriendsList.FeedViewHolder FeedViewHolder, int position) {
             String contactName = "";
-            ChatListItem fe = chatItems.getItem(position);
+            ChatListItem fe = filterChatList.getItem(position);
             ContactDatabase database = new ContactDatabase(getActivity());
 //      if (fe.getGroupItem() != null) {
 //        Log.e(TAG, "onBindViewHolder: " + fe.getGroupItem().getGroupLastChatAmount() + "     ===>" + position);
@@ -392,6 +396,7 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
                 if (fe.getGroupItem().getGroupTitle().length() > 15) {
                     contactName = fe.getGroupItem().getGroupTitle();
                     FeedViewHolder.contactName.setText(contactName.substring(0, 15) + "...");
+
                 } else {
                     FeedViewHolder.contactName.setText(fe.getGroupItem().getGroupTitle());
                 }
@@ -472,7 +477,8 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
             private ListAdapter lAdapter;
 
             private doFilter(ListAdapter listAdapter) {
-                this.lAdapter = listAdapter;
+                lAdapter = listAdapter;
+
             }
 
             @Override
@@ -484,7 +490,7 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
                 if (constraint.length() == 0) {
                     filteredChatList = _ChatList_feed;
                 } else {
-                    final String filterPattern = constraint.toString().toLowerCase().trim();
+                    String filterPattern = constraint.toString().toLowerCase().trim();
                     for (int i = 0; i < _ChatList_feed.getItemCount(); i++) {
                         if (_ChatList_feed.getItem(i).getGroupItem() == null) {
                             if (_ChatList_feed.getItem(i).getTitle().toLowerCase().startsWith(filterPattern)) {
@@ -506,9 +512,8 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                chatItems = (ChatListFeed) results.values;
+                filterChatList = (ChatListFeed) results.values;
                 this.lAdapter.notifyDataSetChanged();
-
             }
 
         }
@@ -516,90 +521,6 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
 
     }
 
-    public class UnListAdapter extends RecyclerView.Adapter<FriendsList.UnContactFeedViewHolder> implements Filterable {
-        OnClickHandler onClickHandler;
-        private doFilter mFilter;
-        private ChatListFeed unChatItems;
-
-        public UnListAdapter(OnClickHandler onClickHandler, ChatListFeed chatItems) {
-            this.onClickHandler = onClickHandler;
-            mFilter = new doFilter(UnListAdapter.this);
-            this.unChatItems = chatItems;
-        }
-
-        @Override
-        public int getItemCount() {
-            return unChatItems.getItemCount();
-        }
-
-        @Override
-        public void onBindViewHolder(final FriendsList.UnContactFeedViewHolder FeedViewHolder, int position) {
-            String contactName = "";
-            ChatListItem fe = unChatItems.getItem(position);
-            ContactDatabase database = new ContactDatabase(getActivity());
-
-        }
-
-        @Override
-        public FriendsList.UnContactFeedViewHolder onCreateViewHolder(final ViewGroup viewGroup, final int position) {
-            View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.un_contact_item, viewGroup, false);
-            return new UnContactFeedViewHolder(itemView, onClickHandler);
-        }
-
-
-        @Override
-        public android.widget.Filter getFilter() {
-            return mFilter;
-        }
-
-        public class doFilter extends android.widget.Filter {
-
-            private UnListAdapter lAdapter;
-
-            private doFilter(UnListAdapter listAdapter) {
-                this.lAdapter = listAdapter;
-            }
-
-            @Override
-            protected FilterResults performFiltering(CharSequence constraint) {
-
-                filteredUnContacts = new ChatListFeed();
-                final FilterResults results = new FilterResults();
-
-                if (constraint.length() == 0) {
-                    filteredUnContacts = unChatItems;
-                } else {
-                    final String filterPattern = constraint.toString().toLowerCase().trim();
-                    for (int i = 0; i < notContact.getItemCount(); i++) {
-                        if (notContact.getItem(i).getGroupItem() == null) {
-                            if (notContact.getItem(i).getTitle().toLowerCase().startsWith(filterPattern)) {
-                                filteredUnContacts.addItem(notContact.getItem(i));
-                            }
-                        } else {
-                            if (notContact.getItem(i).getGroupItem().getGroupTitle().toLowerCase().startsWith(filterPattern)) {
-                                filteredUnContacts.addItem(notContact.getItem(i));
-                            }
-                        }
-                    }
-
-                }
-
-                results.values = filteredUnContacts;
-                results.count = filteredUnContacts.getItemCount();
-                return results;
-
-            }
-
-            @Override
-            protected void publishResults(CharSequence constraint, FilterResults results) {
-                unChatItems = (ChatListFeed) results.values;
-                this.lAdapter.notifyDataSetChanged();
-
-            }
-
-        }
-
-    }
 
     private String getDividedToman(Long price) {
         if (price == 0) {
@@ -674,9 +595,17 @@ public class FriendsList extends Fragment implements OnClickHandler, MessageHand
         @Override
         protected void onPostExecute(ChatListFeed result) {
             if (result != null) {
-                _ChatList_feed = result;
-                ApplicationData.setChatListFeed(result);
+                if (srcTitle.length() > 0) {
+                    //Master's Way
+                    adapter.getFilter().filter(srcTitle.getText().toString());
+                }
+
+                _ChatList_feed.removeAll();
+                _ChatList_feed.addAll(result);
+                filteredChatList.removeAll();
+                filteredChatList.addAll(result);
                 adapter.notifyDataSetChanged();
+
             } else {
                 Toast.makeText(getActivity(), "problem in connection!", Toast.LENGTH_SHORT).show();
             }

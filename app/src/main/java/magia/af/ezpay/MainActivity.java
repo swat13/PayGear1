@@ -103,10 +103,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         FragmentManager fm = getSupportFragmentManager();
         if (fm != null) {
-            Log.e("Ok", "In Fm");
             friendsList = new FriendsList();
+            Bundle bundle=getIntent().getExtras();
+
+
+            if (bundle.getString("id")!=null) {
+
+                Log.e("RRRRRRR", "onCreate: 88888888" );
+                Bundle bundle1 = new Bundle();
+                bundle.putString("id", bundle.getString("id"));
+                friendsList.setArguments(bundle1);
+//                fm.beginTransaction().replace(R.id.detail_fragment, friendsList).addToBackStack(null).commit();
+
+
+
+            }
             friendsList.set_ChatList_feed(_ChatList_feed);
             fm.beginTransaction().replace(R.id.detail_fragment, friendsList).addToBackStack(null).commit();
+
         }
         startService(new Intent(this, LocationService.class));
 
@@ -265,10 +279,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onBackPressed() {
 
-        if (friendsList.srcTitle.getText().length() > 0) {
-            friendsList.srcTitle.clearFocus();
+        if (friendsList.srcTitle.getVisibility() == View.VISIBLE) {
+            friendsList.srcTitle.setVisibility(View.GONE);
         } else {
-            finish();
-        }
+        finish();
+       }
     }
 }

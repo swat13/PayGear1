@@ -100,13 +100,12 @@ public class Splash extends BaseActivity {
 
             ChatListFeed databaseContact = database.getAllData();
             ChatListFeed phoneContact = getContact.getNewContact(Splash.this);
-            newChatList=new ChatListFeed();
 
             for (int i = 0; i < phoneContact.getItemCount(); i++) {
                 for (int j = 0; j < databaseContact.getItemCount(); j++) {
                     if (phoneContact.getItem(i).getTelNo().equals(databaseContact.getItem(j).getTelNo())) {
-                        newChatList.addItem(phoneContact.getItem(i));
                         phoneContact.removeItem(i);
+                        i--;
                         break;
                     }
                 }

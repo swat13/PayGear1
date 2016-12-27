@@ -1,18 +1,13 @@
 package magia.af.ezpay.Parser;
 
-import android.util.Base64;
 import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,9 +18,6 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-
-import magia.af.ezpay.Utilities.LocalPersistence;
 
 public class Parser {
 
@@ -685,9 +677,7 @@ public class Parser {
 
                     rssChatListItem.setContactCount(i);
                     contactMembers.add(rssChatListItem);
-                }
-
-                else if (contactObject.getString("$type").contains("GroupModel")) {
+                } else if (contactObject.getString("$type").contains("GroupModel")) {
                     GroupItem groupItem = new GroupItem();
                     groupItem.setGroupId(contactObject.getInt("id"));
                     groupItem.setGroupPhoto(contactObject.getString("photo"));
@@ -834,7 +824,7 @@ public class Parser {
                 //kk
                 try {
                     payLogItem1.setId(jsonObject.getInt("id"));
-                    payLogFeed.getHash().put(jsonObject.getInt("id"),i);
+                    payLogFeed.getHash().put(jsonObject.getInt("id"), i);
                     payLogItem1.setfMobile(jsonObject.getString("f"));
                     payLogItem1.settMobile(jsonObject.getString("t"));
                     payLogItem1.setAmount(jsonObject.getInt("a"));
@@ -924,7 +914,6 @@ public class Parser {
             }
 
             Log.e("Parser", "Parser Input: " + resCode);
-
 
 
             PayLogItem payLogItem = new PayLogItem();
@@ -1375,8 +1364,6 @@ public class Parser {
     public String changeGroupImage(String uploadFile1, String id) throws IOException {
 
 
-
-
         URL url = new URL(mainUrl + "api/Group/" + id + "/SetPhotoBase64");
         Log.e("Parser", "Url: " + url);
         HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
@@ -1769,12 +1756,13 @@ public class Parser {
 
     }
 
-    public GroupItem groupWithChat(String id, int pageSize) {
+    public Object[] groupWithChat(String id) {
 
         GroupItem groupItem = null;
+        Object[] obj=new Object[2];
         try {
 
-            URL url = new URL(mainUrl + "api/group/" + id + "?pagesize=" + pageSize);
+            URL url = new URL(mainUrl + "api/group/" + id + "?pagesize=" + 10);
             Log.e("Parser", "Url: " + url);
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
             httpConn.setDoOutput(false);
@@ -1830,20 +1818,40 @@ public class Parser {
                 }
                 groupItem.setMembersFeed(membersFeed);
             }
-            if (object.isNull("lastChats")) {
-                JSONObject groupsLastChat = object.getJSONObject("lastchat");
-                groupItem.setGroupLastChatId(groupsLastChat.getInt("id"));
-                groupItem.setGroupLastChatFrom(groupsLastChat.getString("f"));
-                groupItem.setGroupLastChatTo(groupsLastChat.getString("t"));
-                groupItem.setGroupLastChatAmount(groupsLastChat.getInt("a"));
-                groupItem.setGroupLastChatDate(groupsLastChat.getString("d"));
-                groupItem.setGroupLastChatOrderPay(groupsLastChat.getBoolean("o"));
-                groupItem.setGroupLastChatStatus(groupsLastChat.getBoolean("s"));
-                groupItem.setGroupLastChatFromGroup(groupsLastChat.getBoolean("g"));
-                groupItem.setGroupLastChatComment(groupsLastChat.getString("c"));
-            }
 
-            return groupItem;
+            JSONArray groupsLastChats = object.getJSONArray("lastChats");
+            PayLogFeed payLogFeed=new PayLogFeed();
+
+            for (int i = 0; i < groupsLastChats.length(); i++) {
+
+                JSONObject jsonObject = groupsLastChats.getJSONObject(i);
+                PayLogItem payLogItem = new PayLogItem();
+                payLogItem.setId(jsonObject.getInt("id"));
+                payLogFeed.getHash().put(i,jsonObject.getInt("id"));
+                payLogItem.setAmount(jsonObject.getInt("a"));
+                payLogItem.setDate(jsonObject.getString("d"));
+                payLogItem.setPaideBool(jsonObject.getBoolean("o"));
+                payLogItem.setStatus(jsonObject.getBoolean("s"));
+                payLogItem.setComment(jsonObject.getString("c"));
+
+                JSONObject jsonObject1 = jsonObject.getJSONObject("f");
+                payLogItem.setfId(jsonObject1.getString("id"));
+                payLogItem.setfTitle(jsonObject1.getString("title"));
+                payLogItem.setfMobile(jsonObject1.getString("mobile"));
+                payLogItem.setfPhoto(jsonObject1.getString("photo"));
+
+                JSONObject jsonObject2 = jsonObject.getJSONObject("t");
+                payLogItem.setfId(jsonObject2.getString("id"));
+                payLogItem.setfTitle(jsonObject2.getString("title"));
+                payLogItem.setfMobile(jsonObject2.getString("mobile"));
+                payLogItem.setfPhoto(jsonObject2.getString("photo"));
+
+                payLogFeed.addItem(payLogItem);
+            }
+            obj[1]=groupItem;
+            obj[2]=payLogFeed;
+
+            return obj;
 
         } catch (IOException | JSONException e) {
             e.printStackTrace();

@@ -47,7 +47,7 @@ public class GroupDetailsActivity extends BaseActivity {
     static MembersFeed groupMembers;
     private RecyclerView membersRecycler;
     private RecyclerAdapter adapter;
-    ImageView groupAvatar;
+    ImageView groupAvatar,assignPic;
     ChatListFeed _ChatList_feed;
     Bitmap thumbnail;
     Intent mData;
@@ -71,6 +71,7 @@ public class GroupDetailsActivity extends BaseActivity {
         TextView txtNameOfGroup = (TextView) findViewById(R.id.nameOfGroup);
         txtNameOfGroup.setText(groupTitle);
         groupAvatar = (ImageView) findViewById(R.id.groupAvatar);
+        assignPic=(ImageView) findViewById(R.id.assign_pic);
         Glide.with(this)
                 .load(groupPhoto)
                 .asBitmap()
@@ -91,7 +92,7 @@ public class GroupDetailsActivity extends BaseActivity {
         manager.setReverseLayout(true);
         membersRecycler.setLayoutManager(manager);
         membersRecycler.setAdapter(adapter);
-        groupAvatar.setOnClickListener(new View.OnClickListener() {
+        assignPic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder1 = new AlertDialog.Builder(GroupDetailsActivity.this);

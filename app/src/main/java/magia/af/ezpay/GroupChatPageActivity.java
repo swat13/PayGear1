@@ -104,11 +104,21 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             groupId = bundle.getInt("id");
-            Log.e(TAG, "onCreate: id:" + groupId);
+
             groupPhoto = bundle.getString("photo");
             groupTitle = bundle.getString("title");
             groupMembers = (MembersFeed) bundle.getSerializable("members");
-            _ChatList_feed = (ChatListFeed) bundle.getSerializable("contact");
+
+            if (bundle.getSerializable("payLog") != null) {
+
+                feed=(PayLogFeed) bundle.getSerializable("payLog");
+                adapter.notifyDataSetChanged();
+
+            } else {
+                _ChatList_feed = (ChatListFeed) bundle.getSerializable("contact");
+            }
+
+
         }
         phone = getSharedPreferences("EZpay", 0).getString("phoneNumber", "");
 
@@ -596,8 +606,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
 
         @Override
         public void onBindViewHolder(final RecyclerAdapter.ViewHolder holder, int position) {
-            Log.e("Erfan Pos", "onBindViewHolder: " + position);
-            Log.e("Erfan Test", "onBindViewHolder: " + groupMembers.getMember(position).getMemberPhoto());
+
             holder.txt_contact_item_name.setText(groupMembers.getMember(position).getMemberTitle());
             holder.txt_contact_item_phone.setText(groupMembers.getMember(position).getMemberPhone());
             String imageUrl = "http://new.opaybot.ir";
@@ -1214,9 +1223,9 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
         @Override
         protected void onPostExecute(Boolean result) {
             if (result != null) {
-                Log.e("TEst", "onClick: " + result);
+
                 if (result) {
-                    Log.e("TEst", "onClick: " + pos);
+
                     feed.getItem(pos).setStatus(true);
                     adapter.notifyDataSetChanged();
                     new fillContact().execute("[]");
@@ -1272,7 +1281,7 @@ public class GroupChatPageActivity extends BaseActivity implements MessageHandle
                     new GroupChatPageActivity.DeletePaymentRequestWithID(newPos).execute(payLogItem.getCancelId());
                     adapter.notifyDataSetChanged();
                 } else if (payLogItem.getNotifParam1().equals(String.valueOf(groupId))) {
-                    Log.e(TAG, "run: ");
+
                     adapter.notifyDataSetChanged();
                     feed.addItem(payLogItem, 0);
                     hashMap = shiftHashMap(payLogItem.getId());
