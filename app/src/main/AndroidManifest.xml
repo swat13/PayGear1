@@ -13,7 +13,9 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS"/>
+
     <permission android:name="android.permission.INTERACT_ACROSS_USERS"/>
+
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false"/>
@@ -37,15 +39,21 @@
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
+
+                <!--<action android:name="android.intent.action.VIEW" />-->
+                <!--<category android:name="android.intent.category.DEFAULT" />-->
+                <!--<category android:name="android.intent.category.BROWSABLE" />-->
+                <!--<data android:scheme="paygear" />-->
             </intent-filter>
         </activity>
         <activity
             android:name=".LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".MainActivity"
-            android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".ChatPageActivity" />
+        <activity android:name=".MainActivity">
+        </activity>
+        <activity android:name=".ChatPageActivity">
+        </activity>
         <activity android:name=".SimpleScannerActivity"/>
         <!--
      ATTENTION: This was auto-generated to add Google Play services to your project for
@@ -78,7 +86,9 @@
         <activity android:name=".GroupChatPageActivity"/>
         <activity android:name=".CreateGroupActivity">
         </activity>
-        <activity android:name=".GroupDetailsActivity" />
+        <activity android:name=".GroupDetails"/>
+        <activity android:name=".IPGViewActivity">
+        </activity>
     </application>
 
 </manifest>

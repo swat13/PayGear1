@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/bank_image_placeHolder"
+        android:layout_width="80dp"
+        android:layout_alignParentRight="true"
+        android:layout_height="80dp"/>
+    <TextView
+        android:layout_toLeftOf="@+id/bank_image_placeHolder"
+        android:layout_centerVertical="true"
+        android:text="bank_item"
+        android:id="@+id/txtNameOfBank"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:layout_width="wrap_content"
+        android:layout_marginRight="16dp"
+        android:layout_height="wrap_content"/>
+</RelativeLayout>

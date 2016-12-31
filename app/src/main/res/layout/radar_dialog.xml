@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_marginTop="40dp"
+        android:paddingTop="60dp"
+        android:background="@drawable/radar_background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/edt_username"
+            android:hint="نام"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:gravity="center"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:textColor="#FFFFFF"
+            android:text="دریافت و پرداخت"
+            android:background="@drawable/btn_request_pay_background"
+            android:id="@+id/btn_pay"
+            android:layout_margin="10dp"
+            android:layout_below="@+id/edt_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+
+    <com.pkmmte.view.CircularImageView
+        android:id="@+id/user_avatar"
+        android:src="@drawable/pic_profile"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:border_width="2dp"
+        app:shadow="true"
+        app:border_color="#FFFFFF"
+        app:border="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="17dp"/>
+
+</RelativeLayout>

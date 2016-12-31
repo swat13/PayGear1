@@ -18,4 +18,6 @@
     <dimen name="app_bar_height">420dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
+    <dimen name="default_divider_height">1dp</dimen>
+    <dimen name="default_divider_padding">4dp</dimen>
 </resources>

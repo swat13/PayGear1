@@ -1,6 +1,9 @@
 package magia.af.ezpay.fragments;
 
+import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,8 +18,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
@@ -26,6 +33,7 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import magia.af.ezpay.ChatPageActivity;
 import magia.af.ezpay.Parser.ChatListFeed;
 import magia.af.ezpay.Parser.Parser;
 import magia.af.ezpay.Parser.ChatListItem;
@@ -113,22 +121,22 @@ public class Radar extends Fragment {
   }
 
   public void generateImageViews() {
-   // params = new RelativeLayout.LayoutParams[chatListFeed.getItemCount()];
-    if(circleImageView==null)
-    circleImageView = new ArrayList<ImageView>();
+    // params = new RelativeLayout.LayoutParams[chatListFeed.getItemCount()];
+    if (circleImageView == null)
+      circleImageView = new ArrayList<ImageView>();
 
     for (int j = 0; j < circleImageView.size(); j++) {
       boolean isDuplicate = false;
       for (i = 0; i < chatListFeed.getItemCount(); i++) {
-        if (((ChatListItem) circleImageView.get(j).getTag(R.string.Amir)).getUserId().equals( chatListFeed.getItem(i).getUserId()) ){
+        if (((ChatListItem) circleImageView.get(j).getTag(R.string.Amir)).getUserId().equals(chatListFeed.getItem(i).getUserId())) {
           isDuplicate = true;
           break;
         }
       }
-        if (!isDuplicate) {
-          relativeLayout.removeView(circleImageView.get(i));
-          circleImageView.remove(i);
-        }
+      if (!isDuplicate) {
+        relativeLayout.removeView(circleImageView.get(i));
+        circleImageView.remove(i);
+      }
 
     }
 
@@ -136,7 +144,7 @@ public class Radar extends Fragment {
 
       boolean isDuplicate = false;
       for (int j = 0; j < circleImageView.size(); j++) {
-        if (((ChatListItem) circleImageView.get(j).getTag(R.string.Amir)).getUserId().equals( chatListFeed.getItem(i).getUserId())) {
+        if (((ChatListItem) circleImageView.get(j).getTag(R.string.Amir)).getUserId().equals(chatListFeed.getItem(i).getUserId())) {
           isDuplicate = true;
           break;
         }
@@ -148,9 +156,9 @@ public class Radar extends Fragment {
       Log.e("width", "generateImageViews: " + display.getWidth());
       Log.e("height", "generateImageViews: " + display.getHeight());
 
-      ImageView newView = new ImageView(getActivity());
-      RelativeLayout.LayoutParams newParam=new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-Log.e("Amir", chatListFeed.getItem(i).getContactImg());
+      final ImageView newView = new ImageView(getActivity());
+      RelativeLayout.LayoutParams newParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+      Log.e("Amir", chatListFeed.getItem(i).getContactImg());
       newView.setTag(R.string.Amir, chatListFeed.getItem(i));
       int random = ((int) (Math.random() + 0.5) * ((display.getWidth() / 2) + 100)) + (int) (Math.random() * ((display.getWidth() / 2) - 200));
       int randomH = ((int) (Math.random() + 0.5) * ((display.getHeight() / 2) + 100)) + (int) (Math.random() * ((display.getHeight() / 2) - 200));
@@ -197,7 +205,7 @@ Log.e("Amir", chatListFeed.getItem(i).getContactImg());
       if (calculateDistanceOfTwoPoint(xDot(newParam), yDot(newParam), halfDisplayWidth, halfDisplayHeight) <= 200) {
         break;
       }
-      for (int j = 0; j <params.size(); j++) {
+      for (int j = 0; j < params.size(); j++) {
         Log.e("Distance" + i + "  " + j, "generateImageViews: " + calculateDistanceOfTwoPoint(xDot(newParam), yDot(newParam), xDot(params.get(j)), yDot(params.get(j))));
 //        Log.e("diameter", "generateImageViews: " + calculateDiameter(newView));
         if (i != j) {
@@ -218,7 +226,41 @@ Log.e("Amir", chatListFeed.getItem(i).getContactImg());
         newView.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
-//            Toast.makeText(Radar.this, "clicked" + v.getTag(), Toast.LENGTH_SHORT).show();
+            final ChatListItem chatListItem = (ChatListItem) newView.getTag(R.string.Amir);
+            final Dialog dialog = new Dialog(getActivity(), R.style.PauseDialog);
+            dialog.setContentView(R.layout.radar_dialog);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+            dialog.setCancelable(true);
+            dialog.setCanceledOnTouchOutside(true);
+            ImageView userAvatar = (ImageView) dialog.findViewById(R.id.user_avatar);
+            Glide.with(getActivity())
+              .load(imageUrl + chatListItem.getContactImg())
+              .asBitmap()
+              .centerCrop()
+              .placeholder(R.drawable.pic_profile)
+              .into(new BitmapImageViewTarget(userAvatar) {
+                @Override
+                protected void setResource(Bitmap resource) {
+                  RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
+                  circularBitmapDrawable.setCornerRadius(700);
+                  ((ImageView) this.view).setImageDrawable(circularBitmapDrawable);
+                }
+              });
+            TextView edtUserName = (TextView) dialog.findViewById(R.id.edt_username);
+            edtUserName.setText(chatListItem.getContactName());
+            Button btnGoToChat = (Button)dialog.findViewById(R.id.btn_pay);
+            btnGoToChat.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                dialog.dismiss();
+                Intent intent = new Intent(getActivity(), ChatPageActivity.class);
+                intent.putExtra("phone",chatListItem.getTelNo());
+                intent.putExtra("contactName",chatListItem.getContactName());
+                intent.putExtra("image",chatListItem.getContactImg());
+                getActivity().startActivity(intent);
+              }
+            });
+            dialog.show();
           }
         });
         params.add(newParam);

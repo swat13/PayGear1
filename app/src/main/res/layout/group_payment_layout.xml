@@ -86,8 +86,6 @@
                     android:hint="توضیحات"
                     android:imeOptions="actionDone"
                     android:inputType="text"
-                    android:maxLength="15"
-                    android:maxLines="1"
                     android:padding="10dp"
                     android:singleLine="true"
                     android:textColorHint="#a69291"

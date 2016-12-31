@@ -4,6 +4,7 @@ import android.util.Log;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class ChatListFeed implements Serializable {
 
@@ -30,13 +31,12 @@ public class ChatListFeed implements Serializable {
 	}
 	public void removeItem(int position) {
 		_itemlist.remove(position);
-//		_itemcount--;
 	}
 
-	public void removeAll() {
-		_itemlist.clear();
-//		_itemcount--;
+	public void removeItem(Object o) {
+		_itemlist.remove(o);
 	}
+
 
 	public ChatListItem getItem(int location) {
 		return _itemlist.get(location);
@@ -44,7 +44,6 @@ public class ChatListFeed implements Serializable {
 
 	public int getItemCount() {
 		return _itemlist.size();
-
 	}
 
 }

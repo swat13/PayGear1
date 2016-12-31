@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import magia.af.ezpay.Parser.ChatListFeed;
 import magia.af.ezpay.Parser.ChatListItem;
@@ -24,7 +25,7 @@ import magia.af.ezpay.Utilities.LocalPersistence;
 public class GetContact {
 
     private static final String TAG = "TAG";
-    private ArrayMap<String, Boolean> stringArrayMap = new ArrayMap<>();
+    private HashMap<String, Boolean> stringArrayMap = new HashMap<>();
     Context cx;
     ChatListItem chatListItem;
     ChatListFeed chatListFeed;

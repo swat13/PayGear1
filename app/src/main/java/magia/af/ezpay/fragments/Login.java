@@ -111,10 +111,12 @@ public class Login extends Fragment implements View.OnClickListener {
                 }
                 parser.setJson(object.toString());
                 parser.execute(new JSONParser.Execute() {
+
                     @Override
-                    public void onPreExecute() {
-                        DialogMaker.makeDialog(getContext()).showDialog();
+                    public void onPreExecute(){
+                        DialogMaker.makeDialog(getActivity()).showDialog();
                     }
+
 
                     @Override
                     public void onPostExecute(String s) {

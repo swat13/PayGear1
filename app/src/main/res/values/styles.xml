@@ -43,4 +43,9 @@
         <item name="android:windowExitAnimation">@android:anim/slide_out_right</item>
     </style>
 
+    <style name="OrginalAppTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/orginalThemeColorPrimary</item>
+        <item name="colorPrimaryDark">@color/orginalThemeColorPrimaryDark</item>
+    </style>
+
 </resources>

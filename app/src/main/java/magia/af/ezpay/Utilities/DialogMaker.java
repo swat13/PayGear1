@@ -23,7 +23,6 @@ public class DialogMaker {
     dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
     ImageView gif = (ImageView)dialog.findViewById(R.id.gif);
     Glide.with(dialog.getContext()).load(R.drawable.gif_loading).into(gif);
-//    dialog.show();
     return dialogMaker;
   }
 
